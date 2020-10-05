@@ -10,8 +10,16 @@
 	<property name="res.dir" location="resources" />
 	<property name="lib.dir" location="lib" />
 	
-	<target name="build" depends="clean, makedir">
-		<echo>Server build ended</echo>
+	<path id="class.path">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<echo>${ant.version}</echo>
+	
+	<target name="build" depends="server_jar, client_jar">
+		<echo>Build ended</echo>
 	</target>
 	
 	<target name="clean" >
@@ -37,9 +45,45 @@
 		<echo>Compiling...</echo>
 		<javac includeAntRuntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpath = "${lib.dir}/javax.mail.jar">
 		</javac>
-		<copy file="postgresql-42.2.5.jar" todir="${dist.dir}/lib"/>
-		<copy file="javax.mail.jar" todir="${dist.dir}/lib"/>
-		<copy file="activation.jar" todir="${dist.dir}/lib"/>
-		<copy file="${dbsrc.dir}/DBSource.txt" todir="${dist.dir}/sql_src"/>
+		<copy file="${lib.dir}/postgresql-42.2.5.jar" todir="${dist.dir}/lib"/>
+		<copy file="${lib.dir}/javax.mail.jar" todir="${dist.dir}/lib"/>
+		<copy file="${lib.dir}/activation.jar" todir="${dist.dir}/lib"/>
+		<copy file="${dbsrc.dir}/DBSource.sql" todir="${dist.dir}/sql_src"/>
+	</target>
+	
+	<target name="docs" depends="compile">
+		<echo>Generating docs...</echo>
+		<javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}" classpath = "${lib.dir}/javax.mail.jar">
+			<fileset dir="${src.dir}">
+				<include name="**"/>
+			</fileset>
+		
+		</javadoc>
+		
+	</target>
+	
+	<target name="client_jar" depends="compile, docs">
+		<echo>Generating client's jar file...</echo>
+	        <jar destfile="${dist.dir}\IpClient.jar">
+			<fileset dir="${build.dir}" includes="client/*.class"/>
+	            <manifest>
+	            	<attribute name="Class-Path" value="${class.path}"/>
+	                <attribute name="Main-Class" value="" />
+	            	
+	            </manifest>
+	        </jar>
+	</target>
+	
+	<target name="server_jar" depends="compile, docs">
+		<echo>Generating server's jar file...</echo>
+	        <jar destfile="${dist.dir}\IpServer.jar">
+				<fileset dir="${build.dir}" 
+					includes="server/*.class database/*.class"/>
+	            <manifest>
+	            	<attribute name="Class-Path" value="${class.path}"/>
+	                <attribute name="Main-Class" value="" />
+	            	
+	            </manifest>
+	        </jar>
 	</target>
 </project>
