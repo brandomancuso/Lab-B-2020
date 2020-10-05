@@ -4,6 +4,8 @@
 # Folders
 /bin/
 /dist/
+/docs/
+/nbproject/
 
 # Package Files #
 *.jar
