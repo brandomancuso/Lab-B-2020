@@ -51,7 +51,7 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_profile.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
         btn_profile.setForeground(new java.awt.Color(255, 255, 255));
         btn_profile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/icons8-user-32.png"))); // NOI18N
-        btn_profile.setText("  PROFILO");
+        btn_profile.setText("PROFILO");
         btn_profile.setBorder(null);
         btn_profile.setEnabled(false);
         btn_profile.setPreferredSize(new java.awt.Dimension(589, 521));
@@ -91,6 +91,11 @@ public class ControlFrame extends javax.swing.JFrame {
         text_password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_password.setText("jPasswordField1");
         text_password.setBorder(null);
+        text_password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                text_passwordActionPerformed(evt);
+            }
+        });
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -122,6 +127,11 @@ public class ControlFrame extends javax.swing.JFrame {
         label_signin.setForeground(new java.awt.Color(79, 36, 107));
         label_signin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label_signin.setText("Non hai un account? Registrati!");
+        label_signin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                label_signinMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel_loginLayout = new javax.swing.GroupLayout(jPanel_login);
         jPanel_login.setLayout(jPanel_loginLayout);
@@ -236,6 +246,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void text_emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_emailActionPerformed
         // TODO add your handling code here:
+        this.text_email.setText("");
     }//GEN-LAST:event_text_emailActionPerformed
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
@@ -244,9 +255,21 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void label_pswRecoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_pswRecoverMouseClicked
         // TODO add your handling code here:
-        
-        
+
+
     }//GEN-LAST:event_label_pswRecoverMouseClicked
+
+    private void text_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_passwordActionPerformed
+        // TODO add your handling code here:
+        this.text_password.setText("");
+    }//GEN-LAST:event_text_passwordActionPerformed
+
+    private void label_signinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_signinMouseClicked
+        // TODO add your handling code here:
+        Register reg = new Register();
+        reg.setVisible(true);
+
+    }//GEN-LAST:event_label_signinMouseClicked
 
     /**
      * @param args the command line arguments
