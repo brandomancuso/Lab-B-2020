@@ -27,11 +27,82 @@ public class Recover extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        label_recuperaPsw = new javax.swing.JLabel();
+        text_email = new javax.swing.JTextField();
+        jSeparator6 = new javax.swing.JSeparator();
+        btn_recoverPsw = new javax.swing.JButton();
+
         setBackground(new java.awt.Color(255, 255, 255));
-        setLayout(null);
+
+        label_recuperaPsw.setBackground(new java.awt.Color(137, 109, 156));
+        label_recuperaPsw.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        label_recuperaPsw.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_recuperaPsw.setText("Recupero Password");
+
+        text_email.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        text_email.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        text_email.setText("email");
+        text_email.setBorder(null);
+        text_email.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                text_emailActionPerformed(evt);
+            }
+        });
+
+        jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
+
+        btn_recoverPsw.setBackground(new java.awt.Color(79, 36, 107));
+        btn_recoverPsw.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        btn_recoverPsw.setForeground(new java.awt.Color(255, 255, 255));
+        btn_recoverPsw.setText("RECUPERA");
+        btn_recoverPsw.setBorder(null);
+        btn_recoverPsw.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(label_recuperaPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btn_recoverPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(149, 149, 149))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(text_email, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                            .addComponent(jSeparator6))
+                        .addGap(82, 82, 82))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(label_recuperaPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(text_email, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_recoverPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
+        );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void text_emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_emailActionPerformed
+        // TODO add your handling code here:
+        this.text_email.setText("");
+        
+    }//GEN-LAST:event_text_emailActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_recoverPsw;
+    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JLabel label_recuperaPsw;
+    private javax.swing.JTextField text_email;
     // End of variables declaration//GEN-END:variables
 }
