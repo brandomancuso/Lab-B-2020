@@ -47,14 +47,24 @@ public class WordsMatrix {
 		}
 	}
 	
-	public void print() {
+	public String[] print() {
+            String[] gridTmp=new String[DIM*DIM];
+            int count=1;
 		for(int i = 0; i<DIM; i++) {
 			System.out.println();
 			for(int j = 0; j<DIM; j++) {
-				System.out.print(matrix[i][j].read() + " ");
+				gridTmp[count]=matrix[i][j].read();
+                                count++;
 			}
 		}
+            return gridTmp;
 	}
+        
+        public boolean isAllowed (String wordFound)
+        {
+            //check if the word could be derived from the matrix
+            return true;
+        }
 
 	private void swap(int select, int bound) {
 		Dice tmp = dices[bound];

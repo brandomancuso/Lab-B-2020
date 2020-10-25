@@ -2,13 +2,13 @@ package database;
 
 import entity.GameData;
 import entity.StatsData;
-import entity.User;
+import entity.UserData;
 
 public interface Database {
-    User getUser(String nickname);
-    User getUser(String email, String password);
-    boolean addUser(User user);
-    boolean updateUser(User user);
+    UserData getUser(String nickname);
+    UserData getUser(String email, String password);
+    boolean addUser(UserData user);
+    boolean updateUser(UserData user);
     int addGame(GameData gameData);
     GameData getGame(int gameId);
     boolean updateGame(int gameId, GameData gameData);

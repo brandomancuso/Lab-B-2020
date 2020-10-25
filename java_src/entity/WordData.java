@@ -2,7 +2,7 @@ package entity;
 
 import java.io.Serializable;
 
-public class Word implements Serializable{
+public class WordData implements Serializable{
     private String word;
     private int points;
     private boolean correct;

@@ -2,7 +2,7 @@ package entity;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class UserData implements Serializable{
     
     private String nickname;
     private String email;

@@ -9,7 +9,7 @@ import java.util.Map;
 public class GameData implements Serializable{
     private int id;
     private String name;
-    private List<Session> sessions;
+    private List<SessionData> sessions;
     private int numPlayers;
     private Map<String, Integer> playerPoints;
     
@@ -80,7 +80,7 @@ public class GameData implements Serializable{
         return new LinkedList<>(playerPoints.keySet());
     }
     
-    public void addSession(Session s){
+    public void addSession(SessionData s){
         sessions.add(s);
     }
 }
