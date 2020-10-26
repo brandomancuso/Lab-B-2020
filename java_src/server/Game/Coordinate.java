@@ -1,3 +1,5 @@
+package server.Game;
+
 import java.util.Objects;
 
 public final class Coordinate {

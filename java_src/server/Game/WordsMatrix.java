@@ -1,3 +1,5 @@
+package server.Game;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Stack;
