@@ -9,6 +9,5 @@ public interface ServerGameStub extends Remote{
 
     void sendWords(String nickname, List<Word> words) throws RemoteException;
     String requestWordDef(Word word) throws RemoteException;
-    void ready(String nickname) throws RemoteException;
-    void exit() throws RemoteException;  
+    void ready(String nickname) throws RemoteException; 
 }
