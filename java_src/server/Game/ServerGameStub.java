@@ -1,4 +1,4 @@
-package server;
+package server.Game;
 
 import entity.WordData;
 import java.rmi.Remote;
@@ -10,5 +10,4 @@ public interface ServerGameStub extends Remote{
     void sendWords(String nickname, List<WordData> words) throws RemoteException;
     String requestWordDef(WordData word) throws RemoteException;
     void ready(String nickname) throws RemoteException;
-    void exit() throws RemoteException;  
 }

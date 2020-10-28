@@ -1,71 +1,80 @@
 package server.Game;
 
-import server.Game.Dictionary;
-import server.Game.InvalidKey;
-import server.Game.Loader;
-import java.io.File;
-import java.io.IOException;
+import client.ClientGameStub;
+import entity.GameData;
+import entity.WordData;
+import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 //Coustructor called after a master wants to create a Game
-public final class Game{
+public class Game implements ServerGameStub{
+    GameData gameData;
+    Timer timer;
+    Set<ObserverClient> observerClients;
     
-    public Game ()
+    public Game (String nameGame,int numPlayer,String hostNickname,ClientGameStub clientGameStub)
     {
-        //TO-DO: give back the reference of the game just created
-        AddPartecipant();//add the master of the game
+        gameData=new GameData(nameGame,numPlayer);
+        observerClients=new HashSet<>();
+        timer=new Timer();
+        observerClients.add(new ObserverClient(timer,clientGameStub,this));
+        gameData.addPlayer(hostNickname);
     }
     
     //private methods for game class purpose
     private void StartGame()
     {
-        
+        timer.setTime(30);//start after passing all the reference
     }
     
     //public methods for server purpose
-    public boolean AddPartecipant()
+    public boolean AddPartecipant(String nicknamePlayer,ClientGameStub clientGameStub)
     {
-        //TO-DO:add remote reference in the list of timer listeners and add player, before checking the maximum player number
-        return true;
+        if (gameData.getPlayersList().size()+1>gameData.getNumPlayers())
+        {
+            StartGame();
+            return false;
+        }
+        else
+        {
+            gameData.addPlayer(nicknamePlayer);
+            return true;
+        }
     }
     
-    public boolean RemovePartecipant()
+    public boolean RemovePartecipant(String nicknamePlayer)
     {
-        //TO-DO:remove remote reference in the list of timer listeners and remove player, and after checking the minimun player number got
-        return true;
+        
+         if (gameData.getPlayersList().size()-1==0)
+            return false;
+        else
+        {
+            gameData.removePlayer(nicknamePlayer);
+            return true;
+        }
+    }
+    
+    public void exit (ObserverClient observerClintRemoved)
+    {
+        observerClients.remove(observerClintRemoved);//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
     }
     
     
     //remote methods for client purpose via RMI
-    
-    
-    
-    
-    
-    
-    
-    
-    public static void main(String[] args) {
-        Loader loader=new Loader();
-		String file_dizionario= "dict-it.oxt";
-		File dizionario=new File(file_dizionario);
-		
-		try {
-			
-			Dictionary d=loader.loadDictionaryFromFile(dizionario);
-			
-			/*for(String key: d.getKeys()) {
-				System.out.println(d.getTerm(key));
-			}*/
-			System.out.println(d.getSize());
-			System.out.println(d.getTerm("studente"));
-			System.out.println(d.getTerm("studentato"));
-			System.out.println(d.getTerm("studio"));
-			System.out.println(d.getTerm("stud"));
+     @Override
+    public void sendWords(String nickname, List<WordData> words) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidKey e) {
-			e.printStackTrace();
-		}
-    }  
+    @Override
+    public String requestWordDef(WordData word) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ready(String nickname) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

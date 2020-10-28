@@ -1,15 +1,13 @@
 package server.Game;
 import java.util.Observable;
-import java.util.Observer;
 
 
 public class Timer extends Observable implements Runnable 
 {
     int time;//the variable time counts the seconds remained
     
-    public Timer (int time)
+    public Timer ()
     {
-        this.time=time+1;//adding 1 unit when it turns into 30 than it notifies a setChanged()
         //TO-DO:start the thread when all the clients receive the remote reference
     }
     @Override
@@ -35,5 +33,14 @@ public class Timer extends Observable implements Runnable
             }
         }
     }
-    
-}
+        
+    public void setTime(int time)
+        {
+            this.time=time+1;//adding 1 unit when it turns into 30 than it notifies a setChanged()
+        }
+        
+    public int getTime()
+        {
+            return time;
+        }
+    }
