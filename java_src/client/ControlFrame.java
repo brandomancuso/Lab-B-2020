@@ -6,6 +6,9 @@
 package client;
 
 import java.awt.CardLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
@@ -18,7 +21,8 @@ public class ControlFrame extends javax.swing.JFrame {
      * Creates new form ControlFrame
      */
     CardLayout card;
-    
+    private Image img;
+
     public ControlFrame() {
         initComponents();
         //Fill with user data for the profile tab
@@ -28,8 +32,17 @@ public class ControlFrame extends javax.swing.JFrame {
         text_username_profile.setText("giominchia98");
         text_password_profile.setText("password");
         text_repeatPassword_profile.setText("password");
-        
+
         card = (CardLayout) jPanel_main.getLayout();
+        this.combo_Nplayers.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (combo_Nplayers.getSelectedIndex() != 5) {
+                    btn_createGame_home.setEnabled(true);
+                } else {
+                    btn_createGame_home.setEnabled(false);
+                }
+            }
+        });
     }
 
     /**
@@ -56,6 +69,7 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_login = new javax.swing.JButton();
         label_pswRecover = new javax.swing.JLabel();
         label_signin = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jPanel_home = new javax.swing.JPanel();
         label_home_activeGames = new javax.swing.JLabel();
         label_home_createGame = new javax.swing.JLabel();
@@ -65,8 +79,13 @@ public class ControlFrame extends javax.swing.JFrame {
         text_gameName_home = new javax.swing.JTextField();
         jSeparator9 = new javax.swing.JSeparator();
         btn_partecipate_home1 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        combo_Nplayers = new javax.swing.JComboBox<>();
         jPanel_stats = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        combo_stats = new javax.swing.JComboBox<>();
+        btn_search_stats = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         jPanel_profile = new javax.swing.JPanel();
         label_profile = new javax.swing.JLabel();
         text_name_profile = new javax.swing.JTextField();
@@ -238,6 +257,8 @@ public class ControlFrame extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/user_90px.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel_loginLayout = new javax.swing.GroupLayout(jPanel_login);
         jPanel_login.setLayout(jPanel_loginLayout);
         jPanel_loginLayout.setHorizontalGroup(
@@ -261,11 +282,17 @@ public class ControlFrame extends javax.swing.JFrame {
                             .addComponent(label_signin, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(label_pswRecover, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(365, 365, 365))))
+            .addGroup(jPanel_loginLayout.createSequentialGroup()
+                .addGap(430, 430, 430)
+                .addComponent(jLabel2)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel_loginLayout.setVerticalGroup(
             jPanel_loginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_loginLayout.createSequentialGroup()
-                .addGap(131, 131, 131)
+                .addGap(36, 36, 36)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
                 .addComponent(text_email_login, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -279,7 +306,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 .addComponent(label_pswRecover)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(label_signin)
-                .addContainerGap(253, Short.MAX_VALUE))
+                .addContainerGap(251, Short.MAX_VALUE))
         );
 
         jPanel_main.add(jPanel_login, "login");
@@ -304,6 +331,7 @@ public class ControlFrame extends javax.swing.JFrame {
         });
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jList1.setToolTipText("");
+        jList1.setSelectedIndex(0);
         jScrollPane1.setViewportView(jList1);
 
         btn_createGame_home.setBackground(new java.awt.Color(79, 36, 107));
@@ -311,6 +339,7 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_createGame_home.setForeground(new java.awt.Color(255, 255, 255));
         btn_createGame_home.setText("CREA");
         btn_createGame_home.setBorder(null);
+        btn_createGame_home.setEnabled(false);
         btn_createGame_home.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_createGame_homeActionPerformed(evt);
@@ -345,11 +374,11 @@ public class ControlFrame extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "3", "4", "5", "6", "Numero Giocatori" }));
-        jComboBox1.setSelectedIndex(5);
-        jComboBox1.setToolTipText("");
-        jComboBox1.setBorder(null);
+        combo_Nplayers.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        combo_Nplayers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "3", "4", "5", "6", "Numero Giocatori" }));
+        combo_Nplayers.setSelectedIndex(5);
+        combo_Nplayers.setToolTipText("");
+        combo_Nplayers.setBorder(null);
 
         javax.swing.GroupLayout jPanel_homeLayout = new javax.swing.GroupLayout(jPanel_home);
         jPanel_home.setLayout(jPanel_homeLayout);
@@ -373,7 +402,7 @@ public class ControlFrame extends javax.swing.JFrame {
                         .addGap(49, 49, 49))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_homeLayout.createSequentialGroup()
                         .addGroup(jPanel_homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jComboBox1, 0, 254, Short.MAX_VALUE)
+                            .addComponent(combo_Nplayers, 0, 254, Short.MAX_VALUE)
                             .addComponent(btn_createGame_home, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(100, 100, 100))))
             .addGroup(jPanel_homeLayout.createSequentialGroup()
@@ -396,7 +425,7 @@ public class ControlFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(combo_Nplayers, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(102, 102, 102)
                         .addComponent(btn_createGame_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(61, 61, 61)
@@ -406,15 +435,72 @@ public class ControlFrame extends javax.swing.JFrame {
 
         jPanel_main.add(jPanel_home, "home");
 
+        jPanel_stats.setBackground(new java.awt.Color(255, 255, 255));
+
+        jTable1.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable1);
+
+        combo_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_stats.setBorder(null);
+
+        btn_search_stats.setBackground(new java.awt.Color(79, 36, 107));
+        btn_search_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        btn_search_stats.setForeground(new java.awt.Color(255, 255, 255));
+        btn_search_stats.setText("CERCA");
+        btn_search_stats.setBorder(null);
+        btn_search_stats.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_search_statsActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/combo_chart_96px.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel_statsLayout = new javax.swing.GroupLayout(jPanel_stats);
         jPanel_stats.setLayout(jPanel_statsLayout);
         jPanel_statsLayout.setHorizontalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 998, Short.MAX_VALUE)
+            .addGroup(jPanel_statsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_statsLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addContainerGap())
+                    .addGroup(jPanel_statsLayout.createSequentialGroup()
+                        .addGap(0, 116, Short.MAX_VALUE)
+                        .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(136, 136, 136)
+                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(159, 159, 159))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(452, 452, 452))
         );
         jPanel_statsLayout.setVerticalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 691, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(109, 109, 109)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jPanel_main.add(jPanel_stats, "stats");
@@ -424,7 +510,7 @@ public class ControlFrame extends javax.swing.JFrame {
         label_profile.setBackground(new java.awt.Color(137, 109, 156));
         label_profile.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
         label_profile.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_profile.setText("Profilo Utente");
+        label_profile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/male_user_90px.png"))); // NOI18N
 
         text_name_profile.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         text_name_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -526,8 +612,8 @@ public class ControlFrame extends javax.swing.JFrame {
             jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_profileLayout.createSequentialGroup()
                 .addGap(0, 11, Short.MAX_VALUE)
-                .addComponent(label_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(label_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(text_name_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -583,18 +669,18 @@ public class ControlFrame extends javax.swing.JFrame {
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         // TODO add your handling code here:
         boolean logged = true; //MUST BE FALSE!
-        
-        if (logged){
+
+        if (logged) {
             btn_home.setEnabled(true);
             btn_stats.setEnabled(true);
             btn_profile.setEnabled(true);
-            
+
             card.show(jPanel_main, "home");
-        } else{
+        } else {
             //alert
             showMessageDialog(null, "Email / password errati");
         }
-        
+
     }//GEN-LAST:event_btn_loginActionPerformed
 
     private void label_pswRecoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_pswRecoverMouseClicked
@@ -667,6 +753,10 @@ public class ControlFrame extends javax.swing.JFrame {
         this.text_gameName_home.setText("");
     }//GEN-LAST:event_text_gameName_homeMouseClicked
 
+    private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_search_statsActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -709,9 +799,13 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JButton btn_partecipate_home1;
     private javax.swing.JButton btn_profile;
     private javax.swing.JButton btn_save_profile;
+    private javax.swing.JButton btn_search_stats;
     private javax.swing.JButton btn_stats;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> combo_Nplayers;
+    private javax.swing.JComboBox<String> combo_stats;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel_home;
     private javax.swing.JPanel jPanel_login;
@@ -721,6 +815,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel_stats;
     private javax.swing.JPanel jPanel_title;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -730,6 +825,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel label_home_activeGames;
     private javax.swing.JLabel label_home_createGame;
     private javax.swing.JLabel label_profile;
@@ -745,4 +841,5 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JTextField text_surname_profile;
     private javax.swing.JTextField text_username_profile;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -42,7 +42,7 @@ public class RecoverPsw extends javax.swing.JDialog {
         label_recuperaPsw.setBackground(new java.awt.Color(137, 109, 156));
         label_recuperaPsw.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
         label_recuperaPsw.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_recuperaPsw.setText("Recupero Password");
+        label_recuperaPsw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/key_90px.png"))); // NOI18N
 
         text_email.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         text_email.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -87,8 +87,8 @@ public class RecoverPsw extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(label_recuperaPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
+                .addComponent(label_recuperaPsw)
+                .addGap(28, 28, 28)
                 .addComponent(text_email, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
