@@ -44,9 +44,11 @@ public class WordsMatrix {
 		for(int i = 0; i<DIM*DIM; i++) {
 			dices[i] = new Dice(diceFaces[i]);
 		}
+                shake();
 	}
 
-	public void shake() {
+//private method
+	private void shake() {
 		Random gen = new Random();
 		int upperBound = DIM*DIM -1;
 		for(int i = 0; i<DIM; i++) {
@@ -58,7 +60,14 @@ public class WordsMatrix {
 			}
 		}
 	}
+        
+        private void swap(int select, int bound) {
+		Dice tmp = dices[bound];
+		dices[bound] = dices[select];
+		dices[select] = tmp;
+	}
 	
+//public method
 	public String[] print() {
             String[] gridTmp=new String[DIM*DIM];
             int count=1;
@@ -70,12 +79,6 @@ public class WordsMatrix {
 			}
 		}
             return gridTmp;
-	}
-	
-	private void swap(int select, int bound) {
-		Dice tmp = dices[bound];
-		dices[bound] = dices[select];
-		dices[select] = tmp;
 	}
 	
     public boolean isAllowed (String wordFound)

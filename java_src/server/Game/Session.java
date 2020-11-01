@@ -8,7 +8,7 @@ public class Session {
     WordsMatrix wordsMatrix;
     Dictionary dictionary;
    
-    public Session (WordsMatrix wordsMatrix,Dictionary dictionary)
+    public Session (Dictionary dictionary)
     {
         this.sessionData=new SessionData();//every Session istantiated i've to create a SessionData Object
         this.wordsMatrix=new WordsMatrix();
@@ -16,40 +16,60 @@ public class Session {
         this.dictionary=dictionary;//the instance is created by the class Game
 
     }
-    
-    
+ 
     //method called by Game Class    
-    public void checkWord(String nickname,String wordFound)
+    public int checkWord(String nickname,List<String> wordFoundList)
     {
+       int pointPlayer=0;
        WordData wordTmp=new WordData();
-       
-       if(!wordsMatrix.isAllowed(wordFound))
-        {
-            wordTmp.setPoints(calculateScore(wordFound));
-            wordTmp.setCorrect(false);
-        }
-         else
-           if (!dictionary.exists(wordFound))
-               {
-                    wordTmp.setPoints(calculateScore(wordFound));
-                    wordTmp.setCorrect(false);
-               }
-            else
-                if(isDuplicated(wordFound))
+       for (String wordFound : wordFoundList)
+       {
+            if(!wordsMatrix.isAllowed(wordFound))
+             {
+                 wordTmp.setPoints(calculateScore(wordFound));
+                 wordTmp.setCorrect(false);
+             }
+              else
+                if (!dictionary.exists(wordFound))
                     {
-                        wordTmp.setPoints(calculateScore(wordFound));
-                        wordTmp.setCorrect(true);
-                        wordTmp.setDuplicate(true);
+                         wordTmp.setPoints(calculateScore(wordFound));
+                         wordTmp.setCorrect(false);
                     }
                  else
-                    {
-                        wordTmp.setPoints(calculateScore(wordFound));  
-                        wordTmp.setCorrect(true);
-                    }
-       
-        sessionData.addWord(nickname, wordTmp);    
+                     if(isDuplicated(wordFound))
+                         {
+                             wordTmp.setPoints(calculateScore(wordFound));
+                             wordTmp.setCorrect(true);
+                             wordTmp.setDuplicate(true);
+                         }
+                      else
+                         {
+                             pointPlayer=calculateScore(wordFound);//to know how many point the player has
+                             wordTmp.setPoints(calculateScore(wordFound));  
+                             wordTmp.setCorrect(true);
+                         }
+
+             sessionData.addWord(nickname, wordTmp);   
+       }
+       return pointPlayer;
     }   
     
+    public List<WordData> getWordChecked ()
+    {
+       List<WordData> resultList=new ArrayList<>();
+       for(List<WordData> wordPlayerList :sessionData.getFoundWords().values())
+       {
+           for(WordData wordPlayer : wordPlayerList)
+                resultList.add(wordPlayer);
+       }
+       return resultList;
+    }
+    
+    public String[] getWordMatrix()
+    {
+        return wordsMatrix.print();
+    }
+   
     //utility method   
     private boolean isDuplicated (String wordFound)
     {

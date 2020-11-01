@@ -1,9 +1,12 @@
 package server.Game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Term{
+public class Term implements Serializable{
+    
+        private static final long serialVersionUID = 1L;
 	private String key="";
 	private List<Definition> definitionSet;
 	

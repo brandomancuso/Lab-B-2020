@@ -1,20 +1,23 @@
 package server.Game;
 
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 import client.ClientGameStub;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObserverClient implements Observer  {
-
-    Timer timer;
-    ClientGameStub client;
-    Game game;
+    private final ClientGameStub client;
+    private List<String> wordsFound;
+    private final Game game;//to have access to exit method
+    private final String nickname;//i need to display the nickname of the person who exit the game
+    private Timer timer;//to have access to the method of observable
     
-    public ObserverClient (Timer timer,ClientGameStub client,Game game)
+    public ObserverClient (String nickname,ClientGameStub client,Game game)
     {
-        this.timer=timer;
+        wordsFound=new ArrayList<>();
+        this.nickname=nickname;
         this.client=client;
         this.game=game;
     }
@@ -26,31 +29,33 @@ public class ObserverClient implements Observer  {
         } catch (RemoteException ex) {
             System.err.println("Client isn't reachable");
             o.deleteObserver(this);
-            game.exit(this);
+            game.exit();
         }
     }
-    
-    @Override
-    public int hashCode() 
-	 {
-            return Objects.hash(this.client);
-	 }    
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ObserverClient other = (ObserverClient) obj;
-        if (!Objects.equals(this.client, other.client)) {
-            return false;
-        }
-        return true;
+    public ClientGameStub getClientGameStub()
+    {
+        return client;
+    }
+       
+    public void setWordsFound(ArrayList<String> wordsFound)
+    {
+        this.wordsFound=wordsFound;
+    }
+    
+    public void setTimer (Timer timer)
+    {
+        this.timer=timer;
+        timer.addObserver(this);
+    }
+    
+    public String getNickname ()
+    {
+        return nickname;
+    }
+    
+    public List<String> getWordsFound ()
+    {
+        return wordsFound;
     }
 }

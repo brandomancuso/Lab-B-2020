@@ -6,9 +6,9 @@ public class Timer extends Observable implements Runnable
 {
     int time;//the variable time counts the seconds remained
     
-    public Timer ()
+    public Timer (int time)
     {
-        //TO-DO:start the thread when all the clients receive the remote reference
+        this.time=time+1;
     }
     @Override
     public void run() {
@@ -33,14 +33,4 @@ public class Timer extends Observable implements Runnable
             }
         }
     }
-        
-    public void setTime(int time)
-        {
-            this.time=time+1;//adding 1 unit when it turns into 30 than it notifies a setChanged()
-        }
-        
-    public int getTime()
-        {
-            return time;
-        }
-    }
+}
