@@ -20,6 +20,7 @@ public class Game implements ServerGameStub{
     Dictionary dictionary;
     Boolean boolNextRound;
     int playerReadyNextRound;
+    PersistentSignal persistentSignal;
     
     public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub)
     {
@@ -31,6 +32,7 @@ public class Game implements ServerGameStub{
         gameData.addPlayer(hostNickname);
         boolNextRound=true;//i assume that there might be a little succesful at the end of the first round
         playerReadyNextRound=0;
+        persistentSignal=new PersistentSignal();
     }
     
     //private methods for game class purpose
@@ -69,13 +71,13 @@ public class Game implements ServerGameStub{
     
     private void StartBeforeGame()
     {
-        Timer timer=new Timer(30);
+        Timer timer=new Timer(30,persistentSignal);
         timerThread=new Thread(timer);
         observerClientSet.forEach((ObserverClient observerClient)->observerClient.setTimer(timer));
         //TO-DO:Remote Method for changing the state of the client
         timerThread.start();
         try {
-            timerThread.join();
+            persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
@@ -84,7 +86,7 @@ public class Game implements ServerGameStub{
     private void StartRealGame()
     {
         Session currentSession=new Session(dictionary);
-        Timer timer=new Timer(180);
+        Timer timer=new Timer(180,persistentSignal);
         timerThread=new Thread(timer);
         sessionList.add(currentSession);
         observerClientSet.forEach((ObserverClient observerClient)->{
@@ -98,7 +100,10 @@ public class Game implements ServerGameStub{
         //TO-DO:Remote Method for changing the state of the client
         timerThread.start();
         try {
-            timerThread.join();
+            persistentSignal.waitTimer();
+            if (Thread.interrupted())
+                    //unbind the object and use the method unicastRemoteObject.unexportedObject();
+                    System.exit(0);
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
@@ -107,7 +112,7 @@ public class Game implements ServerGameStub{
     private void StartAfterGame()
     {
         int lastIndex=sessionList.size()-1;
-        Timer timer=new Timer(180);
+        Timer timer=new Timer(180,persistentSignal);
         timerThread=new Thread(timer);
         //reequest of the list of the word found
         observerClientSet.forEach((ObserverClient observerClient)->
@@ -130,7 +135,10 @@ public class Game implements ServerGameStub{
         //TO-DO:Remote Method for changing the state of the client and check the word
         timerThread.start();
         try {
-            timerThread.join();
+            persistentSignal.waitTimer();
+            if (Thread.interrupted())
+                //unbind the object and use the method unicastRemoteObject.unexportedObject();
+                System.exit(0);
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
@@ -168,13 +176,14 @@ public class Game implements ServerGameStub{
     {
         //TO-DO:advise the client that someone quit (by his nickname)
         observerClientSet.clear();//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
-        //TO-DO: end the game
+        timerThread.interrupt();
+        persistentSignal.interruptGame();
     }
     
     
     //remote methods for client purpose via RMI
     @Override
-    public Term requestWordDef(WordData word) throws RemoteException {
+    public synchronized Term requestWordDef(WordData word) throws RemoteException {
         try {
             return dictionary.getTerm(word.getWord());
         } catch (InvalidKey ex) {
@@ -184,13 +193,16 @@ public class Game implements ServerGameStub{
     }
 
     @Override
-    public void ready(String nickname) throws RemoteException {
+    public synchronized void ready(String nickname) throws RemoteException {
         if(++playerReadyNextRound==gameData.getNumPlayers())
             timerThread.interrupt();//interupting the time allow the server to go to the next phases
     }
 
     @Override
-    public void leaveGame(String nickname) throws RemoteException {
+    public synchronized void leaveGame(String nickname) throws RemoteException {
         //TO-DO:display who has just leaved the game to the other player and End the Game
+        timerThread.interrupt();//interrupt the timer beacause of game ending
+        persistentSignal.interruptGame();//interrupt the game itself
+        
     }
 }

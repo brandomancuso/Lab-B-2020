@@ -5,10 +5,12 @@ import java.util.Observable;
 public class Timer extends Observable implements Runnable 
 {
     int time;//the variable time counts the seconds remained
+    PersistentSignal persistentSignal;
     
-    public Timer (int time)
+    public Timer (int time,PersistentSignal persistentSignal)
     {
         this.time=time+1;
+        this.persistentSignal=persistentSignal;
     }
     @Override
     public void run() {
@@ -32,5 +34,7 @@ public class Timer extends Observable implements Runnable
                 notifyObservers(time);//notify to all listeners the new state of the timer
             }
         }
+        
+        persistentSignal.signalON();//to warn the game that the time is over
     }
 }
