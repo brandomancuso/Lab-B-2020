@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import utils.Pair;
 
 
 public class QueryExecutor {
@@ -27,6 +29,16 @@ public class QueryExecutor {
         }
     }
     
+    //Query methods
+    public boolean executeUpdate(String query, Object... params){
+        return false;
+    }
+    
+    public <T> List<T> executeQuery(Class<T> type, T elem) {
+        return null;
+    }
+    
+    //Configuration and utility methods
     public void configure(DatabaseConfig config) {
         this.configuration = config;
     }
