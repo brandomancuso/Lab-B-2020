@@ -68,7 +68,7 @@ public class WordsMatrix {
 	}
 	
 //public method
-	public String[] print() {
+	public String[] getWordsMatrix() {
             String[] gridTmp=new String[DIM*DIM];
             int count=1;
 		for(int i = 0; i<DIM; i++) {

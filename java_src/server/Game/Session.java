@@ -12,7 +12,7 @@ public class Session {
     {
         this.sessionData=new SessionData();//every Session istantiated i've to create a SessionData Object
         this.wordsMatrix=new WordsMatrix();
-        sessionData.setGrid(wordsMatrix.print());//set the grid of letter from WordsMatrix
+        sessionData.setGrid(wordsMatrix.getWordsMatrix());//set the grid of letter from WordsMatrix
         this.dictionary=dictionary;//the instance is created by the class Game
 
     }
@@ -67,7 +67,7 @@ public class Session {
     
     public String[] getWordMatrix()
     {
-        return wordsMatrix.print();
+        return wordsMatrix.getWordsMatrix();
     }
    
     //utility method   

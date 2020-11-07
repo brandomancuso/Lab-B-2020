@@ -22,7 +22,7 @@ public class PersistentSignal {
 
     }
     
-    public synchronized void signalON()
+    public synchronized void timeOver()
     {
         timeout = true;
         notify();

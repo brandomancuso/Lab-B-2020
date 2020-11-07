@@ -35,6 +35,6 @@ public class Timer extends Observable implements Runnable
             }
         }
         
-        persistentSignal.signalON();//to warn the game that the time is over
+        persistentSignal.timeOver();//to warn the game that the time is over
     }
 }

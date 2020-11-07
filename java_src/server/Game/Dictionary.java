@@ -8,7 +8,7 @@ public class Dictionary {
 	HashMap<String, List<Definition>> dictionary;
 		
 	public Dictionary() {
-		this.dictionary=new HashMap<String, List<Definition>>();	
+		this.dictionary=new HashMap<>();	
 	}
 	
 	public void addTerm(Term t) {

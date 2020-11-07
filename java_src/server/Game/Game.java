@@ -13,14 +13,14 @@ import java.util.Map;
 
 //Coustructor called after a master wants to create a Game
 public class Game implements ServerGameStub{
-    GameData gameData;
-    Thread timerThread;
-    List<Session> sessionList;
-    Map<String,ObserverClient> observerClientSet;
-    Dictionary dictionary;
-    Boolean boolNextRound;
-    int playerReadyNextRound;
-    PersistentSignal persistentSignal;
+    private GameData gameData;
+    private Thread timerThread;
+    private List<Session> sessionList;
+    private Map<String,ObserverClient> observerClientSet;
+    private Dictionary dictionary;
+    private Boolean boolNextRound;
+    private int playerReadyNextRound;
+    private PersistentSignal persistentSignal;
     
     public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub)
     {
@@ -143,7 +143,7 @@ public class Game implements ServerGameStub{
             System.err.println(ex);
         }
     }
-    
+     
     //public methods for server purpose
     public boolean AddPartecipant(String nicknamePlayer,ClientGameStub clientGameStub)
     {
@@ -176,14 +176,14 @@ public class Game implements ServerGameStub{
     {
         //TO-DO:advise the client that someone quit (by his nickname)
         observerClientSet.clear();//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
-        timerThread.interrupt();
-        persistentSignal.interruptGame();
+        timerThread.interrupt();//interrupt the timer beacause of game ending
+        persistentSignal.interruptGame();//interrupt the game itself
     }
     
     
     //remote methods for client purpose via RMI
     @Override
-    public synchronized Term requestWordDef(WordData word) throws RemoteException {
+    public synchronized Definition requestWordDef(WordData word) throws RemoteException {
         try {
             return dictionary.getTerm(word.getWord());
         } catch (InvalidKey ex) {
@@ -200,9 +200,6 @@ public class Game implements ServerGameStub{
 
     @Override
     public synchronized void leaveGame(String nickname) throws RemoteException {
-        //TO-DO:display who has just leaved the game to the other player and End the Game
-        timerThread.interrupt();//interrupt the timer beacause of game ending
-        persistentSignal.interruptGame();//interrupt the game itself
-        
+        exit();   
     }
 }
