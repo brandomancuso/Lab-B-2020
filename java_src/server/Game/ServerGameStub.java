@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface ServerGameStub extends Remote{
-    Definition requestWordDef(Word word) throws RemoteException;
+    Term requestWordDef(Word word) throws RemoteException;
     void ready(String nickname) throws RemoteException; 
     void leaveGame(String nickname) throws RemoteException;
 }
