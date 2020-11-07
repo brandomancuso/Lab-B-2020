@@ -24,7 +24,7 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     private LoginScreen loginScreen;
     private RegisterScreen registerScreen;
     
-    public ServerServiceImpl(){
+    public ServerServiceImpl() throws RemoteException{
         clientsList = new ArrayList<>();
         onlineUsers = new HashMap<>();
         //gamesList = new HashMap<>();
