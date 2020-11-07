@@ -7,10 +7,10 @@ import entity.User;
 public interface Database {
     User getUser(String nickname);
     User getUser(String email, String password);
-    boolean addUser(User user);
+    User addUser(User user);
     boolean updateUser(User user);
-    int addGame(GameData gameData);
+    GameData addGame(GameData gameData);
     GameData getGame(int gameId);
-    boolean updateGame(int gameId, GameData gameData);
+    boolean updateGame(GameData gameData);
     StatsData getStats();
 }

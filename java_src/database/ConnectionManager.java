@@ -9,19 +9,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-import utils.Pair;
 
 
-public class QueryExecutor {
+public class ConnectionManager {
     //Configuration data
     private DatabaseConfig configuration = new DatabaseConfig();
+    private Connection conn;
+    
     //Static Field(s)
     private static final String DBNAME = "databaseIP";
+    
     //Singleton instance
-    private static QueryExecutor instance = null;
+    private static ConnectionManager instance = null;
+    
     //Private constructor - loads the jdbc driver
-    private QueryExecutor(){
+    private ConnectionManager(){
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException ex) {
@@ -29,18 +31,20 @@ public class QueryExecutor {
         }
     }
     
-    //Query methods
-    public boolean executeUpdate(String query, Object... params){
-        return false;
-    }
-    
-    public <T> List<T> executeQuery(Class<T> type, T elem) {
-        return null;
-    }
-    
-    //Configuration and utility methods
-    public void configure(DatabaseConfig config) {
+    //Sets data for connection
+    public ConnectionManager configure(DatabaseConfig config) {
         this.configuration = config;
+        return this;
+    }
+
+    public synchronized Connection getConnection() throws SQLException{
+        if(conn != null) {
+            while(!conn.isClosed()){
+                
+            }
+        }
+        Connection c = DriverManager.getConnection(configuration.host + DBNAME, configuration.user, configuration.pswd);
+        return c;
     }
     
     public boolean checkAdminExistence() {
@@ -65,12 +69,7 @@ public class QueryExecutor {
         }
         return result;
     }
-    
-    private Connection getConnection() throws SQLException{
-        Connection c = DriverManager.getConnection(configuration.host + DBNAME, configuration.user, configuration.pswd);
-        return c;
-    }
-    
+     
     private boolean checkDatabaseExistence() {
         Connection connection;
         boolean result = false;
@@ -125,9 +124,9 @@ public class QueryExecutor {
         }
     }
     
-    public static QueryExecutor getExecutor() {
+    public static ConnectionManager getConnectionManager() {
         if(instance == null){
-            instance = new QueryExecutor();
+            instance = new ConnectionManager();
         }
         return instance;
     }
