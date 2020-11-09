@@ -11,6 +11,6 @@ public interface Database {
     boolean updateUser(UserData user);
     int addGame(GameData gameData);
     GameData getGame(int gameId);
-    boolean updateGame(int gameId, GameData gameData);
+    boolean updateGame(GameData gameData);
     StatsData getStats();
 }

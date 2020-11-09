@@ -1,24 +1,93 @@
 package server.Game;
 
+import client.ClientGameStub;
 import entity.*;
+import java.rmi.RemoteException;
 import java.util.*;
 
 public class Session {
-    SessionData sessionData;
-    WordsMatrix wordsMatrix;
-    Dictionary dictionary;
+    private SessionData sessionData;
+    private WordsMatrix wordsMatrix;
+    private Dictionary dictionary;
+    private PersistentSignal persistentSignal;
+    private Map<String,ObserverClient> observerClientSet;
+    private GameData gameData;
    
-    public Session (Dictionary dictionary)
+    public Session (Dictionary dictionary,PersistentSignal persistentSignal,Map<String,ObserverClient> observerClientSet,GameData gameData)
     {
         this.sessionData=new SessionData();//every Session istantiated i've to create a SessionData Object
         this.wordsMatrix=new WordsMatrix();
         sessionData.setGrid(wordsMatrix.getWordsMatrix());//set the grid of letter from WordsMatrix
         this.dictionary=dictionary;//the instance is created by the class Game
-
+        this.persistentSignal=persistentSignal;
+        this.observerClientSet=(HashMap)observerClientSet;
+        this.gameData=gameData;
     }
  
-    //method called by Game Class    
-    public int checkWord(String nickname,List<String> wordFoundList)
+    //method called by Game Class 
+    public void startBeforeGame(Thread timerThread)
+    {
+        //TO-DO:Remote Method for changing the state of the client
+        timerThread.start();
+        try {
+            persistentSignal.waitTimer();
+        } catch (InterruptedException ex) {
+            System.err.println(ex);
+        }
+    }
+    
+    public void startRealGame(Thread timerThread)
+    {
+        observerClientSet.forEach((ObserverClient observerClient)->{
+            try {
+                    observerClient.getClientGameStub().update(getWordMatrix());
+                } catch (RemoteException ex) {
+                    System.err.println();
+            }
+        });
+        //TO-DO:Remote Method for changing the state of the client
+        timerThread.start();
+        try {
+            persistentSignal.waitTimer();
+            if (Thread.interrupted())
+                    //unbind the object and use the method unicastRemoteObject.unexportedObject();
+                    System.exit(0);
+        } catch (InterruptedException ex) {
+            System.err.println(ex);
+        }
+    }
+    
+    public void startAfterGame(Thread timerThread)
+    {
+        //reequest of the list of the word found
+        observerClientSet.forEach((ObserverClient observerClient)->
+        {
+            try {
+                //request the words
+                observerClient.setWordsFound((ArrayList<String>)observerClient.getClientGameStub().getWords());
+                //check the words requested
+                int pointPlayer=checkWord(observerClient.getNickname(), observerClient.getWordsFound());
+                //Set the point for the player
+                gameData.setPoints(observerClient.getNickname(),gameData.getPoints(observerClient.getNickname())+pointPlayer);
+                //send the word with points
+                observerClient.getClientGameStub().sendWords(getWordChecked());
+            } catch (RemoteException ex) {
+                System.err.println(ex);
+            }
+        });
+        //TO-DO:Remote Method for changing the state of the client and check the word
+        timerThread.start();
+        try {
+            persistentSignal.waitTimer();
+            if (Thread.interrupted())
+                //unbind the object and use the method unicastRemoteObject.unexportedObject();
+                System.exit(0);
+        } catch (InterruptedException ex) {
+            System.err.println(ex);
+        }
+    }
+      
+    private int checkWord(String nickname,List<String> wordFoundList)
     {
        int pointPlayer=0;
        WordData wordTmp=new WordData();
@@ -53,7 +122,7 @@ public class Session {
        }
        return pointPlayer;
     }   
-    
+
     public List<WordData> getWordChecked ()
     {
        List<WordData> resultList=new ArrayList<>();
@@ -68,6 +137,11 @@ public class Session {
     public String[] getWordMatrix()
     {
         return wordsMatrix.getWordsMatrix();
+    }
+    
+    public SessionData getSessionData()
+    {
+        return sessionData;
     }
    
     //utility method   

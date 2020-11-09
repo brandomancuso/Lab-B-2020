@@ -4,14 +4,19 @@ import java.util.Observable;
 
 public class Timer extends Observable implements Runnable 
 {
-    int time;//the variable time counts the seconds remained
-    PersistentSignal persistentSignal;
+    private int time;//the variable time counts the seconds remained
+    private PersistentSignal persistentSignal;
     
-    public Timer (int time,PersistentSignal persistentSignal)
+    public Timer (PersistentSignal persistentSignal)
     {
-        this.time=time+1;
         this.persistentSignal=persistentSignal;
     }
+    
+    public void setTime (int time)
+    {
+        this.time=time;
+    }
+    
     @Override
     public void run() {
         int clockTmpInSeconds=(int)(System.currentTimeMillis()/1000);//to know when a second is clicked

@@ -14,12 +14,14 @@ public class ObserverClient implements Observer  {
     private final String nickname;//i need to display the nickname of the person who exit the game
     private Timer timer;//to have access to the method of observable
     
-    public ObserverClient (String nickname,ClientGameStub client,Game game)
+    public ObserverClient (String nickname,ClientGameStub client,Game game,Timer timer)
     {
         wordsFound=new ArrayList<>();
         this.nickname=nickname;
         this.client=client;
         this.game=game;
+        this.timer=timer;
+        timer.addObserver(this);
     }
     
     @Override
@@ -41,12 +43,6 @@ public class ObserverClient implements Observer  {
     public void setWordsFound(ArrayList<String> wordsFound)
     {
         this.wordsFound=wordsFound;
-    }
-    
-    public void setTimer (Timer timer)
-    {
-        this.timer=timer;
-        timer.addObserver(this);
     }
     
     public String getNickname ()
