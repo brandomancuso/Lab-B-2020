@@ -13,8 +13,7 @@ import java.sql.Statement;
 
 public class ConnectionManager {
     //Configuration data
-    private DatabaseConfig configuration = new DatabaseConfig();
-    private Connection conn;
+    private DatabaseConfig configuration;
     
     //Static Field(s)
     private static final String DBNAME = "databaseIP";
@@ -32,23 +31,24 @@ public class ConnectionManager {
     }
     
     //Sets data for connection
-    public ConnectionManager configure(DatabaseConfig config) {
+    ConnectionManager configure(DatabaseConfig config) {
         this.configuration = config;
         return this;
     }
 
-    public synchronized Connection getConnection() throws SQLException{
-        if(conn != null) {
-            while(!conn.isClosed()){
-                
-            }
+    Connection getConnection() throws SQLException{
+        if(configuration == null){
+            throw new NoConfigException("You need to configure the database first!");
         }
         Connection c = DriverManager.getConnection(configuration.host + DBNAME, configuration.user, configuration.pswd);
         return c;
     }
     
-    public boolean checkAdminExistence() {
+    boolean checkAdminExistence() {
         boolean result = false;
+        if(configuration == null){
+            throw new NoConfigException("You need to configure the database first!");
+        }
         if(checkDatabaseExistence()) {
             String sql = "SELECT * FROM ip_user WHERE adminstrator = true";
             try {
@@ -64,13 +64,14 @@ public class ConnectionManager {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }else{
-            createDatabase();
         }
         return result;
     }
      
-    private boolean checkDatabaseExistence() {
+    boolean checkDatabaseExistence() {
+        if(configuration == null){
+            throw new NoConfigException("You need to configure the database first!");
+        }
         Connection connection;
         boolean result = false;
         try {
@@ -92,7 +93,10 @@ public class ConnectionManager {
         return result;
     }
     
-    private void createDatabase() {
+    void createDatabase() {
+        if(configuration == null){
+            throw new NoConfigException("You need to configure the database first!");
+        }
         Connection conn;
         BufferedReader reader;
         try {
@@ -102,7 +106,7 @@ public class ConnectionManager {
             conn.close();
             conn = getConnection();
             stmt = conn.createStatement();
-            reader = new BufferedReader(new FileReader("dbsrc/db_src_ip.txt"));
+            reader = new BufferedReader(new FileReader("sql_src/db_src_ip.txt"));
             String line;
             StringBuilder builder = new StringBuilder();
             while(reader.ready()) {
@@ -124,11 +128,16 @@ public class ConnectionManager {
         }
     }
     
-    public static ConnectionManager getConnectionManager() {
+    static ConnectionManager getConnectionManager() {
         if(instance == null){
             instance = new ConnectionManager();
         }
         return instance;
     }
     
+    private class NoConfigException extends RuntimeException {
+        NoConfigException(String msg) {
+            super(msg);
+        }
+    }
 }
