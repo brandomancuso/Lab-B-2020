@@ -5,7 +5,8 @@ CREATE TABLE ip_user (
 	name VARCHAR(30) NOT NULL,
 	surname VARCHAR(30) NOT NULL,
 	adminstrator BOOLEAN NOT NULL DEFAULT false,
-	activation_code CHAR(8) NOT NULL
+	activation_code CHAR(8) NOT NULL,
+        active BOOLEAN NOT NULL DEFAULT false
 );
 CREATE TABLE game (
 	id INTEGER NOT NULL SERIAL PRIMARY KEY,

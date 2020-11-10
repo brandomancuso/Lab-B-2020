@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ConnectionManager {
@@ -133,6 +135,22 @@ public class ConnectionManager {
             instance = new ConnectionManager();
         }
         return instance;
+    }
+
+    void deleteDatabase() {
+        if(configuration == null){
+            throw new NoConfigException("You need to configure the database first!");
+        }
+        Connection conn;
+        try {
+            conn = DriverManager.getConnection(configuration.host, configuration.user, configuration.pswd);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("DROP DATABASE " + DBNAME);
+            conn.close();
+            System.out.println("Database cancellato!");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
     
     private class NoConfigException extends RuntimeException {
