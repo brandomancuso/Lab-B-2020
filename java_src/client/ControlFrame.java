@@ -7,15 +7,29 @@ package client;
 
 import entity.GameData;
 import entity.StatsData;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -27,18 +41,13 @@ public class ControlFrame extends javax.swing.JFrame {
      * Creates new form ControlFrame
      */
     CardLayout card;
-    ClientServiceImpl csi;
+    ClientServiceImpl clientService;
 
     public ControlFrame() {
         initComponents();
-        
-        try {
-            csi = new ClientServiceImpl();
-        } catch (RemoteException ex) {
-            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
+
+        clientService = ClientServiceImpl.ClientServiceImpl();
+
         //Fill with user data for the profile tab
         text_email_profile.setText("giorgio@gmail.com");
         text_name_profile.setText("giorgio");
@@ -49,6 +58,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
         card = (CardLayout) jPanel_main.getLayout();
         this.combo_Nplayers.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (combo_Nplayers.getSelectedIndex() != 5) {
                     btn_createGame_home.setEnabled(true);
@@ -57,8 +67,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 }
             }
         });
-        
-        
+
     }
 
     /**
@@ -70,6 +79,8 @@ public class ControlFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel_sidebar = new javax.swing.JPanel();
         btn_profile = new javax.swing.JButton();
         btn_home = new javax.swing.JButton();
@@ -90,13 +101,13 @@ public class ControlFrame extends javax.swing.JFrame {
         jPanel_home = new javax.swing.JPanel();
         label_home_activeGames = new javax.swing.JLabel();
         label_home_createGame = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
         btn_createGame_home = new javax.swing.JButton();
         text_gameName_home = new javax.swing.JTextField();
         jSeparator9 = new javax.swing.JSeparator();
         btn_partecipate_home = new javax.swing.JButton();
         combo_Nplayers = new javax.swing.JComboBox<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTableGameList = new javax.swing.JTable();
         jPanel_stats = new javax.swing.JPanel();
         combo_stats = new javax.swing.JComboBox<>();
         btn_search_stats = new javax.swing.JButton();
@@ -116,6 +127,19 @@ public class ControlFrame extends javax.swing.JFrame {
         text_repeatPassword_profile = new javax.swing.JPasswordField();
         jSeparator8 = new javax.swing.JSeparator();
         btn_save_profile = new javax.swing.JButton();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(79, 36, 107));
@@ -352,11 +376,6 @@ public class ControlFrame extends javax.swing.JFrame {
         label_home_createGame.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label_home_createGame.setText("Crea Partita:");
 
-        jList1.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jList1.setToolTipText("");
-        jScrollPane1.setViewportView(jList1);
-
         btn_createGame_home.setBackground(new java.awt.Color(79, 36, 107));
         btn_createGame_home.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         btn_createGame_home.setForeground(new java.awt.Color(255, 255, 255));
@@ -403,6 +422,42 @@ public class ControlFrame extends javax.swing.JFrame {
         combo_Nplayers.setToolTipText("");
         combo_Nplayers.setBorder(null);
 
+        jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane3.setBorder(null);
+
+        jTableGameList.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
+        jTableGameList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableGameList.setGridColor(new java.awt.Color(255, 255, 255));
+        jTableGameList.setSelectionBackground(new java.awt.Color(23, 113, 230));
+        jTableGameList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTableGameList.setShowHorizontalLines(false);
+        jTableGameList.setShowVerticalLines(false);
+        jTableGameList.getTableHeader().setResizingAllowed(false);
+        jTableGameList.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(jTableGameList);
+
         javax.swing.GroupLayout jPanel_homeLayout = new javax.swing.GroupLayout(jPanel_home);
         jPanel_home.setLayout(jPanel_homeLayout);
         jPanel_homeLayout.setHorizontalGroup(
@@ -414,9 +469,9 @@ public class ControlFrame extends javax.swing.JFrame {
                 .addComponent(label_home_createGame, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(jPanel_homeLayout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(56, 56, 56)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGap(139, 139, 139)
                 .addGroup(jPanel_homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_homeLayout.createSequentialGroup()
                         .addGroup(jPanel_homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -429,7 +484,7 @@ public class ControlFrame extends javax.swing.JFrame {
                             .addComponent(btn_createGame_home, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(100, 100, 100))))
             .addGroup(jPanel_homeLayout.createSequentialGroup()
-                .addGap(95, 95, 95)
+                .addGap(116, 116, 116)
                 .addComponent(btn_partecipate_home, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -442,7 +497,7 @@ public class ControlFrame extends javax.swing.JFrame {
                     .addComponent(label_home_activeGames, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel_homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel_homeLayout.createSequentialGroup()
                         .addComponent(text_gameName_home, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -451,9 +506,9 @@ public class ControlFrame extends javax.swing.JFrame {
                         .addComponent(combo_Nplayers, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(102, 102, 102)
                         .addComponent(btn_createGame_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(61, 61, 61)
+                .addGap(64, 64, 64)
                 .addComponent(btn_partecipate_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         jPanel_main.add(jPanel_home, "home");
@@ -482,15 +537,16 @@ public class ControlFrame extends javax.swing.JFrame {
         jPanel_statsLayout.setHorizontalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_statsLayout.createSequentialGroup()
-                .addContainerGap(126, Short.MAX_VALUE)
-                .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(136, 136, 136)
-                .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(159, 159, 159))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3)
-                .addGap(452, 452, 452))
+                .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
+                        .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(136, 136, 136)
+                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(159, 159, 159))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(452, 452, 452))))
         );
         jPanel_statsLayout.setVerticalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -650,20 +706,16 @@ public class ControlFrame extends javax.swing.JFrame {
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
 
         boolean logged = true; //MUST BE FALSE!
-
         if (logged) {
-            
-            
             btn_home.setEnabled(true);
             btn_stats.setEnabled(true);
             btn_profile.setEnabled(true);
-
             card.show(jPanel_main, "home");
+            this.fillGameTable();
         } else {
             //alert
             showMessageDialog(null, "Email / password errati");
         }
-
     }//GEN-LAST:event_btn_loginActionPerformed
 
     private void label_pswRecoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_pswRecoverMouseClicked
@@ -703,8 +755,7 @@ public class ControlFrame extends javax.swing.JFrame {
         card.show(jPanel_main, "profile");
     }//GEN-LAST:event_btn_profileActionPerformed
 
-    
-    
+
     private void btn_createGame_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_createGame_homeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_createGame_homeActionPerformed
@@ -731,6 +782,60 @@ public class ControlFrame extends javax.swing.JFrame {
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_search_statsActionPerformed
+
+    //UTILITY
+    private DefaultTableModel createGametable() {
+        DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
+        headerBgRender.setBackground(Color.decode("#FFFFFF"));
+        headerBgRender.setForeground(Color.decode("#FFFFFF"));
+        DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
+        rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
+        DefaultTableModel model = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        model.addColumn("");
+        model.addColumn("");
+        this.jTableGameList.setModel(model);
+        this.jTableGameList.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(headerBgRender);
+        this.jTableGameList.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(headerBgRender);
+        this.jTableGameList.getColumnModel().getColumn(1).setCellRenderer(rightAlignmentRender);
+        this.jTableGameList.getColumnModel().getColumn(0).setPreferredWidth(350);
+        this.jTableGameList.getColumnModel().getColumn(1).setPreferredWidth(50);
+        this.jScrollPane3.getViewport().setBackground(Color.white);
+        return model;
+    }
+
+    private void fillGameTable() {
+        DefaultTableModel model = this.createGametable();
+        List<GameData> gameList = clientService.getGamesList();
+
+        //TEST ADDING VALUES
+        GameData test = new GameData("PartitaEdoardoBianchiVoglioGiocare", 3);
+        test.addPlayer("marco");
+        test.addPlayer("giovanni");
+        gameList.add(test);
+        GameData test1 = new GameData("PartitaSandro", 6);
+        test.addPlayer("sandro");
+        test.addPlayer("rocco");
+        gameList.add(test1);
+        GameData test2 = new GameData("PartitaMia", 5);
+        test.addPlayer("gigi");
+        test.addPlayer("rocco");
+        gameList.add(test2);
+        //END
+
+        Object rowData[] = new Object[2];
+        for (GameData tmp : gameList) {
+            if (tmp != null) {
+                rowData[0] = tmp.getName() + " " + "(Creatore)";
+                rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
+                model.addRow(rowData);
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -781,7 +886,6 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel_home;
     private javax.swing.JPanel jPanel_login;
     private javax.swing.JPanel jPanel_main;
@@ -789,7 +893,8 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel_sidebar;
     private javax.swing.JPanel jPanel_stats;
     private javax.swing.JPanel jPanel_title;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -799,6 +904,8 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableGameList;
     private javax.swing.JLabel label_home_activeGames;
     private javax.swing.JLabel label_home_createGame;
     private javax.swing.JLabel label_profile;
