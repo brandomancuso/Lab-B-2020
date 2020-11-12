@@ -2,6 +2,7 @@ package client;
 
 import entity.GameData;
 import entity.StatsData;
+import java.awt.Component;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -20,16 +21,18 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     private StatsData statsData;
     private List<GameData> gamesList;
+    private ControlFrame gui;
 
-    private ClientServiceImpl() throws RemoteException {
+    private ClientServiceImpl(ControlFrame parGui) throws RemoteException {
         statsData = new StatsData();
         gamesList = new ArrayList<GameData>();
+        this.gui = parGui;
     }
 
-    public static ClientServiceImpl ClientServiceImpl() {
+    public static ClientServiceImpl ClientServiceImpl(ControlFrame parGui) {
         if (csiSingleInstance == null) {
             try {
-                csiSingleInstance = new ClientServiceImpl();
+                csiSingleInstance = new ClientServiceImpl(parGui);
             } catch (RemoteException ex) {
                 Logger.getLogger(ClientServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -55,6 +58,8 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     @Override
     public synchronized void update(List<GameData> games) throws RemoteException {
         gamesList = games;
+        //capire quando sono nella finestra home e chiamare il metodo per refillare la tabella partite
+        
     }
 
     @Override

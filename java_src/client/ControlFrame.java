@@ -45,8 +45,8 @@ public class ControlFrame extends javax.swing.JFrame {
 
     public ControlFrame() {
         initComponents();
-
-        clientService = ClientServiceImpl.ClientServiceImpl();
+        
+        clientService = ClientServiceImpl.ClientServiceImpl(this);
 
         //Fill with user data for the profile tab
         text_email_profile.setText("giorgio@gmail.com");
@@ -790,9 +790,9 @@ public class ControlFrame extends javax.swing.JFrame {
         headerBgRender.setForeground(Color.decode("#FFFFFF"));
         DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
         rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
-        DefaultTableModel model = new DefaultTableModel(){
+        DefaultTableModel model = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column){
+            public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
@@ -808,22 +808,22 @@ public class ControlFrame extends javax.swing.JFrame {
         return model;
     }
 
-    private void fillGameTable() {
+    public void fillGameTable() {
         DefaultTableModel model = this.createGametable();
         List<GameData> gameList = clientService.getGamesList();
 
         //TEST ADDING VALUES
-        GameData test = new GameData("PartitaEdoardoBianchiVoglioGiocare", 3);
+        GameData test = new GameData("PartitaEdoardoBianchi", 3);
         test.addPlayer("marco");
         test.addPlayer("giovanni");
         gameList.add(test);
         GameData test1 = new GameData("PartitaSandro", 6);
-        test.addPlayer("sandro");
-        test.addPlayer("rocco");
+        test1.addPlayer("sandro");
+        test1.addPlayer("rocco");
         gameList.add(test1);
         GameData test2 = new GameData("PartitaMia", 5);
-        test.addPlayer("gigi");
-        test.addPlayer("rocco");
+        test2.addPlayer("gigi");
+        test2.addPlayer("rocco");
         gameList.add(test2);
         //END
 
