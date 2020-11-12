@@ -213,9 +213,9 @@ public class RegisterUser extends javax.swing.JDialog {
         text_verificationCode.setText("Codice di Verifica");
         text_verificationCode.setBorder(null);
         text_verificationCode.setEnabled(false);
-        text_verificationCode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_verificationCodeActionPerformed(evt);
+        text_verificationCode.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_verificationCodeMouseClicked(evt);
             }
         });
 
@@ -314,9 +314,10 @@ public class RegisterUser extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_text_emailActionPerformed
 
-    private void text_verificationCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_verificationCodeActionPerformed
+    private void text_verificationCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_verificationCodeMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_text_verificationCodeActionPerformed
+        this.text_verificationCode.setText("");
+    }//GEN-LAST:event_text_verificationCodeMouseClicked
 
     /**
      * @param args the command line arguments

@@ -5,10 +5,16 @@
  */
 package client;
 
+import entity.GameData;
+import entity.StatsData;
 import java.awt.CardLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
@@ -21,10 +27,18 @@ public class ControlFrame extends javax.swing.JFrame {
      * Creates new form ControlFrame
      */
     CardLayout card;
-    private Image img;
+    ClientServiceImpl csi;
 
     public ControlFrame() {
         initComponents();
+        
+        try {
+            csi = new ClientServiceImpl();
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         //Fill with user data for the profile tab
         text_email_profile.setText("giorgio@gmail.com");
         text_name_profile.setText("giorgio");
@@ -43,6 +57,8 @@ public class ControlFrame extends javax.swing.JFrame {
                 }
             }
         });
+        
+        
     }
 
     /**
@@ -70,6 +86,7 @@ public class ControlFrame extends javax.swing.JFrame {
         label_pswRecover = new javax.swing.JLabel();
         label_signin = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        label_verify = new javax.swing.JLabel();
         jPanel_home = new javax.swing.JPanel();
         label_home_activeGames = new javax.swing.JLabel();
         label_home_createGame = new javax.swing.JLabel();
@@ -78,11 +95,9 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_createGame_home = new javax.swing.JButton();
         text_gameName_home = new javax.swing.JTextField();
         jSeparator9 = new javax.swing.JSeparator();
-        btn_partecipate_home1 = new javax.swing.JButton();
+        btn_partecipate_home = new javax.swing.JButton();
         combo_Nplayers = new javax.swing.JComboBox<>();
         jPanel_stats = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         combo_stats = new javax.swing.JComboBox<>();
         btn_search_stats = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -259,6 +274,17 @@ public class ControlFrame extends javax.swing.JFrame {
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/user_90px.png"))); // NOI18N
 
+        label_verify.setBackground(new java.awt.Color(255, 255, 255));
+        label_verify.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
+        label_verify.setForeground(new java.awt.Color(79, 36, 107));
+        label_verify.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_verify.setText("Oppure, verifica il tuo account");
+        label_verify.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                label_verifyMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel_loginLayout = new javax.swing.GroupLayout(jPanel_login);
         jPanel_login.setLayout(jPanel_loginLayout);
         jPanel_loginLayout.setHorizontalGroup(
@@ -280,7 +306,8 @@ public class ControlFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_loginLayout.createSequentialGroup()
                         .addGroup(jPanel_loginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(label_signin, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(label_pswRecover, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(label_pswRecover, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(365, 365, 365))))
             .addGroup(jPanel_loginLayout.createSequentialGroup()
                 .addGap(430, 430, 430)
@@ -306,7 +333,9 @@ public class ControlFrame extends javax.swing.JFrame {
                 .addComponent(label_pswRecover)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(label_signin)
-                .addContainerGap(251, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(label_verify)
+                .addContainerGap(224, Short.MAX_VALUE))
         );
 
         jPanel_main.add(jPanel_login, "login");
@@ -324,14 +353,8 @@ public class ControlFrame extends javax.swing.JFrame {
         label_home_createGame.setText("Crea Partita:");
 
         jList1.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jList1.setToolTipText("");
-        jList1.setSelectedIndex(0);
         jScrollPane1.setViewportView(jList1);
 
         btn_createGame_home.setBackground(new java.awt.Color(79, 36, 107));
@@ -363,19 +386,19 @@ public class ControlFrame extends javax.swing.JFrame {
 
         jSeparator9.setBackground(new java.awt.Color(0, 0, 0));
 
-        btn_partecipate_home1.setBackground(new java.awt.Color(79, 36, 107));
-        btn_partecipate_home1.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        btn_partecipate_home1.setForeground(new java.awt.Color(255, 255, 255));
-        btn_partecipate_home1.setText("PARTECIPA");
-        btn_partecipate_home1.setBorder(null);
-        btn_partecipate_home1.addActionListener(new java.awt.event.ActionListener() {
+        btn_partecipate_home.setBackground(new java.awt.Color(79, 36, 107));
+        btn_partecipate_home.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        btn_partecipate_home.setForeground(new java.awt.Color(255, 255, 255));
+        btn_partecipate_home.setText("PARTECIPA");
+        btn_partecipate_home.setBorder(null);
+        btn_partecipate_home.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_partecipate_home1ActionPerformed(evt);
+                btn_partecipate_homeActionPerformed(evt);
             }
         });
 
         combo_Nplayers.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        combo_Nplayers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "3", "4", "5", "6", "Numero Giocatori" }));
+        combo_Nplayers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "3", "4", "5", "6", "Numero Giocatori?" }));
         combo_Nplayers.setSelectedIndex(5);
         combo_Nplayers.setToolTipText("");
         combo_Nplayers.setBorder(null);
@@ -407,7 +430,7 @@ public class ControlFrame extends javax.swing.JFrame {
                         .addGap(100, 100, 100))))
             .addGroup(jPanel_homeLayout.createSequentialGroup()
                 .addGap(95, 95, 95)
-                .addComponent(btn_partecipate_home1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_partecipate_home, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel_homeLayout.setVerticalGroup(
@@ -429,27 +452,13 @@ public class ControlFrame extends javax.swing.JFrame {
                         .addGap(102, 102, 102)
                         .addComponent(btn_createGame_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(61, 61, 61)
-                .addComponent(btn_partecipate_home1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_partecipate_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(74, Short.MAX_VALUE))
         );
 
         jPanel_main.add(jPanel_home, "home");
 
         jPanel_stats.setBackground(new java.awt.Color(255, 255, 255));
-
-        jTable1.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jTable1);
 
         combo_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -473,17 +482,11 @@ public class ControlFrame extends javax.swing.JFrame {
         jPanel_statsLayout.setHorizontalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_statsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_statsLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2)
-                        .addContainerGap())
-                    .addGroup(jPanel_statsLayout.createSequentialGroup()
-                        .addGap(0, 116, Short.MAX_VALUE)
-                        .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(136, 136, 136)
-                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(159, 159, 159))))
+                .addContainerGap(126, Short.MAX_VALUE)
+                .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(136, 136, 136)
+                .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(159, 159, 159))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
@@ -498,9 +501,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(109, 109, 109)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(473, 473, 473))
         );
 
         jPanel_main.add(jPanel_stats, "stats");
@@ -516,11 +517,6 @@ public class ControlFrame extends javax.swing.JFrame {
         text_name_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_name_profile.setText("Nome");
         text_name_profile.setBorder(null);
-        text_name_profile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_name_profileActionPerformed(evt);
-            }
-        });
 
         jSeparator3.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -528,11 +524,6 @@ public class ControlFrame extends javax.swing.JFrame {
         text_surname_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_surname_profile.setText("Cognome");
         text_surname_profile.setBorder(null);
-        text_surname_profile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_surname_profileActionPerformed(evt);
-            }
-        });
 
         jSeparator4.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -540,11 +531,6 @@ public class ControlFrame extends javax.swing.JFrame {
         text_username_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_username_profile.setText("Username");
         text_username_profile.setBorder(null);
-        text_username_profile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_username_profileActionPerformed(evt);
-            }
-        });
 
         jSeparator5.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -552,11 +538,6 @@ public class ControlFrame extends javax.swing.JFrame {
         text_email_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_email_profile.setText("Email");
         text_email_profile.setBorder(null);
-        text_email_profile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_email_profileActionPerformed(evt);
-            }
-        });
 
         jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -667,10 +648,12 @@ public class ControlFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
-        // TODO add your handling code here:
+
         boolean logged = true; //MUST BE FALSE!
 
         if (logged) {
+            
+            
             btn_home.setEnabled(true);
             btn_stats.setEnabled(true);
             btn_profile.setEnabled(true);
@@ -705,22 +688,6 @@ public class ControlFrame extends javax.swing.JFrame {
         this.text_password_login.setText("");
     }//GEN-LAST:event_text_password_loginMouseClicked
 
-    private void text_name_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_name_profileActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_name_profileActionPerformed
-
-    private void text_surname_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_surname_profileActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_surname_profileActionPerformed
-
-    private void text_username_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_username_profileActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_username_profileActionPerformed
-
-    private void text_email_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_email_profileActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_email_profileActionPerformed
-
     private void btn_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_homeActionPerformed
         // TODO add your handling code here:
         card.show(jPanel_main, "home");
@@ -736,6 +703,8 @@ public class ControlFrame extends javax.swing.JFrame {
         card.show(jPanel_main, "profile");
     }//GEN-LAST:event_btn_profileActionPerformed
 
+    
+    
     private void btn_createGame_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_createGame_homeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_createGame_homeActionPerformed
@@ -744,14 +713,20 @@ public class ControlFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_text_gameName_homeActionPerformed
 
-    private void btn_partecipate_home1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_home1ActionPerformed
+    private void btn_partecipate_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_homeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_partecipate_home1ActionPerformed
+    }//GEN-LAST:event_btn_partecipate_homeActionPerformed
 
     private void text_gameName_homeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_gameName_homeMouseClicked
         // TODO add your handling code here:
         this.text_gameName_home.setText("");
     }//GEN-LAST:event_text_gameName_homeMouseClicked
+
+    private void label_verifyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_verifyMouseClicked
+        // TODO add your handling code here:
+        VerifyUser verify = new VerifyUser(this, true);
+        verify.setVisible(true);
+    }//GEN-LAST:event_label_verifyMouseClicked
 
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
         // TODO add your handling code here:
@@ -796,7 +771,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JButton btn_createGame_home;
     private javax.swing.JButton btn_home;
     private javax.swing.JButton btn_login;
-    private javax.swing.JButton btn_partecipate_home1;
+    private javax.swing.JButton btn_partecipate_home;
     private javax.swing.JButton btn_profile;
     private javax.swing.JButton btn_save_profile;
     private javax.swing.JButton btn_search_stats;
@@ -815,7 +790,6 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel_stats;
     private javax.swing.JPanel jPanel_title;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -825,12 +799,12 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel label_home_activeGames;
     private javax.swing.JLabel label_home_createGame;
     private javax.swing.JLabel label_profile;
     private javax.swing.JLabel label_pswRecover;
     private javax.swing.JLabel label_signin;
+    private javax.swing.JLabel label_verify;
     private javax.swing.JTextField text_email_login;
     private javax.swing.JTextField text_email_profile;
     private javax.swing.JTextField text_gameName_home;
