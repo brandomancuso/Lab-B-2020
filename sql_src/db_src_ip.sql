@@ -41,3 +41,9 @@ CREATE TABLE def_req (
 	manche_key INTEGER NOT NULL REFERENCES manche,
 	PRIMARY KEY (user_key, word_key, manche_key)
 );
+CREATE TABLE play (
+	user_key INTEGER NOT NULL REFERENCES user_ip,
+	manche_key INTEGER NOT NULL REFERENCES manche,
+        points INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY (user_key, manche_key)
+);
