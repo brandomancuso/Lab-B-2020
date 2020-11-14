@@ -2,9 +2,6 @@ package server;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,7 +14,7 @@ public class HomeScreen extends JFrame implements ActionListener{
     private JLabel jLabel1;
     private JScrollPane jScrollPane1;
     private JSeparator jSeparator1;
-    private JTextArea serverOutput;
+    private static JTextArea serverOutput;
     
     public HomeScreen(){
         
@@ -27,12 +24,8 @@ public class HomeScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == startButton){
-            
+            ServerMain.activateServer();
         }
-    }
-    
-    public void showInfo(String text){
-        serverOutput.append(text + "\n");
     }
     
     private void initGUI() {
@@ -94,6 +87,10 @@ public class HomeScreen extends JFrame implements ActionListener{
 
         pack();
         setLocationRelativeTo(null);
+    }
+    
+    protected static void stampEvent(String event){
+        serverOutput.append(event+"\n");
     }
     
 }
