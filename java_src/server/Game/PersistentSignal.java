@@ -1,4 +1,4 @@
-package server.Game;
+ package server.Game;
 
 public class PersistentSignal {
     private boolean timeout,interruptFlag;

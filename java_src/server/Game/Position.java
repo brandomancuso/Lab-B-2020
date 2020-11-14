@@ -1,4 +1,4 @@
-package server.Game;
+ package server.Game;
 
 public enum Position {
 	UPPER,UPPER_LEFT,UPPER_RIGHT,CENTER,CENTER_LEFT,CENTER_RIGHT,LOWER,LOWER_LEFT,LOWER_RIGHT

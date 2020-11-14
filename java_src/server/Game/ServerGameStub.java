@@ -1,4 +1,4 @@
-package server.Game;
+ package server.Game;
 
 import entity.WordData;
 import java.rmi.Remote;

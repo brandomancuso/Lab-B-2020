@@ -1,4 +1,4 @@
-package server.Game;
+ package server.Game;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package server.Game;
+ package server.Game;
 
 import client.ClientGameStub;
 import entity.GameData;
