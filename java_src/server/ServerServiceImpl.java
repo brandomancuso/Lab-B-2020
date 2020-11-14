@@ -4,18 +4,20 @@ import client.ClientGameStub;
 import client.ClientServiceStub;
 import entity.GameData;
 import entity.User;
+import entity.UserData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import server.game.Game;
 import server.game.ServerGameStub;
 import utils.Pair;
 
 public class ServerServiceImpl extends UnicastRemoteObject implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList;
     private Map<String, User> usersList;
-    //private Map<Integer, Game> gamesList;
+    private Map<Integer, Game> gamesList;
     private Stack<Integer> freePort;
     private Map<Integer, Integer> occupiedPort;
     
@@ -25,21 +27,6 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
         //gamesList = new HashMap<>();
         freePort = new Stack();
         occupiedPort = new HashMap<>();
-    }
-    
-    @Override
-    public Pair<String, User> login(String email, String password) throws RemoteException {
-        return null;
-    }
-
-    @Override
-    public boolean updateUserData(User user) throws RemoteException {
-        return false;
-    }
-
-    @Override
-    public String register(User newUser) throws RemoteException {
-        return null;
     }
 
     @Override
@@ -75,13 +62,13 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
 
     @Override //Deve restituire l'oggetto Game
     public ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException {
-        //User user = clientsLins.get(nickname);
+        ClientServiceStub user = clientsList.get(nickname);
         GameData gameData = new GameData(gameTitle, numPlayers);
         //game.setId(dbReference.addGame(dbGame));
-        //Game game = new Game(gameData, nickname, client, this);
-        //gamesList.put(gameData.getId(), gameData);
-        //ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
-        //occupiedPort.put(gameData.getId(),freePort.pop());
+        Game game = new Game(gameData, nickname, client, this);
+        gamesList.put(gameData.getId(), game);
+        ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
+        occupiedPort.put(gameData.getId(),freePort.pop());
         //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
         return gameStub;
     }
@@ -95,5 +82,20 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     //Metodo per aggiornare numero di giocatori nella singola partita
     public void updateNumPlayer(Integer gameId){
         
+    }
+
+    @Override
+    public boolean updateUserData(UserData user) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String register(UserData newUser) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Pair<String, UserData> login(String email, String password) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

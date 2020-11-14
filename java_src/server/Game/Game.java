@@ -8,12 +8,11 @@ import java.io.IOException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.ServerServiceImpl;
 import utils.Pair;
 
 //Coustructor called after a master wants to create a Game
@@ -26,7 +25,7 @@ public class Game implements ServerGameStub{
     private Boolean boolNextRound;
     private int playerReadyNextRound;
     private PersistentSignal persistentSignal;
-    private ServerServiceImpl serverServiceImpl
+    private ServerServiceImpl serverServiceImpl;
     
     public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub,ServerServiceImpl serverServiceImpl)
     {
@@ -140,9 +139,10 @@ public class Game implements ServerGameStub{
     public synchronized Term requestWordDef(WordData word) throws RemoteException {
         try {
             return dictionary.getTerm(word.getWord());
-        } catch (InvalidKey ex) {
-            System.err.println(ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return new Term(word.getWord());
     }
 
