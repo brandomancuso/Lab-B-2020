@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 
 public class LoginScreen extends JFrame implements ActionListener{
     private JTextField emailTxt;
-    private JButton registerButton, loginButton, resetButton;
+    private JButton loginButton, resetButton;
     private JLabel jLabel1, jLabel2, jLabel3, jLabel4;
     private JSeparator jSeparator1;
     private JPasswordField passwordTxt;
@@ -25,30 +25,26 @@ public class LoginScreen extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginButton){
             new HomeScreen().setVisible(true);
+            //TODO Aggiungere controlli all'accesso
             this.setVisible(false);
         }
         if(event.getSource() == resetButton){
             emailTxt.setText("");
             passwordTxt.setText("");
         }
-        if(event.getSource() == registerButton){
-            new RegisterScreen().setVisible(true);
-            this.setVisible(false);
-        }
     }
 
     private void initGUI() {
-        jLabel1 = new JLabel();
-        jSeparator1 = new JSeparator();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
-        jLabel4 = new JLabel();
-        emailTxt = new JTextField();
-        passwordTxt = new JPasswordField();
-        loginButton = new JButton();
-        resetButton = new JButton();
-        registerButton = new JButton();
-        
+        jLabel1 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        emailTxt = new javax.swing.JTextField();
+        passwordTxt = new javax.swing.JPasswordField();
+        loginButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Server Il Paroliere");
         setBackground(new java.awt.Color(0, 51, 255));
@@ -77,10 +73,6 @@ public class LoginScreen extends JFrame implements ActionListener{
         resetButton.setBackground(new java.awt.Color(204, 0, 0));
         resetButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         resetButton.setText("Reset");
-
-        registerButton.setBackground(new java.awt.Color(0, 204, 204));
-        registerButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        registerButton.setText("Registrati");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,9 +105,7 @@ public class LoginScreen extends JFrame implements ActionListener{
             .addGroup(layout.createSequentialGroup()
                 .addGap(150, 150, 150)
                 .addComponent(loginButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(registerButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(105, 105, 105)
                 .addComponent(resetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -139,7 +129,6 @@ public class LoginScreen extends JFrame implements ActionListener{
                 .addGap(79, 79, 79)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loginButton)
-                    .addComponent(registerButton)
                     .addComponent(resetButton))
                 .addContainerGap(107, Short.MAX_VALUE))
         );
