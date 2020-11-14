@@ -5,11 +5,16 @@ import entity.GameData;
 import entity.WordData;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import utils.Pair;
 
 //Coustructor called after a master wants to create a Game
 public class Game implements ServerGameStub{
@@ -21,8 +26,9 @@ public class Game implements ServerGameStub{
     private Boolean boolNextRound;
     private int playerReadyNextRound;
     private PersistentSignal persistentSignal;
+    private ServerServiceImpl serverServiceImpl
     
-    public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub)
+    public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub,ServerServiceImpl serverServiceImpl)
     {
         this.gameData=gameData;
         observerClientSet=new HashMap<>();
@@ -32,6 +38,7 @@ public class Game implements ServerGameStub{
         playerReadyNextRound=0;
         observerClientSet.put(hostNickname,new ObserverClient(hostNickname,clientGameStub,this,timer));
         gameData.addPlayer(hostNickname);
+        serverServiceImpl=serverServiceImpl;
         loadDictionary();
     }
     
@@ -72,50 +79,59 @@ public class Game implements ServerGameStub{
             }
         }
         //TO-DO make transit the client to the winner state and send the winners
+        observerClientSet.forEach((key,value)->{
+            try {
+                value.getClientGameStub().changeGameState(2);
+            } catch (RemoteException ex) {
+                System.err.println(ex);
+            }
+        });
         //updateGame(gameData); to save the results of the all sessions
     }
       
     //public methods for the game creation
-    public boolean AddPartecipant(String nicknamePlayer,ClientGameStub clientGameStub)
+    public Pair<GameData,Boolean> AddPartecipant(String nicknamePlayer,ClientGameStub clientGameStub)
     {
         if (gameData.getPlayersList().size()+1>gameData.getNumPlayers())
         {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer,new ObserverClient(nicknamePlayer,clientGameStub,this,timer));
             startSession();
-            return false;
+            return new Pair<>(gameData,Boolean.FALSE);
         }
         else
         {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer,new ObserverClient(nicknamePlayer,clientGameStub,this,timer));
-            return true;
+            return new Pair<>(gameData,Boolean.TRUE);
         }
     }
     
-    public boolean RemovePartecipant(String nicknamePlayer)
+    public Pair<GameData,Boolean> RemovePartecipant(String nicknamePlayer)
     {     
          if (gameData.getPlayersList().size()-1==0)
          {
             gameData.removePlayer(nicknamePlayer);
             observerClientSet.remove(nicknamePlayer);
-            return false;
+            return new Pair<>(gameData,Boolean.FALSE);
          }
         else
         {
             gameData.removePlayer(nicknamePlayer);
             observerClientSet.remove(nicknamePlayer);
-            return true;
+            return new Pair<>(gameData,Boolean.TRUE);
         }
     }
-    
-    public void exit ()
+ 
+    public void exit () throws NoSuchObjectException
     {
         //TO-DO:advise the client that someone quit (by his nickname)
         observerClientSet.clear();//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
         timerThread.interrupt();//interrupt the timer beacause of game ending
         persistentSignal.interruptGame();//interrupt the game itself
         boolNextRound=false;
+        UnicastRemoteObject.unexportObject(this, true);
+        //serverServiceImpl.disconnectGame(gameData.GetId());
     }
     
     
@@ -140,4 +156,6 @@ public class Game implements ServerGameStub{
     public synchronized void leaveGame(String nickname) throws RemoteException {
         exit();   
     }
+    
+    //TO-DO create an override of hashmap and manage the loobby
 }

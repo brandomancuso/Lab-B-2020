@@ -4,6 +4,8 @@ import client.ClientGameStub;
 import entity.*;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Session {
     private SessionData sessionData;
@@ -27,25 +29,25 @@ public class Session {
     //method called by Game Class 
     public void startBeforeGame(Thread timerThread)
     {
-        //TO-DO:Remote Method for changing the state of the client
         timerThread.start();
         try {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
+        
     }
     
     public void startRealGame(Thread timerThread)
     {
-        observerClientSet.forEach((ObserverClient observerClient)->{
+        observerClientSet.forEach((key,value)->{
             try {
-                    observerClient.getClientGameStub().update(getWordMatrix());
+                    value.getClientGameStub().update(getWordMatrix());
+                    value.getClientGameStub().changeGameState(0);//change state into session
                 } catch (RemoteException ex) {
                     System.err.println();
             }
         });
-        //TO-DO:Remote Method for changing the state of the client
         timerThread.start();
         try {
             persistentSignal.waitTimer();
@@ -59,23 +61,22 @@ public class Session {
     
     public void startAfterGame(Thread timerThread)
     {
-        //reequest of the list of the word found
-        observerClientSet.forEach((ObserverClient observerClient)->
+        observerClientSet.forEach((key,value)->
         {
             try {
                 //request the words
-                observerClient.setWordsFound((ArrayList<String>)observerClient.getClientGameStub().getWords());
+                value.setWordsFound((ArrayList<String>)value.getClientGameStub().getWords());
                 //check the words requested
-                int pointPlayer=checkWord(observerClient.getNickname(), observerClient.getWordsFound());
+                int pointPlayer=checkWord(value.getNickname(), value.getWordsFound());
                 //Set the point for the player
-                gameData.setPoints(observerClient.getNickname(),gameData.getPoints(observerClient.getNickname())+pointPlayer);
+                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);
                 //send the word with points
-                observerClient.getClientGameStub().sendWords(getWordChecked());
+                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords());
+                value.getClientGameStub().changeGameState(1);
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }
         });
-        //TO-DO:Remote Method for changing the state of the client and check the word
         timerThread.start();
         try {
             persistentSignal.waitTimer();
@@ -122,17 +123,6 @@ public class Session {
        }
        return pointPlayer;
     }   
-
-    public List<WordData> getWordChecked ()
-    {
-       List<WordData> resultList=new ArrayList<>();
-       for(List<WordData> wordPlayerList :sessionData.getFoundWords().values())
-       {
-           for(WordData wordPlayer : wordPlayerList)
-                resultList.add(wordPlayer);
-       }
-       return resultList;
-    }
     
     public String[] getWordMatrix()
     {
