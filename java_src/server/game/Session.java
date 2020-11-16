@@ -43,9 +43,9 @@ public class Session {
         observerClientSet.forEach((key,value)->{
             try {
                     value.getClientGameStub().updateGrid(getWordMatrix());
-                    value.getClientGameStub().changeGameState(0);//change state into session
+                    value.getClientGameStub().changeGameState(1);//change state into session
                 } catch (RemoteException ex) {
-                    System.err.println();
+                    System.err.println(ex);
             }
         });
         timerThread.start();
@@ -72,7 +72,7 @@ public class Session {
                 gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);
                 //send the word with points
                 value.getClientGameStub().updateSessionResults(sessionData.getFoundWords());
-                value.getClientGameStub().changeGameState(1);
+                value.getClientGameStub().changeGameState(2);//change in watching Result State
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }

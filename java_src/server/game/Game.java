@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import utils.Pair;
 import server.ServerServiceImpl;
@@ -20,10 +22,11 @@ public class Game implements ServerGameStub{
     private Thread timerThread;
     private Map<String,ObserverClient> observerClientSet;
     private Dictionary dictionary;
-    private Boolean boolNextRound;
     private int playerReadyNextRound;
-    private PersistentSignal persistentSignal;
-    private ServerServiceImpl serverServiceImpl;
+    private PersistentSignal persistentSignal;//to syncronized the esecution between session and timer
+    private ServerServiceImpl serverServiceImpl;//the reference is for call the methods for disconnect and update the player number 
+    private Boolean isLobbyState;//to know which method call according to whether or not the game is in lobby frame
+    private Boolean boolNextRound;
     
     public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub,ServerServiceImpl serverServiceImpl)
     {
@@ -32,10 +35,11 @@ public class Game implements ServerGameStub{
         persistentSignal=new PersistentSignal();
         timer=new Timer(persistentSignal);
         boolNextRound=true;//i assume that there might be a little succesful at the end of the first round
+        isLobbyState=true;//at creation the game is in lobby state
         playerReadyNextRound=0;
         observerClientSet.put(hostNickname,new ObserverClient(hostNickname,clientGameStub,this,timer));
         gameData.addPlayer(hostNickname);
-        serverServiceImpl=serverServiceImpl;
+        this.serverServiceImpl=serverServiceImpl;
         loadDictionary();
     }
     
@@ -54,11 +58,23 @@ public class Game implements ServerGameStub{
     
     private void startSession()
     {
+        List<String> winnerNickname=new ArrayList<>();
         while (boolNextRound)
         {
             Session currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData);
-            gameData.addSession(currentSession.getSessionData());
-            timer.setTime(30);
+            if(isLobbyState)
+            {
+                observerClientSet.forEach((key,value)->{
+                    try {
+                        value.getClientGameStub().changeGameState(0);//change state in waiting inside the lobby
+                    } catch (RemoteException ex) {
+                        System.err.println(ex);
+                    }
+                    });
+                gameData.addSession(currentSession.getSessionData());
+                timer.setTime(30);
+                isLobbyState=false;
+            }
             currentSession.startBeforeGame(timerThread=new Thread(timer));
             timer.setTime(180);
             currentSession.startBeforeGame(timerThread=new Thread(timer));
@@ -70,21 +86,50 @@ public class Game implements ServerGameStub{
                 //create a list of winners
                 if(gameData.getPoints(nickname)>=50)
                 {
-                    //add the winner
+                    winnerNickname.add(nickname);
                     boolNextRound=false;
                 }
             }
         }
-        //TO-DO make transit the client to the winner state and send the winners
+        //TO-DO make transit the client to the winner state and send the winners with notify()
         observerClientSet.forEach((key,value)->{
             try {
-                value.getClientGameStub().changeGameState(2);
+                value.getClientGameStub().changeGameState(3);
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }
         });
         //updateGame(gameData); to save the results of the all sessions
     }
+    
+    private void RemovePartecipant(String nicknamePlayer)
+    {     
+         if (gameData.getPlayersList().size()-1==0)
+         {
+            gameData.removePlayer(nicknamePlayer);
+            observerClientSet.remove(nicknamePlayer);
+            updateInfoLobby();
+         }
+        else
+        {
+            gameData.removePlayer(nicknamePlayer);
+            observerClientSet.remove(nicknamePlayer);
+            updateInfoLobby();
+        }
+    }
+    
+    private void updateInfoLobby()
+    {
+        observerClientSet.forEach((key,value)->{
+                    try {
+                        value.getClientGameStub().updateLobby(gameData.getPlayersList());//change state in waiting inside the lobby
+                    } catch (RemoteException ex) {
+                        System.err.println(ex);
+                    }
+                    });
+    }
+    
+    
       
     //public methods for the game creation
     public Pair<GameData,Boolean> AddPartecipant(String nicknamePlayer,ClientGameStub clientGameStub)
@@ -93,6 +138,7 @@ public class Game implements ServerGameStub{
         {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer,new ObserverClient(nicknamePlayer,clientGameStub,this,timer));
+            updateInfoLobby();
             startSession();
             return new Pair<>(gameData,Boolean.FALSE);
         }
@@ -100,26 +146,11 @@ public class Game implements ServerGameStub{
         {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer,new ObserverClient(nicknamePlayer,clientGameStub,this,timer));
+            updateInfoLobby();
             return new Pair<>(gameData,Boolean.TRUE);
         }
     }
-    
-    public Pair<GameData,Boolean> RemovePartecipant(String nicknamePlayer)
-    {     
-         if (gameData.getPlayersList().size()-1==0)
-         {
-            gameData.removePlayer(nicknamePlayer);
-            observerClientSet.remove(nicknamePlayer);
-            return new Pair<>(gameData,Boolean.FALSE);
-         }
-        else
-        {
-            gameData.removePlayer(nicknamePlayer);
-            observerClientSet.remove(nicknamePlayer);
-            return new Pair<>(gameData,Boolean.TRUE);
-        }
-    }
- 
+   
     public void exit () 
     {
         //TO-DO:advise the client that someone quit (by his nickname)
@@ -129,7 +160,7 @@ public class Game implements ServerGameStub{
         boolNextRound=false;
         try {
             UnicastRemoteObject.unexportObject(this, true);
-            //serverServiceImpl.disconnectGame(gameData.GetId());
+            serverServiceImpl.disconnectGame(gameData.getId());
         } catch (NoSuchObjectException ex) {
             System.err.println(ex);
         }
@@ -154,9 +185,15 @@ public class Game implements ServerGameStub{
     }
 
     @Override
-    public synchronized void leaveGame(String nickname) throws RemoteException {
-        exit();   
+    public synchronized void leaveGame(String nickname) throws RemoteException {     
+        if(isLobbyState)
+        {
+            RemovePartecipant(nickname);
+            serverServiceImpl.updateNumPlayer(gameData.getId());
+        }
+        else
+            exit();   
+        
+        //TO-DO:notify() who left the game
     }
-    
-    //TO-DO create an override of hashmap and manage the loobby
 }

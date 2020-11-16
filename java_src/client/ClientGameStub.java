@@ -19,6 +19,6 @@ public interface ClientGameStub extends Remote{
     void changeGameState(int gameState) throws RemoteException;
     void updateTimer(int timerValue) throws RemoteException;//valore sec x sec dei timer (tutti)
     void updateGrid(String[] grid) throws RemoteException;//mi passi le lettere da mettere nela griglia grafica
-    void updateLobby(List<String> nickName);//mi manda la lista dei giocatori in sala di attesa
+    void updateLobby(List<String> nickName) throws RemoteException;//mi manda la lista dei giocatori in sala di attesa
 
 }
