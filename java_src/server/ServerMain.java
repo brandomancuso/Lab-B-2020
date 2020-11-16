@@ -19,7 +19,7 @@ public class ServerMain {
         loginScreen = new LoginScreen();
         registerScreen = new RegisterScreen();
         homeScreen = new HomeScreen();
-        connectionManager = ConnectionManager.getConnectionManager();
+        //connectionManager = ConnectionManager.getConnectionManager();
         
         dbConnect.setVisible(true);
     }
