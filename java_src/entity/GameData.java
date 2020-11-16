@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GameData implements Serializable{
-    private int id;
+    private Integer id;
     private String name;
     private List<SessionData> sessions;
     private int numPlayers;
@@ -36,11 +36,11 @@ public class GameData implements Serializable{
         this.numPlayers = numPlayers;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

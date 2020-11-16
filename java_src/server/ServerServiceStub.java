@@ -1,9 +1,11 @@
 package server;
 
+import client.ClientGameStub;
 import client.ClientServiceStub;
 import entity.UserData;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import server.game.ServerGameStub;
 import utils.Pair;
 
 public interface ServerServiceStub extends Remote{
@@ -13,6 +15,6 @@ public interface ServerServiceStub extends Remote{
     boolean recoverPassword(String email) throws RemoteException;
     void addObserver(String nickname, ClientServiceStub client) throws RemoteException;
     void logout(String nickname) throws RemoteException;
-    boolean partecipate(String nickname, int gameId) throws RemoteException;
-    boolean createGame(String nickname, String gameTitle, int numPlayers) throws RemoteException;
+    ServerGameStub partecipate(String nickname, int gameId, ClientGameStub client) throws RemoteException;
+    ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException;
 }
