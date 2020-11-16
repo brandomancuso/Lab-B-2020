@@ -26,7 +26,7 @@ public class Game implements ServerGameStub{
     private Boolean boolNextRound;
     private int playerReadyNextRound;
     private PersistentSignal persistentSignal;
-    private ServerServiceImpl serverServiceImpl
+    private ServerServiceImpl serverServiceImpl;
     
     public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub,ServerServiceImpl serverServiceImpl)
     {
@@ -123,15 +123,19 @@ public class Game implements ServerGameStub{
         }
     }
  
-    public void exit () throws NoSuchObjectException
+    public void exit () 
     {
         //TO-DO:advise the client that someone quit (by his nickname)
         observerClientSet.clear();//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
         timerThread.interrupt();//interrupt the timer beacause of game ending
         persistentSignal.interruptGame();//interrupt the game itself
         boolNextRound=false;
-        UnicastRemoteObject.unexportObject(this, true);
-        //serverServiceImpl.disconnectGame(gameData.GetId());
+        try {
+            UnicastRemoteObject.unexportObject(this, true);
+            //serverServiceImpl.disconnectGame(gameData.GetId());
+        } catch (NoSuchObjectException ex) {
+            System.err.println(ex);
+        }
     }
     
     
