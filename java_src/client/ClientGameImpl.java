@@ -38,7 +38,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     }
 
     @Override
-    public void updateGrid(String[] grid) throws RemoteException {
+    public void updateSessionGame(String[] grid) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

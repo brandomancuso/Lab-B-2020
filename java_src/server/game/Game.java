@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.Pair;
 import server.ServerServiceImpl;
 
@@ -59,9 +61,10 @@ public class Game implements ServerGameStub{
     private void startSession()
     {
         List<String> winnerNickname=new ArrayList<>();
+        int i=1;//in order to count the number of sessions
         while (boolNextRound)
         {
-            Session currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData);
+            Session currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i);
             if(isLobbyState)
             {
                 observerClientSet.forEach((key,value)->{
@@ -90,6 +93,8 @@ public class Game implements ServerGameStub{
                     boolNextRound=false;
                 }
             }
+            
+            i++;
         }
         //TO-DO make transit the client to the winner state and send the winners with notify()
         observerClientSet.forEach((key,value)->{
@@ -121,11 +126,14 @@ public class Game implements ServerGameStub{
     private void updateInfoLobby()
     {
         observerClientSet.forEach((key,value)->{
-                    try {
-                        value.getClientGameStub().updateLobby(gameData.getPlayersList());//change state in waiting inside the lobby
-                    } catch (RemoteException ex) {
-                        System.err.println(ex);
-                    }
+                  
+            try {
+                value.getClientGameStub().updateLobby(gameData.getPlayersList());//change state in waiting inside the lobby
+            } catch (RemoteException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                 
+                    
                     });
     }
     
