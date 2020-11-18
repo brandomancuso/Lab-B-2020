@@ -2,6 +2,8 @@ package server;
 
 import client.ClientGameStub;
 import client.ClientServiceStub;
+import database.Database;
+import database.DatabaseImpl;
 import entity.GameData;
 import entity.User;
 import entity.UserData;
@@ -9,24 +11,34 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Stack;
 import server.game.Game;
 import server.game.ServerGameStub;
 import utils.Pair;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class ServerServiceImpl extends UnicastRemoteObject implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList;
-    private Map<String, User> usersList;
+    private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
     private Stack<Integer> freePort;
     private Map<Integer, Integer> occupiedPort;
+    private Database dbReference;
     
     public ServerServiceImpl() throws RemoteException{
         clientsList = new HashMap<>();
         usersList = new HashMap<>();
-        //gamesList = new HashMap<>();
+        gamesList = new HashMap<>();
         freePort = new Stack();
         occupiedPort = new HashMap<>();
+        dbReference = DatabaseImpl.getDatabase();
     }
 
     @Override
@@ -47,24 +59,78 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
         usersList.remove(nickname);
     }
 
-    @Override //Deve restituire l'oggetto Game
+    @Override
+    public boolean updateUserData(UserData user) throws RemoteException {
+        return false;
+    }
+    
+    @Override
+    public String register(UserData newUser) throws RemoteException {
+        try{
+            String registerResult;
+            User updatedUser = dbReference.addUser(newUser);
+
+            if(newUser != null){
+                registerResult = "Registrazione completata!";
+                //TODO Invio mail all'utente
+                sendEmail("", "", updatedUser.getEmail(), "Verifica account Il Paroliere", "");
+                HomeScreen.stampEvent(updatedUser.getNickname() + " registrato!");
+                return registerResult;
+            }
+            else{
+                registerResult = "Errore durante la registrazione!";
+                HomeScreen.stampEvent(updatedUser.getNickname() + " errore durante la registrazione!");
+                return registerResult;
+            }
+        }
+        catch(MessagingException e){
+            HomeScreen.stampEvent("Invio email fallito!");
+            return null;
+        }
+    }
+
+    @Override
+    public Pair<String, UserData> login(String email, String password) throws RemoteException {
+        Pair<String, User> loginResult;
+        Pair<User, Integer> dbResult = dbReference.getUser(email, password);
+        User userResult = dbResult.getFirst();
+        int infoResult = dbResult.getLast();
+        
+        if(userResult != null){
+            loginResult = new Pair<>(null, userResult);
+            return loginResult;
+        }
+        else{
+            if(infoResult == 1){
+                loginResult = new Pair<>("Email errata!", null);
+                return loginResult;
+            }
+            if(infoResult == 2){
+                loginResult = new Pair<>("Password errata!", null);
+                result loginResult;
+            }
+        }
+    }
+    
+    @Override
     public ServerGameStub partecipate(String nickname, int gameId, ClientGameStub client) throws RemoteException {
-        //Game game = gamesList.get(gameId);
-        //if(game != null){
-        //    game.addPartecipant(nickname, client);
-        //    if(result.getSecond().booleanValue())
-        //          return game;
-        //    else
-        //          return null;
-        //}
+        Pair<GameData, Boolean> result;
+        Game game = gamesList.get(gameId);
+        if(game != null){
+            result = game.AddPartecipant(nickname, client);
+            if(result.getLast().booleanValue())
+                  return game;
+            else
+                  return null;
+        }
         return null;
     }
 
-    @Override //Deve restituire l'oggetto Game
+    @Override
     public ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException {
         ClientServiceStub user = clientsList.get(nickname);
         GameData gameData = new GameData(gameTitle, numPlayers);
-        //game.setId(dbReference.addGame(dbGame));
+        gameData = dbReference.addGame(gameData);
         Game game = new Game(gameData, nickname, client, this);
         gamesList.put(gameData.getId(), game);
         ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
@@ -83,19 +149,27 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     public void updateNumPlayer(Integer gameId){
         
     }
-
-    @Override
-    public boolean updateUserData(UserData user) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String register(UserData newUser) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Pair<String, UserData> login(String email, String password) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    private void sendEmail(String usr, String pwd, String to, String subject, String body) throws SendFailedException, MessagingException{
+        String password=pwd;
+	String username=usr;
+	    	       
+	String host = "smtp.office365.com";
+	String from=username;
+	   
+        Properties props = System.getProperties();
+	props.put("mail.smtp.host",host);
+	props.put("mail.smtp.starttls.enable", "true");
+	props.put("mail.smtp.port",587);
+	    
+	Session session = Session.getInstance(props);
+	    
+	Message msg = new MimeMessage(session);
+	msg.setFrom(new InternetAddress(from));
+	msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to, false));
+	msg.setSubject(subject);
+	msg.setText(body);
+	    
+	Transport.send(msg,username,password);
     }
 }

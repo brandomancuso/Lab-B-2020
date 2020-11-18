@@ -24,7 +24,6 @@ public class RegisterScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == registerButton){
-            new LoginScreen().setVisible(true);
             //TODO Invio mail
             this.setVisible(false);
         }
