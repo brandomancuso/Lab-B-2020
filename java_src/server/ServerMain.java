@@ -48,4 +48,14 @@ public class ServerMain {
             
         }
     }
+    
+    //Mostra la finestra di Login
+    public static void showLogin(){
+        loginScreen.setVisible(true);
+    }
+    
+    //Mostra la finestra di Home
+    public static void showHome(){
+        homeScreen.setVisible(true);
+    }
 }

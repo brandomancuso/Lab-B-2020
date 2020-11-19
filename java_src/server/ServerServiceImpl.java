@@ -79,7 +79,7 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
             }
             else{
                 registerResult = "Errore durante la registrazione!";
-                HomeScreen.stampEvent(updatedUser.getNickname() + " errore durante la registrazione!");
+                HomeScreen.stampEvent(updatedUser.getNickname() + ": errore durante la registrazione!");
                 return registerResult;
             }
         }
@@ -88,16 +88,18 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
             return null;
         }
     }
-
+    
+    //Aggiungere richiesta del ClientServiceStub
     @Override
     public Pair<String, UserData> login(String email, String password) throws RemoteException {
         Pair<String, User> loginResult;
         Pair<User, Integer> dbResult = dbReference.getUser(email, password);
-        User userResult = dbResult.getFirst();
+        UserData userResult = dbResult.getFirst();
         int infoResult = dbResult.getLast();
         
         if(userResult != null){
             loginResult = new Pair<>(null, userResult);
+            usersList.put(userResult.getNickname(), userResult);
             return loginResult;
         }
         else{

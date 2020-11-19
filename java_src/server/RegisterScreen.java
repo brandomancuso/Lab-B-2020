@@ -15,8 +15,10 @@ public class RegisterScreen extends JFrame implements ActionListener{
     private JSeparator jSeparator1;
     private JTextField emailTxt;
     private JPasswordField passwordTxt;
+    private ServerUtilityGui utility;
     
     public RegisterScreen(){
+        utility = new ServerUtilityGui();
         
         initGUI();
     }
@@ -24,8 +26,33 @@ public class RegisterScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == registerButton){
-            //TODO Invio mail
-            this.setVisible(false);
+            String email = emailTxt.getText();
+            String password = String.valueOf(passwordTxt.getPassword());
+            
+            //Controllo email vuota
+            if(email.isEmpty()){
+                utility.showMessage("Inserire email!", "Registrazione Amministratore");
+            }
+            //Controllo passoword vuota
+            if(password.isEmpty()){
+                utility.showMessage("Inserire password!", "Registrazione Amministratore");
+            }
+            //Controllo che email e password rispettino il formato
+            if(utility.checkEmail(email)){
+                if(utility.checkPassword(password)){
+                    utility.showMessage("Registrazione Completata", "Registrazione Amministratore");
+                    this.setVisible(false);
+                    ServerMain.showLogin();
+                }
+                else{
+                    utility.showMessage("La password non è valida!", "Registrazione Amministratore");
+                    passwordTxt.setText("");
+                }
+            }
+            else{
+                utility.showMessage("L'email non è valida!", "Registrazione Amministratore");
+                emailTxt.setText("");
+            }
         }
         if(event.getSource() == resetButton){
             emailTxt.setText("");

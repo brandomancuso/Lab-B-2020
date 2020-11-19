@@ -22,8 +22,10 @@ public class LoginScreen extends JFrame implements ActionListener{
     private JButton loginButton;
     private JPasswordField passwordTxt;
     private JButton resetButton;
+    private ServerUtilityGui utility;
     
     public LoginScreen(){
+        utility = new ServerUtilityGui();
         
         initGUI();
     }
@@ -31,8 +33,25 @@ public class LoginScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginButton){
-            //TODO Aggiungere controlli all'accesso
+            String email = emailTxt.getText();
+            String password = String.valueOf(passwordTxt.getPassword());
+            
+            //Controllo email vuota
+            if(email.isEmpty()){
+                utility.showMessage("Inserire email!", "Login Amministratore");
+            }
+            //Controllo passoword vuota
+            if(password.isEmpty()){
+                utility.showMessage("Inserire password!", "Login Amministratore");
+            }
+            //TODO Controllo delle credenziali nel Database
+            
+            ServerMain.showHome();
             this.setVisible(false);
+        }
+        if(event.getSource() == resetButton){
+            emailTxt.setText("");
+            passwordTxt.setText("");
         }
         if(event.getSource() == resetButton){
             emailTxt.setText("");
@@ -41,17 +60,17 @@ public class LoginScreen extends JFrame implements ActionListener{
     }
 
     private void initGUI() {
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        imageLabel = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        passwordTxt = new javax.swing.JPasswordField();
-        emailTxt = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        loginButton = new javax.swing.JButton();
-        resetButton = new javax.swing.JButton();
+        jPanel1 = new JPanel();
+        jLabel1 = new JLabel();
+        jSeparator1 = new JSeparator();
+        imageLabel = new JLabel();
+        jLabel3 = new JLabel();
+        passwordTxt = new JPasswordField();
+        emailTxt = new JTextField();
+        jLabel5 = new JLabel();
+        jLabel6 = new JLabel();
+        loginButton = new JButton();
+        resetButton = new JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 

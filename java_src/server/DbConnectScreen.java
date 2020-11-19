@@ -24,6 +24,7 @@ public class DbConnectScreen extends JFrame implements ActionListener{
     private JSeparator jSeparator1;
     private JButton loginDbButton;
     private JButton resetButton;
+    private ServerUtilityGui utility;
     
     public DbConnectScreen(){
         
@@ -33,11 +34,26 @@ public class DbConnectScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginDbButton){
-            //TODO Aggiungere controlli
-            if(ServerMain.connectDatabase(dbUser.getText(), new String(dbPassword.getPassword()), dbHost.getText()))
-                this.setVisible(false);
-            else{
-                
+            String host = dbHost.getText();
+            String user = dbUser.getText();
+            String password = String.valueOf(dbPassword.getPassword());
+            
+            if(host.isEmpty()){
+                utility.showMessage("Host richiesto!", "Database Login");
+            }
+            if(user.isEmpty()){
+                utility.showMessage("User richiesto!", "Database Login");
+            }
+            if(password.isEmpty()){
+                utility.showMessage("Password richiesta!", "Database Login");
+            }
+            
+            if(utility.checkDbInfo(host, user, password)){
+                if(ServerMain.connectDatabase(user, password, host))
+                    this.setVisible(false);
+                else{
+                    utility.showMessage("Accesso negato!", "Database Login");
+                }
             }
         }
         if(event.getSource() == resetButton){
