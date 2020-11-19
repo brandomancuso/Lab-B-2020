@@ -1,4 +1,4 @@
-package server.game;
+ package server.game;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -27,7 +27,7 @@ public class ObserverClient implements Observer  {
     @Override
     public void update(Observable o, Object arg) {
         try {
-            client.update((int) arg);
+            client.updateTimer((int) arg);
         } catch (RemoteException ex) {
             System.err.println("Client isn't reachable");
             o.deleteObserver(this);

@@ -1,4 +1,4 @@
-package server.game;
+ package server.game;
 
 public enum StateGame {
     

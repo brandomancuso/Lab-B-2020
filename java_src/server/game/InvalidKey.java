@@ -1,4 +1,5 @@
- package server.Game;
+ package server.game;
+
 
 public class InvalidKey extends Exception {
 

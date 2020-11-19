@@ -1,4 +1,4 @@
-package server.game;
+ package server.game;
 
 import client.ClientGameStub;
 import entity.*;
@@ -14,8 +14,9 @@ public class Session {
     private PersistentSignal persistentSignal;
     private Map<String,ObserverClient> observerClientSet;
     private GameData gameData;
+    private int numSession;
    
-    public Session (Dictionary dictionary,PersistentSignal persistentSignal,Map<String,ObserverClient> observerClientSet,GameData gameData)
+    public Session (Dictionary dictionary,PersistentSignal persistentSignal,Map<String,ObserverClient> observerClientSet,GameData gameData,int numSession)
     {
         this.sessionData=new SessionData();//every Session istantiated i've to create a SessionData Object
         this.wordsMatrix=new WordsMatrix();
@@ -24,6 +25,7 @@ public class Session {
         this.persistentSignal=persistentSignal;
         this.observerClientSet=(HashMap)observerClientSet;
         this.gameData=gameData;
+        this.numSession=numSession;
     }
  
     //method called by Game Class 
@@ -42,10 +44,10 @@ public class Session {
     {
         observerClientSet.forEach((key,value)->{
             try {
-                    value.getClientGameStub().update(getWordMatrix());
-                    value.getClientGameStub().changeGameState(0);//change state into session
+                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);
+                    value.getClientGameStub().changeGameState(1);//change state into session
                 } catch (RemoteException ex) {
-                    System.err.println();
+                    System.err.println(ex);
             }
         });
         timerThread.start();
@@ -69,14 +71,17 @@ public class Session {
                 //check the words requested
                 int pointPlayer=checkWord(value.getNickname(), value.getWordsFound());
                 //Set the point for the player
-                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);
-                //send the word with points
-                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords());
-                value.getClientGameStub().changeGameState(1);
+                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);     
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }
         });
+        
+        //send the word with points to everyone after checking every word
+        //TO-DO:you have to skim through the correct word and incorrect words beacuse remeber that every word has a point for database efficiency
+        //value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPoints);
+        //value.getClientGameStub().changeGameState(2);//change in watching Result State
+        
         timerThread.start();
         try {
             persistentSignal.waitTimer();
