@@ -876,6 +876,9 @@
                   <Border info="null"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="text_name_profileMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator3">
               <Properties>
@@ -895,6 +898,9 @@
                   <Border info="null"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="text_surname_profileMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator4">
               <Properties>
@@ -914,6 +920,9 @@
                   <Border info="null"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="text_username_profileMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator5">
               <Properties>
@@ -933,6 +942,9 @@
                   <Border info="null"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="text_email_profileMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator6">
               <Properties>
@@ -949,6 +961,9 @@
                   <Border info="null"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="text_password_profileMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator7">
               <Properties>
@@ -965,6 +980,9 @@
                   <Border info="null"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="text_repeatPassword_profileMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator8">
               <Properties>
@@ -988,7 +1006,11 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="null"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_save_profileActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

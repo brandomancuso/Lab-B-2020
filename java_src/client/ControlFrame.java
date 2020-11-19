@@ -6,30 +6,18 @@
 package client;
 
 import entity.GameData;
-import entity.StatsData;
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import static javax.swing.JOptionPane.showMessageDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -45,7 +33,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     public ControlFrame() {
         initComponents();
-        
+
         clientService = ClientServiceImpl.ClientServiceImpl(this);
 
         //Fill with user data for the profile tab
@@ -508,7 +496,7 @@ public class ControlFrame extends javax.swing.JFrame {
                         .addComponent(btn_createGame_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(64, 64, 64)
                 .addComponent(btn_partecipate_home, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
 
         jPanel_main.add(jPanel_home, "home");
@@ -573,6 +561,11 @@ public class ControlFrame extends javax.swing.JFrame {
         text_name_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_name_profile.setText("Nome");
         text_name_profile.setBorder(null);
+        text_name_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_name_profileMouseClicked(evt);
+            }
+        });
 
         jSeparator3.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -580,6 +573,11 @@ public class ControlFrame extends javax.swing.JFrame {
         text_surname_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_surname_profile.setText("Cognome");
         text_surname_profile.setBorder(null);
+        text_surname_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_surname_profileMouseClicked(evt);
+            }
+        });
 
         jSeparator4.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -587,6 +585,11 @@ public class ControlFrame extends javax.swing.JFrame {
         text_username_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_username_profile.setText("Username");
         text_username_profile.setBorder(null);
+        text_username_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_username_profileMouseClicked(evt);
+            }
+        });
 
         jSeparator5.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -594,18 +597,33 @@ public class ControlFrame extends javax.swing.JFrame {
         text_email_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_email_profile.setText("Email");
         text_email_profile.setBorder(null);
+        text_email_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_email_profileMouseClicked(evt);
+            }
+        });
 
         jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
 
         text_password_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_password_profile.setText("jPasswordField1");
         text_password_profile.setBorder(null);
+        text_password_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_password_profileMouseClicked(evt);
+            }
+        });
 
         jSeparator7.setBackground(new java.awt.Color(0, 0, 0));
 
         text_repeatPassword_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_repeatPassword_profile.setText("jPasswordField1");
         text_repeatPassword_profile.setBorder(null);
+        text_repeatPassword_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_repeatPassword_profileMouseClicked(evt);
+            }
+        });
 
         jSeparator8.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -614,6 +632,12 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_save_profile.setForeground(new java.awt.Color(255, 255, 255));
         btn_save_profile.setText("SALVA ");
         btn_save_profile.setBorder(null);
+        btn_save_profile.setEnabled(false);
+        btn_save_profile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_save_profileActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel_profileLayout = new javax.swing.GroupLayout(jPanel_profile);
         jPanel_profile.setLayout(jPanel_profileLayout);
@@ -704,7 +728,19 @@ public class ControlFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
-
+        String email = this.text_email_login.getText();
+        String password = Arrays.toString(this.text_password_login.getPassword());
+        //CHECK fields
+        if (GuiUtility.isEmpty(this.text_email_login) == false) {
+            showMessageDialog(null, "Compilare i campi richiesti");
+            return;
+        }
+        //CHECK email
+        if (GuiUtility.isEmailCorrect(email) == false) {
+            showMessageDialog(null, "Formato Email errato");
+            return;
+        }
+        //CALL login method
         boolean logged = true; //MUST BE FALSE!
         if (logged) {
             btn_home.setEnabled(true);
@@ -782,6 +818,59 @@ public class ControlFrame extends javax.swing.JFrame {
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_search_statsActionPerformed
+
+    private void text_name_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_name_profileMouseClicked
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_name_profileMouseClicked
+
+    private void text_surname_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_surname_profileMouseClicked
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_surname_profileMouseClicked
+
+    private void text_username_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_username_profileMouseClicked
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_username_profileMouseClicked
+
+    private void text_email_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_email_profileMouseClicked
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_email_profileMouseClicked
+
+    private void text_password_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_password_profileMouseClicked
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_password_profileMouseClicked
+
+    private void text_repeatPassword_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_repeatPassword_profileMouseClicked
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_repeatPassword_profileMouseClicked
+
+    private void btn_save_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_profileActionPerformed
+        // TODO add your handling code here:
+        //CHECK not empty
+        if (GuiUtility.isEmpty(this.text_email_profile) || GuiUtility.isEmpty(this.text_name_profile) || GuiUtility.isEmpty(this.text_surname_profile) || GuiUtility.isEmpty(this.text_username_profile) || GuiUtility.isEmpty(this.text_password_profile) || GuiUtility.isEmpty(this.text_repeatPassword_profile)) {
+            showMessageDialog(null, "Compilare tutti i campi");
+            return;
+        }
+        //CHECK email
+        if (GuiUtility.isEmailCorrect(this.text_email_profile.getText()) == false) {
+            showMessageDialog(null, "Formato Email errato");
+            return;
+        }
+        //CHECK psw = repeatPsw
+        if (GuiUtility.isPasswordMatching(this.text_password_login, this.text_password_login) == false) {
+            showMessageDialog(null, "Le password non coincidono");
+            return;
+        }
+        //CALL update profile method
+
+        //DISABLE button
+        this.btn_save_profile.setEnabled(false);
+    }//GEN-LAST:event_btn_save_profileActionPerformed
 
     //UTILITY
     private DefaultTableModel createGametable() {

@@ -5,11 +5,21 @@
  */
 package client;
 
+import entity.UserData;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JTextField;
+
 /**
  *
  * @author Edoardo
  */
 public class RegisterUser extends javax.swing.JDialog {
+
+    private UserData newUser;
+    private boolean isFieldLocked;
 
     /**
      * Creates new form RegisterUser
@@ -17,6 +27,7 @@ public class RegisterUser extends javax.swing.JDialog {
     public RegisterUser(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        isFieldLocked = false;
     }
 
     /**
@@ -67,10 +78,11 @@ public class RegisterUser extends javax.swing.JDialog {
         text_name.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         text_name.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_name.setText("nome");
+        text_name.setToolTipText("");
         text_name.setBorder(null);
-        text_name.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_nameActionPerformed(evt);
+        text_name.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_nameMouseClicked(evt);
             }
         });
 
@@ -80,9 +92,9 @@ public class RegisterUser extends javax.swing.JDialog {
         text_surname.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_surname.setText("cognome");
         text_surname.setBorder(null);
-        text_surname.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_surnameActionPerformed(evt);
+        text_surname.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_surnameMouseClicked(evt);
             }
         });
 
@@ -92,9 +104,9 @@ public class RegisterUser extends javax.swing.JDialog {
         text_username.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_username.setText("username");
         text_username.setBorder(null);
-        text_username.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_usernameActionPerformed(evt);
+        text_username.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_usernameMouseClicked(evt);
             }
         });
 
@@ -104,23 +116,33 @@ public class RegisterUser extends javax.swing.JDialog {
         text_email.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_email.setText("email");
         text_email.setBorder(null);
-        text_email.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_emailActionPerformed(evt);
+        text_email.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_emailMouseClicked(evt);
             }
         });
 
         jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
 
         text_password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_password.setText("jPasswordField1");
+        text_password.setText("password");
         text_password.setBorder(null);
+        text_password.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_passwordMouseClicked(evt);
+            }
+        });
 
         jSeparator2.setBackground(new java.awt.Color(0, 0, 0));
 
         text_repeatPassword.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_repeatPassword.setText("jPasswordField1");
+        text_repeatPassword.setText("password");
         text_repeatPassword.setBorder(null);
+        text_repeatPassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                text_repeatPasswordMouseClicked(evt);
+            }
+        });
 
         jSeparator3.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -129,6 +151,11 @@ public class RegisterUser extends javax.swing.JDialog {
         btn_register.setForeground(new java.awt.Color(255, 255, 255));
         btn_register.setText("REGISTRATI");
         btn_register.setBorder(null);
+        btn_register.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_registerActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -227,6 +254,11 @@ public class RegisterUser extends javax.swing.JDialog {
         btn_verify.setText("VERIFICA");
         btn_verify.setBorder(null);
         btn_verify.setEnabled(false);
+        btn_verify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_verifyActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -298,26 +330,92 @@ public class RegisterUser extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void text_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_nameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_nameActionPerformed
-
-    private void text_surnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_surnameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_surnameActionPerformed
-
-    private void text_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_usernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_usernameActionPerformed
-
-    private void text_emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_emailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_emailActionPerformed
-
     private void text_verificationCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_verificationCodeMouseClicked
         // TODO add your handling code here:
         this.text_verificationCode.setText("");
     }//GEN-LAST:event_text_verificationCodeMouseClicked
+
+    private void btn_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registerActionPerformed
+        //CHECK not empty
+        if (GuiUtility.isEmpty(this.text_email) || GuiUtility.isEmpty(this.text_name) || GuiUtility.isEmpty(this.text_surname) || GuiUtility.isEmpty(this.text_username) || GuiUtility.isEmpty(this.text_password) || GuiUtility.isEmpty(this.text_repeatPassword)) {
+            showMessageDialog(null, "Compilare tutti i campi");
+            return;
+        }
+        //CHECK email
+        if (GuiUtility.isEmailCorrect(this.text_email.getText())== false) {
+            showMessageDialog(null, "Formato Email errato");
+            return;
+        }
+        //CHECK psw = repeatPsw
+        if (GuiUtility.isPasswordMatching(this.text_password, this.text_password)) {
+            showMessageDialog(null, "Le password non coincidono");
+            return;
+        }
+        //LOCK fields
+        this.isFieldLocked = true;
+        //DISABLE fileds
+        this.btn_register.setEnabled(false);
+        this.text_email.setEnabled(false);
+        this.text_name.setEnabled(false);
+        this.text_surname.setEnabled(false);
+        this.text_username.setEnabled(false);
+        this.text_password.setEnabled(false);
+        this.text_repeatPassword.setEnabled(false);
+        //CREATE newUser Obj
+        newUser = new UserData();
+        newUser.setEmail(this.text_email.getText());
+        newUser.setFirstName(this.text_name.getText());
+        newUser.setLastName(this.text_surname.getText());
+        newUser.setNickname(this.text_username.getText());
+        newUser.setPassword(Arrays.toString(this.text_password.getPassword()));
+        //CALL Register Method
+        //ENABLE verification part
+        this.text_verificationCode.setEnabled(true);
+        this.btn_verify.setEnabled(true);
+    }//GEN-LAST:event_btn_registerActionPerformed
+
+    private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
+        // TODO add your handling code here:
+
+
+    }//GEN-LAST:event_btn_verifyActionPerformed
+
+    private void text_nameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_nameMouseClicked
+        // TODO add your handling code here:
+        if (!isFieldLocked)
+            this.text_name.setText("");
+    }//GEN-LAST:event_text_nameMouseClicked
+
+    private void text_surnameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_surnameMouseClicked
+        // TODO add your handling code here:
+        if (!isFieldLocked)
+            this.text_surname.setText("");
+    }//GEN-LAST:event_text_surnameMouseClicked
+
+    private void text_usernameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_usernameMouseClicked
+        // TODO add your handling code here:
+        if (!isFieldLocked)
+            this.text_username.setText("");
+    }//GEN-LAST:event_text_usernameMouseClicked
+
+    private void text_emailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_emailMouseClicked
+        // TODO add your handling code here:
+        if (!isFieldLocked)
+            this.text_email.setText("");
+    }//GEN-LAST:event_text_emailMouseClicked
+
+    private void text_passwordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_passwordMouseClicked
+        // TODO add your handling code here:
+        if (!isFieldLocked)
+            this.text_password.setText("");
+    }//GEN-LAST:event_text_passwordMouseClicked
+
+    private void text_repeatPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_repeatPasswordMouseClicked
+        // TODO add your handling code here:
+        if (!isFieldLocked)
+            this.text_repeatPassword.setText("");
+    }//GEN-LAST:event_text_repeatPasswordMouseClicked
+
 
     /**
      * @param args the command line arguments
