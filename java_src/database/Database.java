@@ -9,7 +9,7 @@ public interface Database {
     User getUser(String nickname);
     Pair<User, Integer> getUser(String email, String password);
     User addUser(User user);
-    User updateUser(User user);
+    User updateUser(User user, String old_nickname);
     User removeUser(String nickname);
     GameData addGame(GameData gameData);
     GameData getGame(int gameId);

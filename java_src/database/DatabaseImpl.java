@@ -106,6 +106,7 @@ public class DatabaseImpl implements Database{
             stmt.setString(6, user.getActivationCode());
             stmt.setBoolean(7, user.isAdmin());
             stmt.setBoolean(8, user.isActive());
+            stmt.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
             user = null;
@@ -120,13 +121,60 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public User updateUser(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public User updateUser(User user, String old) {
+        String sql = "UPDATE ip_user SET nickname = ? , name = ? , surname = ? ,"
+                + " email = ? , password = ? , acrivation_code = ? , admin = ? , active = ? "
+                + "WHERE nickname = ?";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            stmt.setString(1, user.getNickname());
+            stmt.setString(2, user.getFirstName());
+            stmt.setString(3, user.getLastName());
+            stmt.setString(4, user.getEmail());
+            stmt.setString(5, user.getPassword());
+            stmt.setString(6, user.getActivationCode());
+            stmt.setBoolean(7, user.isAdmin());
+            stmt.setBoolean(8, user.isActive());
+            stmt.setString(9, old);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            user = null;
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return user;
     }
     
     @Override
     public User removeUser(String nickname) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "DELETE FROM ip_user WHERE nickname = ?";
+        User user = getUser(nickname);
+        if(user != null) {
+            Connection c = null;
+            try {
+                c = connManager.getConnection();
+                PreparedStatement stmt = c.prepareStatement(sql);
+                stmt.setString(1, nickname);
+                stmt.executeUpdate();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                user = null;
+            } finally {
+                try {
+                    if(c != null) c.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return user;
     }
 
     @Override
