@@ -10,6 +10,10 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,6 +22,7 @@ import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import server.ServerServiceStub;
 
 /**
  *
@@ -30,19 +35,19 @@ public class ControlFrame extends javax.swing.JFrame {
      */
     CardLayout card;
     ClientServiceImpl clientService;
+    ServerServiceStub stub;
 
     public ControlFrame() {
         initComponents();
 
-        clientService = ClientServiceImpl.ClientServiceImpl(this);
+        try {
+            Registry registry = LocateRegistry.getRegistry(1099);
+            stub = (ServerServiceStub) registry.lookup("Il Paroliere");
+        } catch (NotBoundException | RemoteException e) {
+            showMessageDialog(null, "Si è verificato un errore nella connessione... " + e.getLocalizedMessage());
+        }
 
-        //Fill with user data for the profile tab
-        text_email_profile.setText("giorgio@gmail.com");
-        text_name_profile.setText("giorgio");
-        text_surname_profile.setText("minchia");
-        text_username_profile.setText("giominchia98");
-        text_password_profile.setText("password");
-        text_repeatPassword_profile.setText("password");
+        clientService = ClientServiceImpl.ClientServiceImpl(this);
 
         card = (CardLayout) jPanel_main.getLayout();
         this.combo_Nplayers.addActionListener(new ActionListener() {
@@ -55,7 +60,6 @@ public class ControlFrame extends javax.swing.JFrame {
                 }
             }
         });
-
     }
 
     /**
@@ -741,7 +745,8 @@ public class ControlFrame extends javax.swing.JFrame {
             return;
         }
         //CALL login method
-        boolean logged = true; //MUST BE FALSE!
+        boolean logged = false;
+        //stub.login(email, password);
         if (logged) {
             btn_home.setEnabled(true);
             btn_stats.setEnabled(true);
@@ -871,6 +876,15 @@ public class ControlFrame extends javax.swing.JFrame {
         //DISABLE button
         this.btn_save_profile.setEnabled(false);
     }//GEN-LAST:event_btn_save_profileActionPerformed
+
+    private void FillUserProfileData() {
+        text_email_profile.setText("giorgio@gmail.com");
+        text_name_profile.setText("giorgio");
+        text_surname_profile.setText("minchia");
+        text_username_profile.setText("giominchia98");
+        text_password_profile.setText("password");
+        text_repeatPassword_profile.setText("password");
+    }
 
     //UTILITY
     private DefaultTableModel createGametable() {
