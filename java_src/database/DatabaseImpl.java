@@ -2,7 +2,7 @@ package database;
 
 import entity.GameData;
 import entity.StatsData;
-import entity.User;
+import entity.UserData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,8 +20,8 @@ public class DatabaseImpl implements Database{
     }
     
     @Override
-    public User getUser(String nickname) {
-        User ret = null;
+    public UserData getUser(String nickname) {
+        UserData ret = null;
         String sql = "SELECT * FROM ip_user WHERE nickname = ?";
         Connection c = null;
         try {
@@ -30,7 +30,7 @@ public class DatabaseImpl implements Database{
             stmt.setString(1, nickname);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                ret = new User();
+                ret = new UserData();
                 ret.setNickname(rs.getString("nickname"));
                 ret.setEmail(rs.getString("email"));
                 ret.setPassword("password");
@@ -51,9 +51,9 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public Pair<User, Integer> getUser(String email, String password) {
-        User usr = null;
-        Pair<User, Integer> result = null;
+    public Pair<UserData, Integer> getUser(String email, String password) {
+        UserData usr = null;
+        Pair<UserData, Integer> result = null;
         String sql = "SELECT * FROM ip_user WHERE email = ?";
         Connection c = null;
         try {
@@ -62,7 +62,7 @@ public class DatabaseImpl implements Database{
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                usr = new User();
+                usr = new UserData();
                 usr.setNickname(rs.getString("nickname"));
                 usr.setEmail(rs.getString("email"));
                 usr.setPassword("password");
@@ -91,7 +91,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public User addUser(User user) {
+    public UserData addUser(UserData user) {
         String sql = "INSERT INTO ip_user (nickname, name, surname, email, password, acrivation_code, admin, active) "
                 + "VALUES (?,?,?,?,?,?,?,?)";
         Connection c = null;
@@ -121,7 +121,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public User updateUser(User user, String old) {
+    public UserData updateUser(UserData user, String old) {
         String sql = "UPDATE ip_user SET nickname = ? , name = ? , surname = ? ,"
                 + " email = ? , password = ? , acrivation_code = ? , admin = ? , active = ? "
                 + "WHERE nickname = ?";
@@ -153,9 +153,9 @@ public class DatabaseImpl implements Database{
     }
     
     @Override
-    public User removeUser(String nickname) {
+    public UserData removeUser(String nickname) {
         String sql = "DELETE FROM ip_user WHERE nickname = ?";
-        User user = getUser(nickname);
+        UserData user = getUser(nickname);
         if(user != null) {
             Connection c = null;
             try {
