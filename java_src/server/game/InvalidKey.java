@@ -1,5 +1,6 @@
  package server.game;
 
+
 public class InvalidKey extends Exception {
 
 		private static final long serialVersionUID = 1L;

@@ -1,5 +1,6 @@
  package server.game;
 
+
 public class PersistentSignal {
     private boolean timeout,interruptFlag;
     
