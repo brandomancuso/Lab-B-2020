@@ -27,8 +27,8 @@ public class DbConnectScreen extends JFrame implements ActionListener{
     private ServerUtilityGui utility;
     
     public DbConnectScreen(){
-        
         initGUI();
+        utility = new ServerUtilityGui();
     }
     
     @Override
@@ -39,20 +39,20 @@ public class DbConnectScreen extends JFrame implements ActionListener{
             String password = String.valueOf(dbPassword.getPassword());
             
             if(host.isEmpty()){
-                utility.showMessage("Host richiesto!", "Database Login");
+                utility.showMessage("Host richiesto!", "Database Login", this);
             }
             if(user.isEmpty()){
-                utility.showMessage("User richiesto!", "Database Login");
+                utility.showMessage("User richiesto!", "Database Login", this);
             }
             if(password.isEmpty()){
-                utility.showMessage("Password richiesta!", "Database Login");
+                utility.showMessage("Password richiesta!", "Database Login", this);
             }
             
             if(utility.checkDbInfo(host, user, password)){
                 if(ServerMain.connectDatabase(user, password, host))
                     this.setVisible(false);
                 else{
-                    utility.showMessage("Accesso negato!", "Database Login");
+                    utility.showMessage("Accesso negato!", "Database Login", this);
                 }
             }
         }
@@ -109,11 +109,13 @@ public class DbConnectScreen extends JFrame implements ActionListener{
         loginDbButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         loginDbButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/server/icons/enter_24px.png"))); // NOI18N
         loginDbButton.setText("Login");
+        loginDbButton.addActionListener(this);
 
         resetButton.setBackground(new java.awt.Color(250, 0, 0));
         resetButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         resetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/server/icons/restore_page_24px.png"))); // NOI18N
         resetButton.setText("Reset");
+        resetButton.addActionListener(this);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

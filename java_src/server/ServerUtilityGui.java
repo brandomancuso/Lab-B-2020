@@ -2,6 +2,7 @@ package server;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class ServerUtilityGui {
@@ -25,8 +26,8 @@ public class ServerUtilityGui {
             return false;
     }
     
-    public void showMessage(String message, String title){
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+    public void showMessage(String message, String title, JFrame parent){
+        JOptionPane.showMessageDialog(parent, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
     
     private boolean checkDbHost(String dbHost){
