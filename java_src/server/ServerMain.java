@@ -13,7 +13,7 @@ public class ServerMain {
     private static RegisterScreen registerScreen;
     private static HomeScreen homeScreen;
     
-    public void main(String[] args) throws RemoteException{
+    public static void main(String[] args) throws RemoteException{
         server = new ServerServiceImpl();
         dbConnect = new DbConnectScreen();
         loginScreen = new LoginScreen();
