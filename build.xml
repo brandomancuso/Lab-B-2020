@@ -9,12 +9,7 @@
 	<property name="docs.dir" location="docs" />
 	<property name="res.dir" location="java_src/client/icons" />
 	<property name="lib.dir" location="lib" />
-	
-	<path id="class.path">
-		<fileset dir="${lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
+        <property name="class.path" value="lib/postgesql-42.2.18.jar lib/javax.mail.jar lib/activation.jar" />
 	
 	<echo>${ant.version}</echo>
 	
@@ -69,9 +64,8 @@
 			<fileset dir="${build.dir}" includes="client/*.class utils/*.class entity/*.class"/>
                         <fileset dir="${src.dir}" includes="client/icons/*.png"/>
 	            <manifest>
-	            	<attribute name="Class-Path" value="${class.path}"/>
 	                <attribute name="Main-Class" value="client.ControlFrame" />
-	            	
+	            	<attribute name="Class-Path" value="${class.path}"/>
 	            </manifest>
 	        </jar>
 	</target>
@@ -79,16 +73,18 @@
 	<target name="server_jar" depends="compile, docs">
 		<echo>Generating server's jar file...</echo>
 	        <jar destfile="${dist.dir}\IpServer.jar">
-				<fileset dir="${build.dir}" 
-					includes="server/*.class database/*.class utils/*.class entity/*.class"/>
+                    <fileset dir="${build.dir}" includes="server/**/*.class client/*.class database/*.class utils/*.class entity/*.class"/>
+                    <fileset dir="${src.dir}" includes="server/icons/*.png"/>
 	            <manifest>
+	                <attribute name="Main-Class" value="server.ServerMain" />
 	            	<attribute name="Class-Path" value="${class.path}"/>
-	                <attribute name="Main-Class" value="" />
-	            	
 	            </manifest>
 	        </jar>
 	</target>
-        <target name="run_client" depends="client_jar">
+        <target name="run_client" depends="">
             <java jar="${dist.dir}/IpClient.jar" fork="true"/>
+        </target>
+        <target name="run_server" depends="">
+            <java jar="${dist.dir}/IpServer.jar" fork="true"/>
         </target>
 </project>
