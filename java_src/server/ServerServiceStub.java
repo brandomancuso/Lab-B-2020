@@ -2,7 +2,7 @@ package server;
 
 import client.ClientGameStub;
 import client.ClientServiceStub;
-import entity.User;
+import entity.UserData;
 import entity.UserData;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -11,7 +11,7 @@ import utils.Pair;
 
 public interface ServerServiceStub extends Remote{
     Pair<String, UserData> login(String email, String password) throws RemoteException;
-    User updateUserData(UserData user, String oldUsername) throws RemoteException;
+    UserData updateUserData(UserData user, String oldUsername) throws RemoteException;
     String register(UserData newUser) throws RemoteException;
     boolean recoverPassword(String email) throws RemoteException;
     void addObserver(String nickname, ClientServiceStub client) throws RemoteException;
