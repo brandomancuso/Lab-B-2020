@@ -11,7 +11,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 public class LoginScreen extends JFrame implements ActionListener{
-    private JTextField emailTxt;
+    private JTextField usernameTxt;
     private JLabel imageLabel;
     private JLabel jLabel1;
     private JLabel jLabel3;
@@ -33,12 +33,12 @@ public class LoginScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginButton){
-            String email = emailTxt.getText();
+            String username = usernameTxt.getText();
             String password = String.valueOf(passwordTxt.getPassword());
             
             //Controllo email vuota
-            if(email.isEmpty()){
-                utility.showMessage("Inserire email!", "Login Amministratore");
+            if(username.isEmpty()){
+                utility.showMessage("Inserire username!", "Login Amministratore");
             }
             //Controllo passoword vuota
             if(password.isEmpty()){
@@ -50,11 +50,11 @@ public class LoginScreen extends JFrame implements ActionListener{
             this.setVisible(false);
         }
         if(event.getSource() == resetButton){
-            emailTxt.setText("");
+            usernameTxt.setText("");
             passwordTxt.setText("");
         }
         if(event.getSource() == resetButton){
-            emailTxt.setText("");
+            usernameTxt.setText("");
             passwordTxt.setText("");
         }
     }
@@ -66,7 +66,7 @@ public class LoginScreen extends JFrame implements ActionListener{
         imageLabel = new JLabel();
         jLabel3 = new JLabel();
         passwordTxt = new JPasswordField();
-        emailTxt = new JTextField();
+        usernameTxt = new JTextField();
         jLabel5 = new JLabel();
         jLabel6 = new JLabel();
         loginButton = new JButton();
@@ -86,10 +86,10 @@ public class LoginScreen extends JFrame implements ActionListener{
 
         passwordTxt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
-        emailTxt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        usernameTxt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel5.setText("Email");
+        jLabel5.setText("Username");
 
         jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel6.setText("Password");
@@ -127,7 +127,7 @@ public class LoginScreen extends JFrame implements ActionListener{
                                     .addComponent(jLabel5))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(emailTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(usernameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(passwordTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(12, 12, 12)
@@ -156,7 +156,7 @@ public class LoginScreen extends JFrame implements ActionListener{
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(emailTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(usernameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

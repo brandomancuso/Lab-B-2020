@@ -60,8 +60,8 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     }
 
     @Override
-    public boolean updateUserData(UserData user) throws RemoteException {
-        return false;
+    public User updateUserData(UserData user, String oldUsername) throws RemoteException {
+        return dbReference.updateUser(user, oldUsername);
     }
     
     @Override
@@ -107,9 +107,9 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
                 loginResult = new Pair<>("Email errata!", null);
                 return loginResult;
             }
-            if(infoResult == 2){
+            else{
                 loginResult = new Pair<>("Password errata!", null);
-                result loginResult;
+                return loginResult;
             }
         }
     }

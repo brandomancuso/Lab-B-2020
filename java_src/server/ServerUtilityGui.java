@@ -5,18 +5,12 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 public class ServerUtilityGui {
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
     private static final Pattern DB_HOST_PATTERN = Pattern.compile("^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$");
     private static final Pattern DB_USER_PATTERN = Pattern.compile("");
     
     public ServerUtilityGui(){
         
-    }
-    
-    public boolean checkEmail(String email){
-        Matcher matcher = EMAIL_PATTERN.matcher(email);
-        return matcher.matches();
     }
     
     public boolean checkPassword(String password){
