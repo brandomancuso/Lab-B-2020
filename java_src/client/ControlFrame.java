@@ -6,6 +6,7 @@
 package client;
 
 import entity.GameData;
+import entity.UserData;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JLabel;
@@ -23,6 +26,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import server.ServerServiceStub;
+import utils.Pair;
 
 /**
  *
@@ -36,6 +40,7 @@ public class ControlFrame extends javax.swing.JFrame {
     CardLayout card;
     ClientServiceImpl clientService;
     ServerServiceStub stub;
+    UserData user;
 
     public ControlFrame() {
         initComponents();
@@ -746,7 +751,18 @@ public class ControlFrame extends javax.swing.JFrame {
         }
         //CALL login method
         boolean logged = false;
-        //stub.login(email, password);
+        try {
+            Pair<String, UserData> res = stub.login(email, password);
+            
+            if(res.getFirst() != null){
+                user = stub.login(email, password).getLast();
+                logged = true;
+            }else{
+                showMessageDialog(null, res.getLast().toString());
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (logged) {
             btn_home.setEnabled(true);
             btn_stats.setEnabled(true);
@@ -767,7 +783,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void label_signinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_signinMouseClicked
         // TODO add your handling code here:
-        RegisterUser register = new RegisterUser(this, true);
+        RegisterUser register = new RegisterUser(this, true, stub);
         register.setVisible(true);
     }//GEN-LAST:event_label_signinMouseClicked
 
@@ -793,6 +809,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_profileActionPerformed
         // TODO add your handling code here:
+        fillUserProfileData(user);
         card.show(jPanel_main, "profile");
     }//GEN-LAST:event_btn_profileActionPerformed
 
@@ -877,13 +894,13 @@ public class ControlFrame extends javax.swing.JFrame {
         this.btn_save_profile.setEnabled(false);
     }//GEN-LAST:event_btn_save_profileActionPerformed
 
-    private void FillUserProfileData() {
-        text_email_profile.setText("giorgio@gmail.com");
-        text_name_profile.setText("giorgio");
-        text_surname_profile.setText("minchia");
-        text_username_profile.setText("giominchia98");
-        text_password_profile.setText("password");
-        text_repeatPassword_profile.setText("password");
+    private void fillUserProfileData(UserData user) {
+        text_email_profile.setText(user.getEmail());
+        text_name_profile.setText(user.getFirstName());
+        text_surname_profile.setText(user.getLastName());
+        text_username_profile.setText(user.getNickname());
+        text_password_profile.setText(user.getPassword());
+        text_repeatPassword_profile.setText(user.getPassword());
     }
 
     //UTILITY
