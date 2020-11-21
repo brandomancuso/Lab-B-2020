@@ -9,6 +9,9 @@ public class UserData implements Serializable{
     private String password;
     private String firstName;
     private String lastName;
+    private String activationCode;
+    private boolean admin;
+    private boolean active;
     
     private static final long serialVersionUID = 1L;
 
@@ -50,6 +53,30 @@ public class UserData implements Serializable{
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+    
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
     
     @Override

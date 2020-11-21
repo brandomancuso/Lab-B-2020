@@ -5,7 +5,7 @@ import client.ClientServiceStub;
 import database.Database;
 import database.DatabaseImpl;
 import entity.GameData;
-import entity.User;
+import entity.UserData;
 import entity.UserData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -60,7 +60,7 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     }
 
     @Override
-    public User updateUserData(UserData user, String oldUsername) throws RemoteException {
+    public UserData updateUserData(UserData user, String oldUsername) throws RemoteException {
         return dbReference.updateUser(user, oldUsername);
     }
     
@@ -68,7 +68,7 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     public String register(UserData newUser) throws RemoteException {
         try{
             String registerResult;
-            User updatedUser = dbReference.addUser(newUser);
+            UserData updatedUser = dbReference.addUser(newUser);
 
             if(newUser != null){
                 registerResult = "Registrazione completata!";
@@ -92,8 +92,8 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     //Aggiungere richiesta del ClientServiceStub
     @Override
     public Pair<String, UserData> login(String email, String password) throws RemoteException {
-        Pair<String, User> loginResult;
-        Pair<User, Integer> dbResult = dbReference.getUser(email, password);
+        Pair<String, UserData> loginResult;
+        Pair<UserData, Integer> dbResult = dbReference.getUser(email, password);
         UserData userResult = dbResult.getFirst();
         int infoResult = dbResult.getLast();
         

@@ -2,15 +2,15 @@ package database;
 
 import entity.GameData;
 import entity.StatsData;
-import entity.User;
+import entity.UserData;
 import utils.Pair;
 
 public interface Database {
-    User getUser(String nickname);
-    Pair<User, Integer> getUser(String email, String password);
-    User addUser(User user);
-    User updateUser(User user, String old_nickname);
-    User removeUser(String nickname);
+    UserData getUser(String nickname);
+    Pair<UserData, Integer> getUser(String email, String password);
+    UserData addUser(UserData user);
+    UserData updateUser(UserData user, String old_nickname);
+    UserData removeUser(String nickname);
     GameData addGame(GameData gameData);
     GameData getGame(int gameId);
     boolean updateGame(GameData gameData);
