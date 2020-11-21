@@ -38,11 +38,11 @@ public class LoginScreen extends JFrame implements ActionListener{
             
             //Controllo email vuota
             if(username.isEmpty()){
-                utility.showMessage("Inserire username!", "Login Amministratore");
+                utility.showMessage("Inserire username!", "Login Amministratore", this);
             }
             //Controllo passoword vuota
             if(password.isEmpty()){
-                utility.showMessage("Inserire password!", "Login Amministratore");
+                utility.showMessage("Inserire password!", "Login Amministratore", this);
             }
             //TODO Controllo delle credenziali nel Database
             

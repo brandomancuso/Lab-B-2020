@@ -40,20 +40,20 @@ public class RegisterScreen extends JFrame implements ActionListener{
             
             //Controllo email vuota
             if(username.isEmpty()){
-                utility.showMessage("Inserire username!", "Registrazione Amministratore");
+                utility.showMessage("Inserire username!", "Registrazione Amministratore", this);
             }
             //Controllo passoword vuota
             if(password.isEmpty()){
-                utility.showMessage("Inserire password!", "Registrazione Amministratore");
+                utility.showMessage("Inserire password!", "Registrazione Amministratore", this);
             }
             //Controllo che la password rispetti il formato
             if(utility.checkPassword(password)){
-                utility.showMessage("Registrazione Completata", "Registrazione Amministratore");
+                utility.showMessage("Registrazione Completata", "Registrazione Amministratore", this);
                 this.setVisible(false);
                 ServerMain.showLogin();
             }
             else{
-                utility.showMessage("La password non è valida!", "Registrazione Amministratore");
+                utility.showMessage("La password non è valida!", "Registrazione Amministratore", this);
                 passwordTxt.setText("");
             }
         }

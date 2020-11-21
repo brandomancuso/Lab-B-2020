@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-//import org.postgresql.Driver;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,11 +25,11 @@ public class ConnectionManager {
     
     //Private constructor - loads the jdbc driver
     private ConnectionManager(){
-        /*try {
-            Class.forName(Driver.class.getName());
+        try {
+            Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException ex) {
             throw new Error("Impossible to find postgres driver");
-        }*/
+        }
     }
     
     //Sets data for connection

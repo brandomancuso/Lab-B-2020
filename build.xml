@@ -9,7 +9,7 @@
 	<property name="docs.dir" location="docs" />
 	<property name="res.dir" location="java_src/client/icons" />
 	<property name="lib.dir" location="lib" />
-        <property name="class.path" value="lib/postgesql-42.2.18.jar lib/javax.mail.jar lib/activation.jar" />
+        <property name="class.path" value="lib/postgresql-42.2.18.jar lib/javax.mail.jar lib/activation.jar" />
 	
 	<echo>${ant.version}</echo>
 	
