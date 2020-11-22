@@ -6,8 +6,9 @@ import database.Database;
 import database.DatabaseImpl;
 import entity.GameData;
 import entity.UserData;
-import entity.UserData;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +44,16 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
 
     @Override
     public boolean recoverPassword(String email) throws RemoteException {
-        //mi serve il nickname dell'utente per avere il suo riferimento
+        //mi serve il nickname dell'utente per avere il riferimento per aggiornare il database
         //invio la mail
-        return false;
+        try{
+            sendEmail("", "", email, "Verifica account Il Paroliere", "");
+            return false;
+        }
+        catch(MessagingException e){
+            HomeScreen.stampEvent("Invio email fallito!");
+            return false;
+        }
     }
 
     @Override
@@ -60,26 +68,28 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
     }
 
     @Override
-    public UserData updateUserData(UserData user, String oldUsername) throws RemoteException {
-        return dbReference.updateUser(user, oldUsername);
+    public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
+        UserData updatedUser = dbReference.updateUser(user, oldNickname);
+        usersList.replace(oldNickname, updatedUser);
+        return updatedUser;
     }
     
     @Override
     public String register(UserData newUser) throws RemoteException {
         try{
             String registerResult;
-            UserData updatedUser = dbReference.addUser(newUser);
+            UserData updatedNewUser = dbReference.addUser(newUser);
 
-            if(newUser != null){
+            if(updatedNewUser != null){
                 registerResult = "Registrazione completata!";
                 //TODO Invio mail all'utente
-                sendEmail("", "", updatedUser.getEmail(), "Verifica account Il Paroliere", "");
-                HomeScreen.stampEvent(updatedUser.getNickname() + " registrato!");
+                sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
+                HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
                 return registerResult;
             }
             else{
                 registerResult = "Errore durante la registrazione!";
-                HomeScreen.stampEvent(updatedUser.getNickname() + ": errore durante la registrazione!");
+                HomeScreen.stampEvent(updatedNewUser.getNickname() + ": errore durante la registrazione!");
                 return registerResult;
             }
         }
@@ -89,7 +99,6 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
         }
     }
     
-    //Aggiungere richiesta del ClientServiceStub
     @Override
     public Pair<String, UserData> login(String email, String password) throws RemoteException {
         Pair<String, UserData> loginResult;
@@ -120,7 +129,7 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
         Game game = gamesList.get(gameId);
         if(game != null){
             result = game.AddPartecipant(nickname, client);
-            if(result.getLast().booleanValue())
+            if(result.getLast())
                   return game;
             else
                   return null;
@@ -173,5 +182,17 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
 	msg.setText(body);
 	    
 	Transport.send(msg,username,password);
+    }
+    
+    public String startServer() throws RemoteException{
+        Registry registry = LocateRegistry.createRegistry(1099);
+        registry.rebind("Il Paroliere", this);
+        return "Server started...";
+    }
+    
+    public void shutDown() throws Exception{
+       Registry registry = LocateRegistry.getRegistry();
+       registry.unbind("Il Paroliere");
+       UnicastRemoteObject.unexportObject(this, false);
     }
 }
