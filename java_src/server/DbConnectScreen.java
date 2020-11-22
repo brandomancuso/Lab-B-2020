@@ -38,7 +38,7 @@ public class DbConnectScreen extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginDbButton){
-            String host = dbHost.getText();
+            String host = "jdbc:postgresql://" + dbHost.getText() + "/"; //jdbc:postgresql://localhost/
             String user = dbUsername.getText();
             String password = String.valueOf(dbPassword.getPassword());
             

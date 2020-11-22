@@ -24,6 +24,9 @@ public class ServerMain {
         Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig().setHost(dbHost).setUser(dbUser).setPswd(dbPassword));
         
         if(dbReference != null){
+            if(!dbReference.checkDatabaseExistence()){
+                dbReference.createDatabase();
+            }
             if(dbReference.checkAdminExistence()){
                 loginScreen.setVisible(true);
                 return true;
