@@ -1,6 +1,6 @@
 package database;
 
-class DatabaseConfig {
+public class DatabaseConfig {
     String host;
     String user;
     String pswd;

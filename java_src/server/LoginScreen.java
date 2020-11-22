@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
@@ -36,22 +37,16 @@ public class LoginScreen extends JFrame implements ActionListener{
             String username = usernameTxt.getText();
             String password = String.valueOf(passwordTxt.getPassword());
             
-            //Controllo email vuota
-            if(username.isEmpty()){
-                utility.showMessage("Inserire username!", "Login Amministratore", this);
-            }
-            //Controllo passoword vuota
-            if(password.isEmpty()){
-                utility.showMessage("Inserire password!", "Login Amministratore", this);
-            }
-            //TODO Controllo delle credenziali nel Database
+            String controlResult = utility.controlLoginResult(username, password);
             
-            ServerMain.showHome();
-            this.setVisible(false);
-        }
-        if(event.getSource() == resetButton){
-            usernameTxt.setText("");
-            passwordTxt.setText("");
+            if(controlResult == null){
+                //TODO Aggiungere controlli accesso con DB
+                this.setVisible(false);
+                ServerMain.showHome();
+            }
+            else{
+                JOptionPane.showMessageDialog(null, controlResult,"Login Amministratore", JOptionPane.ERROR_MESSAGE);
+            }
         }
         if(event.getSource() == resetButton){
             usernameTxt.setText("");
@@ -98,11 +93,13 @@ public class LoginScreen extends JFrame implements ActionListener{
         loginButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         loginButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/server/icons/enter_24px.png"))); // NOI18N
         loginButton.setText("Login");
+        loginButton.addActionListener(this);
 
         resetButton.setBackground(new java.awt.Color(250, 0, 0));
         resetButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         resetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/server/icons/restore_page_24px.png"))); // NOI18N
         resetButton.setText("Reset");
+        resetButton.addActionListener(this);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
