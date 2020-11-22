@@ -208,7 +208,6 @@ public class DatabaseImpl implements Database{
         return this;
     }
     
-    
     public static Database getDatabase() {
         if(instance == null) {
             instance = new DatabaseImpl();
