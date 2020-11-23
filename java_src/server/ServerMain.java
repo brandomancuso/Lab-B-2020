@@ -21,7 +21,9 @@ public class ServerMain {
     
     //Accedo al database e controllo la presenza di un amministratore
     public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost){
-        Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig().setHost(dbHost).setUser(dbUser).setPswd(dbPassword));
+        Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
+                .setHost(dbHost).setUser(dbUser)
+                .setPswd(dbPassword));
         
         if(dbReference != null){
             if(!dbReference.checkDatabaseExistence()){
