@@ -40,7 +40,7 @@ public class ControlFrame extends javax.swing.JFrame {
     CardLayout card;
     ClientServiceImpl clientService;
     ServerServiceStub stub;
-    UserData user;
+    UserData loggedUser;
 
     public ControlFrame() {
         initComponents();
@@ -82,6 +82,7 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_profile = new javax.swing.JButton();
         btn_home = new javax.swing.JButton();
         btn_stats = new javax.swing.JButton();
+        btn_logout = new javax.swing.JButton();
         jPanel_title = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel_main = new javax.swing.JPanel();
@@ -186,6 +187,19 @@ public class ControlFrame extends javax.swing.JFrame {
             }
         });
 
+        btn_logout.setBackground(new java.awt.Color(79, 36, 107));
+        btn_logout.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
+        btn_logout.setForeground(new java.awt.Color(232, 17, 35));
+        btn_logout.setText("LOGOUT");
+        btn_logout.setBorder(null);
+        btn_logout.setEnabled(false);
+        btn_logout.setPreferredSize(new java.awt.Dimension(589, 521));
+        btn_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_logoutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel_sidebarLayout = new javax.swing.GroupLayout(jPanel_sidebar);
         jPanel_sidebar.setLayout(jPanel_sidebarLayout);
         jPanel_sidebarLayout.setHorizontalGroup(
@@ -197,6 +211,10 @@ public class ControlFrame extends javax.swing.JFrame {
                     .addComponent(btn_profile, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btn_home, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap(13, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_sidebarLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel_sidebarLayout.setVerticalGroup(
             jPanel_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,7 +225,9 @@ public class ControlFrame extends javax.swing.JFrame {
                 .addComponent(btn_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(119, 119, 119))
         );
 
         jPanel_title.setBackground(new java.awt.Color(137, 109, 156));
@@ -753,11 +773,11 @@ public class ControlFrame extends javax.swing.JFrame {
         boolean logged = false;
         try {
             Pair<String, UserData> res = stub.login(email, password);
-            
-            if(res.getFirst() != null){
-                user = stub.login(email, password).getLast();
+
+            if (res.getFirst() != null) {
+                loggedUser = stub.login(email, password).getLast();
                 logged = true;
-            }else{
+            } else {
                 showMessageDialog(null, res.getLast().toString());
             }
         } catch (RemoteException ex) {
@@ -767,17 +787,15 @@ public class ControlFrame extends javax.swing.JFrame {
             btn_home.setEnabled(true);
             btn_stats.setEnabled(true);
             btn_profile.setEnabled(true);
+            btn_logout.setEnabled(true);
             card.show(jPanel_main, "home");
             this.fillGameTable();
-        } else {
-            //alert
-            showMessageDialog(null, "Email / password errati");
         }
     }//GEN-LAST:event_btn_loginActionPerformed
 
     private void label_pswRecoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_pswRecoverMouseClicked
         // TODO add your handling code here:
-        RecoverPsw recover = new RecoverPsw(this, true);
+        RecoverPsw recover = new RecoverPsw(this, true, stub);
         recover.setVisible(true);
     }//GEN-LAST:event_label_pswRecoverMouseClicked
 
@@ -809,7 +827,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_profileActionPerformed
         // TODO add your handling code here:
-        fillUserProfileData(user);
+        fillUserProfileData(loggedUser);
         card.show(jPanel_main, "profile");
     }//GEN-LAST:event_btn_profileActionPerformed
 
@@ -873,6 +891,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_save_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_profileActionPerformed
         // TODO add your handling code here:
+        UserData updatedUser;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_email_profile) || GuiUtility.isEmpty(this.text_name_profile) || GuiUtility.isEmpty(this.text_surname_profile) || GuiUtility.isEmpty(this.text_username_profile) || GuiUtility.isEmpty(this.text_password_profile) || GuiUtility.isEmpty(this.text_repeatPassword_profile)) {
             showMessageDialog(null, "Compilare tutti i campi");
@@ -888,11 +907,33 @@ public class ControlFrame extends javax.swing.JFrame {
             showMessageDialog(null, "Le password non coincidono");
             return;
         }
-        //CALL update profile method
+        //SET new profile data
+        updatedUser = new UserData();
+        updatedUser.setEmail(this.text_email_profile.getText());
+        updatedUser.setFirstName(this.text_name_profile.getText());
+        updatedUser.setLastName(this.text_surname_profile.getText());
+        updatedUser.setNickname(this.text_username_profile.getText());
+        updatedUser.setPassword(Arrays.toString(this.text_password_profile.getPassword()));
 
-        //DISABLE button
+        try {
+            //CALL update method and update loggedUser with updatedUser
+            loggedUser = stub.updateUserData(updatedUser, loggedUser.getNickname());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //DISABLE save button
         this.btn_save_profile.setEnabled(false);
     }//GEN-LAST:event_btn_save_profileActionPerformed
+
+    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
+        try {
+            //CALL logout method
+            stub.logout(this.loggedUser.getNickname());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_logoutActionPerformed
 
     private void fillUserProfileData(UserData user) {
         text_email_profile.setText(user.getEmail());
@@ -996,6 +1037,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JButton btn_createGame_home;
     private javax.swing.JButton btn_home;
     private javax.swing.JButton btn_login;
+    private javax.swing.JButton btn_logout;
     private javax.swing.JButton btn_partecipate_home;
     private javax.swing.JButton btn_profile;
     private javax.swing.JButton btn_save_profile;

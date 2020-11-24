@@ -347,6 +347,7 @@ public class RegisterUser extends javax.swing.JDialog {
     }//GEN-LAST:event_text_verificationCodeMouseClicked
 
     private void btn_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registerActionPerformed
+        boolean registered = false;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_email) || GuiUtility.isEmpty(this.text_name) || GuiUtility.isEmpty(this.text_surname) || GuiUtility.isEmpty(this.text_username) || GuiUtility.isEmpty(this.text_password) || GuiUtility.isEmpty(this.text_repeatPassword)) {
             showMessageDialog(null, "Compilare tutti i campi");
@@ -385,9 +386,26 @@ public class RegisterUser extends javax.swing.JDialog {
         } catch (RemoteException ex) {
             Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //ENABLE verification part
-        this.text_verificationCode.setEnabled(true);
-        this.btn_verify.setEnabled(true);
+        //CHECK registration
+        if (registered) {
+            //ENABLE verification part
+            this.text_verificationCode.setEnabled(true);
+            this.btn_verify.setEnabled(true);
+        } else {
+            //IF error, unlock fields so user can try again..
+            showMessageDialog(null, "Errore durante la registrazione...");
+            this.text_verificationCode.setEnabled(false);
+            this.btn_verify.setEnabled(false);
+            this.isFieldLocked = false;
+            this.btn_register.setEnabled(true);
+            this.text_email.setEnabled(true);
+            this.text_name.setEnabled(true);
+            this.text_surname.setEnabled(true);
+            this.text_username.setEnabled(true);
+            this.text_password.setEnabled(true);
+            this.text_repeatPassword.setEnabled(true);
+
+        }
     }//GEN-LAST:event_btn_registerActionPerformed
 
     private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed

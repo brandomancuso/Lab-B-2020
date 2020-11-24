@@ -5,18 +5,32 @@
  */
 package client;
 
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import static javax.swing.JOptionPane.showMessageDialog;
+import server.ServerServiceStub;
+
 /**
  *
  * @author Edoardo
  */
 public class RecoverPsw extends javax.swing.JDialog {
 
+    ServerServiceStub stub;
+
     /**
      * Creates new form RegisterUser
      */
-    public RecoverPsw(java.awt.Frame parent, boolean modal) {
+    public RecoverPsw(java.awt.Frame parent, boolean modal, ServerServiceStub stub) {
         super(parent, modal);
         initComponents();
+        this.stub = stub;
+    }
+
+    private RecoverPsw(JFrame jFrame, boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -62,6 +76,11 @@ public class RecoverPsw extends javax.swing.JDialog {
         btn_recoverPsw.setText("RECUPERA");
         btn_recoverPsw.setBorder(null);
         btn_recoverPsw.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_recoverPsw.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_recoverPswActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -120,6 +139,34 @@ public class RecoverPsw extends javax.swing.JDialog {
         this.text_email.setText("");
 
     }//GEN-LAST:event_text_emailActionPerformed
+
+    private void btn_recoverPswActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_recoverPswActionPerformed
+        // TODO add your handling code here:
+        boolean res = false;
+        //CHECK empty
+        if (GuiUtility.isEmpty(this.text_email)) {
+            showMessageDialog(null, "Fornire un indirizzo email");
+            return;
+        }
+        //CHECK email
+        if (GuiUtility.isEmailCorrect(this.text_email.getText()) == false) {
+            showMessageDialog(null, "Formato Email errato");
+            return;
+        }
+        try {
+            //CALL recover method
+            res = stub.recoverPassword(this.text_email.getText());
+        } catch (RemoteException ex) {
+            Logger.getLogger(RecoverPsw.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (res) {
+            showMessageDialog(null, "Ti abbiamo inviato una email");
+            this.setVisible(false);
+            this.dispose();
+        } else {
+            showMessageDialog(null, "Si è verificato un errore....");
+        }
+    }//GEN-LAST:event_btn_recoverPswActionPerformed
 
     /**
      * @param args the command line arguments
