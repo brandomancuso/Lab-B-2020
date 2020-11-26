@@ -26,6 +26,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import server.ServerServiceStub;
+import server.game.ServerGameStub;
 import utils.Pair;
 
 /**
@@ -39,15 +40,16 @@ public class ControlFrame extends javax.swing.JFrame {
      */
     CardLayout card;
     ClientServiceImpl clientService;
-    ServerServiceStub stub;
+    ServerServiceStub serviceStub;
     UserData loggedUser;
+    List<GameData> gameList;
 
     public ControlFrame() {
         initComponents();
 
         try {
             Registry registry = LocateRegistry.getRegistry(1099);
-            stub = (ServerServiceStub) registry.lookup("Il Paroliere");
+            serviceStub = (ServerServiceStub) registry.lookup("Il Paroliere");
         } catch (NotBoundException | RemoteException e) {
             showMessageDialog(null, "Si è verificato un errore nella connessione... " + e.getLocalizedMessage());
         }
@@ -414,11 +416,6 @@ public class ControlFrame extends javax.swing.JFrame {
                 text_gameName_homeMouseClicked(evt);
             }
         });
-        text_gameName_home.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_gameName_homeActionPerformed(evt);
-            }
-        });
 
         jSeparator9.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -438,6 +435,11 @@ public class ControlFrame extends javax.swing.JFrame {
         combo_Nplayers.setSelectedIndex(5);
         combo_Nplayers.setToolTipText("");
         combo_Nplayers.setBorder(null);
+        combo_Nplayers.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combo_NplayersItemStateChanged(evt);
+            }
+        });
 
         jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane3.setBorder(null);
@@ -760,7 +762,7 @@ public class ControlFrame extends javax.swing.JFrame {
         String email = this.text_email_login.getText();
         String password = Arrays.toString(this.text_password_login.getPassword());
         //CHECK fields
-        if (GuiUtility.isEmpty(this.text_email_login) == false) {
+        if (GuiUtility.isEmpty(this.text_email_login)) {
             showMessageDialog(null, "Compilare i campi richiesti");
             return;
         }
@@ -772,10 +774,10 @@ public class ControlFrame extends javax.swing.JFrame {
         //CALL login method
         boolean logged = false;
         try {
-            Pair<String, UserData> res = stub.login(email, password);
+            Pair<String, UserData> res = serviceStub.login(email, password);
 
             if (res.getFirst() != null) {
-                loggedUser = stub.login(email, password).getLast();
+                loggedUser = serviceStub.login(email, password).getLast();
                 logged = true;
             } else {
                 showMessageDialog(null, res.getLast().toString());
@@ -795,13 +797,13 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void label_pswRecoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_pswRecoverMouseClicked
         // TODO add your handling code here:
-        RecoverPsw recover = new RecoverPsw(this, true, stub);
+        RecoverPsw recover = new RecoverPsw(this, true, serviceStub);
         recover.setVisible(true);
     }//GEN-LAST:event_label_pswRecoverMouseClicked
 
     private void label_signinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_signinMouseClicked
         // TODO add your handling code here:
-        RegisterUser register = new RegisterUser(this, true, stub);
+        RegisterUser register = new RegisterUser(this, true, serviceStub);
         register.setVisible(true);
     }//GEN-LAST:event_label_signinMouseClicked
 
@@ -817,6 +819,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_homeActionPerformed
         // TODO add your handling code here:
+        this.fillGameTable();
         card.show(jPanel_main, "home");
     }//GEN-LAST:event_btn_homeActionPerformed
 
@@ -834,11 +837,21 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_createGame_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_createGame_homeActionPerformed
         // TODO add your handling code here:
+        if (GuiUtility.isEmpty(this.text_gameName_home)) {
+            showMessageDialog(null, "Inserire un nome della partita");
+            return;
+        }
+        ServerGameStub serverGameStub = null;
+        try {
+            ClientGameImpl clientGameStub = new ClientGameImpl();
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGameStub);
+            //OPEN lobby passing serverGameStub
+            Lobby lobby = new Lobby(this, true, serverGameStub, clientGameStub);
+            lobby.setVisible(true);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_createGame_homeActionPerformed
-
-    private void text_gameName_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_gameName_homeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_text_gameName_homeActionPerformed
 
     private void btn_partecipate_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_homeActionPerformed
         // TODO add your handling code here:
@@ -917,7 +930,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
         try {
             //CALL update method and update loggedUser with updatedUser
-            loggedUser = stub.updateUserData(updatedUser, loggedUser.getNickname());
+            loggedUser = serviceStub.updateUserData(updatedUser, loggedUser.getNickname());
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -929,11 +942,18 @@ public class ControlFrame extends javax.swing.JFrame {
     private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
         try {
             //CALL logout method
-            stub.logout(this.loggedUser.getNickname());
+            serviceStub.logout(this.loggedUser.getNickname());
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_logoutActionPerformed
+
+    private void combo_NplayersItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_NplayersItemStateChanged
+        // TODO add your handling code here:
+        if (this.combo_Nplayers.getSelectedIndex() != 5) {
+            this.btn_createGame_home.setEnabled(true);
+        }
+    }//GEN-LAST:event_combo_NplayersItemStateChanged
 
     private void fillUserProfileData(UserData user) {
         text_email_profile.setText(user.getEmail());
@@ -970,8 +990,12 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     public void fillGameTable() {
+        //CREATE custom table model
         DefaultTableModel model = this.createGametable();
-        List<GameData> gameList = clientService.getGamesList();
+        //CLEAR the game list
+        gameList.clear();
+        //GET fresh game list
+        gameList = clientService.getGamesList();
 
         //TEST ADDING VALUES
         GameData test = new GameData("PartitaEdoardoBianchi", 3);
@@ -987,7 +1011,7 @@ public class ControlFrame extends javax.swing.JFrame {
         test2.addPlayer("rocco");
         gameList.add(test2);
         //END
-
+        //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {

@@ -3,6 +3,7 @@ package client;
 import entity.WordData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,11 +12,18 @@ import java.util.Map;
  * @author Edoardo
  */
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
-   
+
+    private List<String> lobby;
+
     public ClientGameImpl() throws RemoteException {
-        
+        lobby = new ArrayList<String>();
     }
 
+    //GETTER
+    public synchronized List<String> getLobbyList() {
+        return lobby;
+    }
+    
     @Override
     public List<String> getWords() throws RemoteException {
         return null;
@@ -44,14 +52,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public void updateLobby(List<String> nickName) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        lobby = nickName;
     }
 
     @Override
     public void notify(List<String> nickName) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
 
 }
