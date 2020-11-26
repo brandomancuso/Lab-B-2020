@@ -773,6 +773,7 @@ public class ControlFrame extends javax.swing.JFrame {
         }
         //CALL login method
         boolean logged = false;
+
         try {
             Pair<String, UserData> res = serviceStub.login(email, password);
 
@@ -843,10 +844,9 @@ public class ControlFrame extends javax.swing.JFrame {
         }
         ServerGameStub serverGameStub = null;
         try {
-            ClientGameImpl clientGameStub = new ClientGameImpl();
-            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGameStub);
-            //OPEN lobby passing serverGameStub
-            Lobby lobby = new Lobby(this, true, serverGameStub, clientGameStub);
+            Lobby lobby = new Lobby(this, true, loggedUser);
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, lobby.getClientGame());
+            lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -855,6 +855,17 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_partecipate_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_homeActionPerformed
         // TODO add your handling code here:
+        ServerGameStub serverGameStub = null;
+        int gameIndex = this.jTableGameList.getSelectedRow();
+
+        try {
+            Lobby lobby = new Lobby(this, true, loggedUser);
+            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), lobby.getClientGame());
+            lobby.setServerGameStub(serverGameStub);
+            lobby.setVisible(true);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_partecipate_homeActionPerformed
 
     private void text_gameName_homeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_gameName_homeMouseClicked
@@ -1015,7 +1026,7 @@ public class ControlFrame extends javax.swing.JFrame {
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {
-                rowData[0] = tmp.getName() + " " + "(Creatore)";
+                rowData[0] = tmp.getId() + " " + tmp.getName() + " " + "Creatore";
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 model.addRow(rowData);
             }

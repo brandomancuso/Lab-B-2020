@@ -5,10 +5,15 @@
  */
 package client;
 
+import entity.UserData;
 import java.awt.Component;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import server.game.ServerGameStub;
 
 /**
@@ -19,21 +24,48 @@ public class Lobby extends javax.swing.JDialog {
 
     ServerGameStub gameStub;
     ClientGameImpl clientgame;
+    UserData loggedUser;
 
     /**
      * Creates new form Lobby
      */
-    public Lobby(java.awt.Frame parent, boolean modal, ServerGameStub gameStub, ClientGameImpl clientGame) {
+    public Lobby(java.awt.Frame parent, boolean modal, ServerGameStub gameStub, UserData loggedUser) {
         super(parent, modal);
         initComponents();
         this.gameStub = gameStub;
-        this.clientgame = clientGame;
-        
+        try {
+            this.clientgame = new ClientGameImpl(this);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.loggedUser = loggedUser;
+
+        this.fillPartecipant();
+    }
+
+    public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser) {
+        super(parent, modal);
+        initComponents();
+        try {
+            this.clientgame = new ClientGameImpl(this);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.loggedUser = loggedUser;
+
         this.fillPartecipant();
     }
 
     private Lobby(JFrame jFrame, boolean b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public synchronized ClientGameImpl getClientGame() {
+        return this.clientgame;
+    }
+
+    public void setServerGameStub(ServerGameStub serverGameStub) {
+        this.gameStub = serverGameStub;
     }
 
     /**
@@ -50,6 +82,7 @@ public class Lobby extends javax.swing.JDialog {
         label_partecipantWait = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList_lobby = new javax.swing.JList<>();
+        jLabel_timer = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -82,37 +115,45 @@ public class Lobby extends javax.swing.JDialog {
         jList_lobby.setEnabled(false);
         jScrollPane1.setViewportView(jList_lobby);
 
+        jLabel_timer.setFont(new java.awt.Font("Bauhaus 93", 0, 36)); // NOI18N
+        jLabel_timer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel_timer.setText("30");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(label_partecipantWait, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(label_partecipantWait, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addGap(39, 39, 39)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btn_leave, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                    .addComponent(jLabel_timer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(label_partecipantWait, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(22, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(76, 76, 76)
-                        .addComponent(btn_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btn_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel_timer)
+                        .addGap(56, 56, 56))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,16 +164,23 @@ public class Lobby extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_leaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_leaveActionPerformed
-
-
+        try {
+            this.gameStub.leaveGame(loggedUser.getNickname());
+        } catch (RemoteException ex) {
+            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.fillPartecipant();
     }//GEN-LAST:event_btn_leaveActionPerformed
 
-    private void fillPartecipant() {
+    public void fillPartecipant() {
         List<String> names = new ArrayList<String>();
-        names.add("uno");
-        names.add("due");
         names = this.clientgame.getLobbyList();
-        this.jList_lobby.add((Component) names);
+        this.jList_lobby.removeAll();
+        this.jList_lobby = new JList(names.toArray());
+    }
+
+    public void updateTimer(int value) {
+        this.jLabel_timer.setText(value + "");
     }
 
     /**
@@ -179,6 +227,7 @@ public class Lobby extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_leave;
+    private javax.swing.JLabel jLabel_timer;
     private javax.swing.JList<String> jList_lobby;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

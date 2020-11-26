@@ -58,6 +58,7 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     @Override
     public synchronized void update(List<GameData> games) throws RemoteException {
         gamesList = games;
+        gui.fillGameTable();
         //capire quando sono nella finestra home e chiamare il metodo per refillare la tabella partite
         
     }
