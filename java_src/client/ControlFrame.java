@@ -762,7 +762,7 @@ public class ControlFrame extends javax.swing.JFrame {
         String email = this.text_email_login.getText();
         String password = Arrays.toString(this.text_password_login.getPassword());
         //CHECK fields
-        if (GuiUtility.isEmpty(this.text_email_login)) {
+        if (email.equals("") || password.equals("")) {
             showMessageDialog(null, "Compilare i campi richiesti");
             return;
         }
