@@ -269,11 +269,6 @@ public class ControlFrame extends javax.swing.JFrame {
                 text_email_loginMouseClicked(evt);
             }
         });
-        text_email_login.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                text_email_loginActionPerformed(evt);
-            }
-        });
 
         text_password_login.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_password_login.setText("jPasswordField1");
