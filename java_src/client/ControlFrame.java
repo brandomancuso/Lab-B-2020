@@ -1060,6 +1060,10 @@ public class ControlFrame extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        System.setProperty("java.security.policy", "file:./resources/policy.policy");
+        if (System.getSecurityManager() == null) {
+            System.setSecurityManager(new SecurityManager());
+        }
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
