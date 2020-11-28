@@ -3,6 +3,7 @@ package client;
 import entity.WordData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,9 +12,28 @@ import java.util.Map;
  * @author Edoardo
  */
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
-   
-    public ClientGameImpl() throws RemoteException {
-        
+
+    private List<String> lobby;
+    private int timerValue;
+    private int gameState;
+    private Lobby guiLobby;
+
+    public ClientGameImpl(Lobby parGuiLobby) throws RemoteException {
+        lobby = new ArrayList<String>();
+        guiLobby = parGuiLobby;
+    }
+
+    //GETTER
+    public synchronized List<String> getLobbyList() {
+        return lobby;
+    }
+
+    public synchronized int getTimerValue() {
+        return timerValue;
+    }
+
+    public synchronized int getGameState() {
+        return gameState;
     }
 
     @Override
@@ -29,12 +49,25 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public void changeGameState(int gameState) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.gameState = gameState;
+        switch (gameState) {
+            case 0: //waiting
+                break;
+            case 1: //session
+                break;
+            case 2: //result
+                break;
+            case 3: //win
+                break;
+            case 4: //abandoned
+                break;
+        }
     }
 
     @Override
     public void updateTimer(int timerValue) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.timerValue = timerValue;
+        this.guiLobby.updateTimer(timerValue);
     }
 
     @Override
@@ -44,14 +77,13 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public void updateLobby(List<String> nickName) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        lobby = nickName;
+        this.guiLobby.fillPartecipant();
     }
 
     @Override
     public void notify(List<String> nickName) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
 
 }

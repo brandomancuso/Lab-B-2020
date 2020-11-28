@@ -6,11 +6,16 @@
 package client;
 
 import entity.UserData;
+import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JTextField;
+import server.ServerServiceStub;
 
 /**
  *
@@ -20,14 +25,20 @@ public class RegisterUser extends javax.swing.JDialog {
 
     private UserData newUser;
     private boolean isFieldLocked;
+    ServerServiceStub stub;
 
     /**
      * Creates new form RegisterUser
      */
-    public RegisterUser(java.awt.Frame parent, boolean modal) {
+    public RegisterUser(java.awt.Frame parent, boolean modal, ServerServiceStub stub) {
         super(parent, modal);
         initComponents();
         isFieldLocked = false;
+        this.stub = stub;
+    }
+
+    private RegisterUser(JFrame jFrame, boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -336,13 +347,14 @@ public class RegisterUser extends javax.swing.JDialog {
     }//GEN-LAST:event_text_verificationCodeMouseClicked
 
     private void btn_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registerActionPerformed
+        boolean registered = false;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_email) || GuiUtility.isEmpty(this.text_name) || GuiUtility.isEmpty(this.text_surname) || GuiUtility.isEmpty(this.text_username) || GuiUtility.isEmpty(this.text_password) || GuiUtility.isEmpty(this.text_repeatPassword)) {
             showMessageDialog(null, "Compilare tutti i campi");
             return;
         }
         //CHECK email
-        if (GuiUtility.isEmailCorrect(this.text_email.getText())== false) {
+        if (GuiUtility.isEmailCorrect(this.text_email.getText()) == false) {
             showMessageDialog(null, "Formato Email errato");
             return;
         }
@@ -368,15 +380,37 @@ public class RegisterUser extends javax.swing.JDialog {
         newUser.setLastName(this.text_surname.getText());
         newUser.setNickname(this.text_username.getText());
         newUser.setPassword(Arrays.toString(this.text_password.getPassword()));
-        //CALL Register Method
-        //ENABLE verification part
-        this.text_verificationCode.setEnabled(true);
-        this.btn_verify.setEnabled(true);
+        try {
+            //CALL Register Method
+            stub.register(newUser);
+        } catch (RemoteException ex) {
+            Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //CHECK registration
+        if (registered) {
+            //ENABLE verification part
+            this.text_verificationCode.setEnabled(true);
+            this.btn_verify.setEnabled(true);
+        } else {
+            //IF error, unlock fields so user can try again..
+            showMessageDialog(null, "Errore durante la registrazione...");
+            this.text_verificationCode.setEnabled(false);
+            this.btn_verify.setEnabled(false);
+            this.isFieldLocked = false;
+            this.btn_register.setEnabled(true);
+            this.text_email.setEnabled(true);
+            this.text_name.setEnabled(true);
+            this.text_surname.setEnabled(true);
+            this.text_username.setEnabled(true);
+            this.text_password.setEnabled(true);
+            this.text_repeatPassword.setEnabled(true);
+
+        }
     }//GEN-LAST:event_btn_registerActionPerformed
 
     private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
         // TODO add your handling code here:
-
+        
 
     }//GEN-LAST:event_btn_verifyActionPerformed
 
@@ -415,7 +449,6 @@ public class RegisterUser extends javax.swing.JDialog {
         if (!isFieldLocked)
             this.text_repeatPassword.setText("");
     }//GEN-LAST:event_text_repeatPasswordMouseClicked
-
 
     /**
      * @param args the command line arguments
