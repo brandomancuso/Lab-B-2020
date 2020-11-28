@@ -242,6 +242,11 @@ public class ControlFrame extends javax.swing.JFrame {
                 text_email_loginMouseClicked(evt);
             }
         });
+        text_email_login.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                text_email_loginActionPerformed(evt);
+            }
+        });
 
         text_password_login.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_password_login.setText("jPasswordField1");
@@ -876,6 +881,10 @@ public class ControlFrame extends javax.swing.JFrame {
         //DISABLE button
         this.btn_save_profile.setEnabled(false);
     }//GEN-LAST:event_btn_save_profileActionPerformed
+
+    private void text_email_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_email_loginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_text_email_loginActionPerformed
 
     private void FillUserProfileData() {
         text_email_profile.setText("giorgio@gmail.com");

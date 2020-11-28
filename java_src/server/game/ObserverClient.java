@@ -31,7 +31,7 @@ public class ObserverClient implements Observer  {
         } catch (RemoteException ex) {
             System.err.println("Client isn't reachable");
             o.deleteObserver(this);
-            game.exit();
+            game.exit(nickname+" non è raggiungibile");
         }
     }
 

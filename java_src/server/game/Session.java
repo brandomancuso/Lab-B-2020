@@ -54,8 +54,7 @@ public class Session {
         try {
             persistentSignal.waitTimer();
             if (Thread.interrupted())
-                    //unbind the object and use the method unicastRemoteObject.unexportedObject();
-                    System.exit(0);
+                System.exit(0);//when the method exit is call then the game is interupted
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
@@ -78,7 +77,6 @@ public class Session {
         });
         
         //send the word with points to everyone after checking every word
-        //TO-DO:you have to skim through the correct word and incorrect words beacuse remeber that every word has a point for database efficiency
         //value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPoints);
         //value.getClientGameStub().changeGameState(2);//change in watching Result State
         
@@ -86,8 +84,7 @@ public class Session {
         try {
             persistentSignal.waitTimer();
             if (Thread.interrupted())
-                //unbind the object and use the method unicastRemoteObject.unexportedObject();
-                System.exit(0);
+                System.exit(0);//when the method exit is call then the game is interupted
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
