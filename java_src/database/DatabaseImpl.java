@@ -319,6 +319,7 @@ public class DatabaseImpl implements Database{
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
+            conn = connManager.getConnection();
             stmt = conn.prepareStatement(sql + "game ORDER BY id DESC");
             rs = stmt.executeQuery();
             if(rs.next()){
