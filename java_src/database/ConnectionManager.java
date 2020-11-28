@@ -1,6 +1,7 @@
 package database;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -18,7 +19,7 @@ public class ConnectionManager {
     private DatabaseConfig configuration;
     
     //Static Field(s)
-    private static final String DBNAME = "databaseIP";
+    private static final String DBNAME = "databaseip";
     
     //Singleton instance
     private static ConnectionManager instance = null;
@@ -104,11 +105,12 @@ public class ConnectionManager {
         try {
             conn = DriverManager.getConnection(configuration.host, configuration.user, configuration.pswd);
             Statement stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE DATABASE " + DBNAME);
+            stmt.execute("CREATE DATABASE " + DBNAME);
+            System.out.println("Database creato.");
+            stmt.close();
             conn.close();
             conn = getConnection();
-            stmt = conn.createStatement();
-            reader = new BufferedReader(new FileReader("sql_src/db_src_ip.txt"));
+            reader = new BufferedReader(new FileReader("sql_src/db_src_ip.sql"));
             String line;
             StringBuilder builder = new StringBuilder();
             while(reader.ready()) {
@@ -119,7 +121,10 @@ public class ConnectionManager {
                 builder.append(" ").append(line);
                 if(builder.charAt(builder.length() - 1) == ';') {
                     builder.deleteCharAt(builder.length() - 1);
-                    stmt.executeUpdate(builder.toString());
+                    stmt = conn.createStatement();
+                    stmt.execute(builder.toString());
+                    stmt.close();
+                    System.out.println("Eseguito: " + builder.toString());
                     builder = new StringBuilder();
                 }
             }
