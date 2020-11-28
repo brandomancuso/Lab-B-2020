@@ -9,6 +9,7 @@ import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class Game implements ServerGameStub{
             
             i++;
         }
-        //TO-DO make transit the client to the winner state and send the winners with notify()
+        //TO-DO make transit the client to the winner state and send the winners with notifyInfoGame()
         observerClientSet.forEach((key,value)->{
             try {
                 value.getClientGameStub().changeGameState(3);
@@ -159,13 +160,22 @@ public class Game implements ServerGameStub{
         }
     }
    
-    public void exit () 
+    public void exit (String nickname) 
     {
-        //TO-DO:advise the client that someone quit (by his nickname)
         observerClientSet.clear();//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
         timerThread.interrupt();//interrupt the timer beacause of game ending
         persistentSignal.interruptGame();//interrupt the game itself
         boolNextRound=false;
+        
+        observerClientSet.forEach((key,value)->{
+        try {
+                 value.getClientGameStub().changeGameState(4);//change into abandoned state
+                 value.getClientGameStub().notifyInfoGame(Arrays.asList(nickname));
+            }   catch (RemoteException ex) {
+                    Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        });
+              
         try {
             UnicastRemoteObject.unexportObject(this, true);
             serverServiceImpl.disconnectGame(gameData.getId());
@@ -198,10 +208,16 @@ public class Game implements ServerGameStub{
         {
             RemovePartecipant(nickname);
             serverServiceImpl.updateNumPlayer(gameData.getId());
+            observerClientSet.forEach((key,value)->{
+            try {
+                 value.getClientGameStub().changeGameState(4);//change into abandoned state
+                 value.getClientGameStub().notifyInfoGame(Arrays.asList(nickname));
+            }   catch (RemoteException ex) {
+                    Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
         }
         else
-            exit();   
-        
-        //TO-DO:notify() who left the game
+            exit(nickname);   
     }
 }
