@@ -347,7 +347,7 @@ public class RegisterUser extends javax.swing.JDialog {
     }//GEN-LAST:event_text_verificationCodeMouseClicked
 
     private void btn_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registerActionPerformed
-        boolean registered = false;
+        boolean registered = true;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_email) || GuiUtility.isEmpty(this.text_name) || GuiUtility.isEmpty(this.text_surname) || GuiUtility.isEmpty(this.text_username) || GuiUtility.isEmpty(this.text_password) || GuiUtility.isEmpty(this.text_repeatPassword)) {
             showMessageDialog(null, "Compilare tutti i campi");
@@ -359,7 +359,7 @@ public class RegisterUser extends javax.swing.JDialog {
             return;
         }
         //CHECK psw = repeatPsw
-        if (GuiUtility.isPasswordMatching(this.text_password, this.text_password)) {
+        if (GuiUtility.isPasswordMatching(this.text_password, this.text_password) == false) {
             showMessageDialog(null, "Le password non coincidono");
             return;
         }
@@ -379,9 +379,10 @@ public class RegisterUser extends javax.swing.JDialog {
         newUser.setFirstName(this.text_name.getText());
         newUser.setLastName(this.text_surname.getText());
         newUser.setNickname(this.text_username.getText());
-        newUser.setPassword(Arrays.toString(this.text_password.getPassword()));
+        //newUser.setPassword(Arrays.toString(this.text_password.getPassword()));
+        newUser.setPassword(String.valueOf(this.text_password.getPassword()));
         try {
-            //CALL Register Method
+            //CALL Register Method --> da sistemare
             stub.register(newUser);
         } catch (RemoteException ex) {
             Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
@@ -410,7 +411,7 @@ public class RegisterUser extends javax.swing.JDialog {
 
     private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
         // TODO add your handling code here:
-        
+
 
     }//GEN-LAST:event_btn_verifyActionPerformed
 
