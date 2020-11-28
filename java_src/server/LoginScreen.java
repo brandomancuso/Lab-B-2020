@@ -1,5 +1,8 @@
 package server;
 
+import database.Database;
+import database.DatabaseImpl;
+import entity.UserData;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -41,8 +44,17 @@ public class LoginScreen extends JFrame implements ActionListener{
             
             if(controlResult == null){
                 //TODO Aggiungere controlli accesso con DB
-                this.setVisible(false);
-                ServerMain.showHome();
+                Database dbReference = DatabaseImpl.getDatabase();
+                UserData administrator = dbReference.getUser(username);
+                if(administrator != null){
+                    this.setVisible(false);
+                    ServerMain.showHome();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Credenziali Errate!","Login Amministratore", JOptionPane.ERROR_MESSAGE);
+                    usernameTxt.setText("");
+                    passwordTxt.setText("");
+                }
             }
             else{
                 JOptionPane.showMessageDialog(null, controlResult,"Login Amministratore", JOptionPane.ERROR_MESSAGE);

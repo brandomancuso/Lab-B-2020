@@ -1,0 +1,5 @@
+grant {
+	permission java.security.AllPermission;
+        permission java.util.PropertyPermission "org.postgresql.forcebinary","read";
+};
+

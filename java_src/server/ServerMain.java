@@ -11,6 +11,10 @@ public class ServerMain {
     private static HomeScreen homeScreen;
     
     public static void main(String[] args){
+        System.setProperty("java.security.policy","file:./resources/policy.policy");
+        if(System.getSecurityManager() == null){
+            System.setSecurityManager(new SecurityManager());
+        }
         dbConnect = new DbConnectScreen();
         loginScreen = new LoginScreen();
         registerScreen = new RegisterScreen();
@@ -21,7 +25,9 @@ public class ServerMain {
     
     //Accedo al database e controllo la presenza di un amministratore
     public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost){
-        Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig().setHost(dbHost).setUser(dbUser).setPswd(dbPassword));
+       Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
+                .setHost(dbHost).setUser(dbUser)
+                .setPswd(dbPassword));
         
         if(dbReference != null){
             if(!dbReference.checkDatabaseExistence()){
@@ -46,7 +52,6 @@ public class ServerMain {
         loginScreen.setVisible(true);
     }
     
-    //Mostra la finestra di Home
     public static void showHome(){
         homeScreen.setVisible(true);
     }

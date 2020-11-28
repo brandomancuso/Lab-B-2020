@@ -7,9 +7,9 @@
 	<property name="build.dir" location="bin" />
 	<property name="dist.dir" location="dist" />
 	<property name="docs.dir" location="docs" />
-	<property name="res.dir" location="java_src/client/icons" />
 	<property name="lib.dir" location="lib" />
         <property name="class.path" value="lib/postgresql-42.2.18.jar lib/javax.mail.jar lib/activation.jar" />
+        <property name="res.dir" value="resources"/>
 	
 	<echo>${ant.version}</echo>
 	
@@ -39,12 +39,13 @@
 	
 	<target name="compile" depends="clean, makedir">
 		<echo>Compiling...</echo>
-		<javac includeAntRuntime="false" srcdir="${src.dir}" destdir="${build.dir}"  debug="true" classpath = "${lib.dir}/javax.mail.jar">
+		<javac includeAntRuntime="false" srcdir="${src.dir}" destdir="${build.dir}" debug="true" classpath = "${lib.dir}/javax.mail.jar">
 		</javac>
 		<copy file="${lib.dir}/postgresql-42.2.18.jar" todir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/javax.mail.jar" todir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/activation.jar" todir="${dist.dir}/lib"/>
 		<copy file="${dbsrc.dir}/db_src_ip.sql" todir="${dist.dir}/sql_src"/>
+                <copy file="${res.dir}/policy.policy" todir="${dist.dir}/resources"/>
 	</target>
 	
 	<target name="docs" depends="compile">
@@ -61,7 +62,7 @@
 	<target name="client_jar" depends="compile, docs">
 		<echo>Generating client's jar file...</echo>
 	        <jar destfile="${dist.dir}\IpClient.jar">
-			<fileset dir="${build.dir}" includes="client/*.class utils/*.class entity/*.class"/>
+			<fileset dir="${build.dir}" includes="client/*.class utils/*.class entity/*.class server/ServerServiceStub.class server/game/ServerGameStub.class"/>
                         <fileset dir="${src.dir}" includes="client/icons/*.png"/>
 	            <manifest>
 	                <attribute name="Main-Class" value="client.ControlFrame" />

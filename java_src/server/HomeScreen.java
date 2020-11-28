@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,7 +31,7 @@ public class HomeScreen extends JFrame implements ActionListener{
             initGUI();
         }
         catch(Exception e){
-            
+            e.printStackTrace();
         }
     }
     
@@ -38,8 +39,10 @@ public class HomeScreen extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == startButton){
             try{
-                String result = server.startServer();
-                serverOutput.append(result + "\n");
+                Registry registry = LocateRegistry.createRegistry(1099);
+                ServerServiceStub serverStub = (ServerServiceStub) UnicastRemoteObject.exportObject(server, 2001);
+                registry.rebind("Il Paroliere", serverStub);
+                serverOutput.append("Server started...\n");
                 startButton.setEnabled(false);
             }
             catch(Exception e){
@@ -48,12 +51,14 @@ public class HomeScreen extends JFrame implements ActionListener{
         }
         if(event.getSource() == exitButton){
             try{
-                server.shutDown();
+                Registry registry = LocateRegistry.getRegistry(1099);
+                registry.unbind("Il Paroliere");
+                UnicastRemoteObject.unexportObject(server, false);
                 startButton.setEnabled(true);
                 this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSED));
             }
             catch(Exception e){
-                serverOutput.append("Errore! "+ e.getMessage() + "\n");
+                serverOutput.append("Errore! "+ e.getCause() + "\n");
             }
             finally{
                 
@@ -159,5 +164,4 @@ public class HomeScreen extends JFrame implements ActionListener{
     protected static void stampEvent(String event){
         serverOutput.append(event+"\n");
     }
-    
 }

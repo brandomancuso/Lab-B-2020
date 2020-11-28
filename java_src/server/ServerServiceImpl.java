@@ -25,7 +25,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class ServerServiceImpl extends UnicastRemoteObject implements ServerServiceStub{
+public class ServerServiceImpl implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList;
     private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
@@ -74,16 +74,18 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
         return updatedUser;
     }
     
+    //TODO Modificare da String a boolean
     @Override
     public String register(UserData newUser) throws RemoteException {
-        try{
+        //try{
             String registerResult;
+            newUser.setActivationCode("12345678");
             UserData updatedNewUser = dbReference.addUser(newUser);
 
             if(updatedNewUser != null){
                 registerResult = "Registrazione completata!";
-                //TODO Invio mail all'utente
-                sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
+                //TODO Invio mail all'utente tramite thread per diminuire il ritardo
+                //sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
                 HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
                 return registerResult;
             }
@@ -92,11 +94,12 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
                 HomeScreen.stampEvent(updatedNewUser.getNickname() + ": errore durante la registrazione!");
                 return registerResult;
             }
-        }
-        catch(MessagingException e){
+        //}
+        /*catch(MessagingException e){
+            e.printStackTrace();
             HomeScreen.stampEvent("Invio email fallito!");
             return null;
-        }
+        }*/
     }
     
     @Override
@@ -182,17 +185,5 @@ public class ServerServiceImpl extends UnicastRemoteObject implements ServerServ
 	msg.setText(body);
 	    
 	Transport.send(msg,username,password);
-    }
-    
-    public String startServer() throws RemoteException{
-        Registry registry = LocateRegistry.createRegistry(1099);
-        registry.rebind("Il Paroliere", this);
-        return "Server started...";
-    }
-    
-    public void shutDown() throws Exception{
-       Registry registry = LocateRegistry.getRegistry();
-       registry.unbind("Il Paroliere");
-       UnicastRemoteObject.unexportObject(this, false);
     }
 }
