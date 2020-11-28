@@ -1,8 +1,13 @@
 package utils;
 
-public class Pair<T, V> {
+import java.io.Serializable;
+
+public class Pair<T, V> implements Serializable{
+    
     private T first;
     private V last;
+    
+    private static final long serialVersionUID = 1L;
     
     public Pair(T first, V last) {
         this.first = first;
