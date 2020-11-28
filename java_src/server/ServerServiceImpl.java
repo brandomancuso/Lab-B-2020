@@ -77,14 +77,15 @@ public class ServerServiceImpl implements ServerServiceStub{
     //TODO Modificare da String a boolean
     @Override
     public String register(UserData newUser) throws RemoteException {
-        try{
+        //try{
             String registerResult;
+            newUser.setActivationCode("12345678");
             UserData updatedNewUser = dbReference.addUser(newUser);
 
             if(updatedNewUser != null){
                 registerResult = "Registrazione completata!";
                 //TODO Invio mail all'utente tramite thread per diminuire il ritardo
-                sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
+                //sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
                 HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
                 return registerResult;
             }
@@ -93,12 +94,12 @@ public class ServerServiceImpl implements ServerServiceStub{
                 HomeScreen.stampEvent(updatedNewUser.getNickname() + ": errore durante la registrazione!");
                 return registerResult;
             }
-        }
-        catch(MessagingException e){
+        //}
+        /*catch(MessagingException e){
             e.printStackTrace();
             HomeScreen.stampEvent("Invio email fallito!");
             return null;
-        }
+        }*/
     }
     
     @Override

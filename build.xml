@@ -62,7 +62,7 @@
 	<target name="client_jar" depends="compile, docs">
 		<echo>Generating client's jar file...</echo>
 	        <jar destfile="${dist.dir}\IpClient.jar">
-			<fileset dir="${build.dir}" includes="client/*.class utils/*.class entity/*.class"/>
+			<fileset dir="${build.dir}" includes="client/*.class utils/*.class entity/*.class server/ServerServiceStub.class server/game/ServerGameStub.class"/>
                         <fileset dir="${src.dir}" includes="client/icons/*.png"/>
 	            <manifest>
 	                <attribute name="Main-Class" value="client.ControlFrame" />
