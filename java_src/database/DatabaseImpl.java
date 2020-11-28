@@ -25,7 +25,6 @@ public class DatabaseImpl implements Database{
     
     private DatabaseImpl() {
         connManager = ConnectionManager.getConnectionManager();
-        updateIds();
     }
     
     public static Database getDatabase() {
@@ -310,6 +309,7 @@ public class DatabaseImpl implements Database{
     @Override
     public Database configure(DatabaseConfig config) {
         connManager.configure(config);
+        updateIds();
         return this;
     }
     
