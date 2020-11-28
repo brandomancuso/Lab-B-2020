@@ -50,6 +50,9 @@ public class DbConnectScreen extends JFrame implements ActionListener{
                 }
                 else{
                     JOptionPane.showMessageDialog(null, "Errore di connessione con il Database","Database Connection", JOptionPane.ERROR_MESSAGE);
+                    dbUsername.setText("");
+                    dbPassword.setText("");
+                    dbHost.setText("");
                 }
             }
             else{

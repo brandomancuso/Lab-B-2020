@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ServerUtilityGui {
-    //private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
-    
+    //private final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
+    private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     public ServerUtilityGui(){
         
     }
@@ -33,7 +33,7 @@ public class ServerUtilityGui {
         }
     }
     
-    public String controlRegisterResult(String username, String password, String rPassword){
+    public String controlRegisterResult(String username, String password, String rPassword, String email){
         if(username.isEmpty()){
             //Se l'utente non ha inserito lo username
             return "Inserire lo username!";
@@ -49,13 +49,26 @@ public class ServerUtilityGui {
                     return "Ripetere la password!";
                 }
                 else{
-                    if(password.equals(rPassword)){
-                        //Tutti i dati inseriti sono corretti
-                        return null;
+                    if(email.isEmpty()){
+                        //Se l'utente non ha inserito la mail
+                        return "Inserire l'indirizzo email!";
                     }
                     else{
-                        //Se le due password sono diverse
-                        return "Le due password non coincidono!";
+                        if(password.equals(rPassword)){
+                            Matcher matcher = EMAIL_PATTERN.matcher(email);
+                            if(matcher.find()){
+                                //Tutte le informazioni corrette
+                                return null;
+                            }
+                            else{
+                                //L'utente non ha inserito una mail corretta
+                                return "Inserire email valida!";
+                            }
+                        }
+                        else{
+                            //Se le due password sono diverse
+                            return "Le due password non coincidono!";
+                        }
                     }
                 }
             }

@@ -92,7 +92,7 @@ public class DatabaseImpl implements Database{
 
     @Override
     public UserData addUser(UserData user) {
-        String sql = "INSERT INTO ip_user (nickname, name, surname, email, password, acrivation_code, admin, active) "
+        String sql = "INSERT INTO ip_user (nickname, name, surname, email, password, activation_code, adminstrator, active) "
                 + "VALUES (?,?,?,?,?,?,?,?)";
         Connection c = null;
         try {
