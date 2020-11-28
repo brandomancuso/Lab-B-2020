@@ -79,6 +79,14 @@ public class GameData implements Serializable{
     public List<String> getPlayersList() {
         return new LinkedList<>(playerPoints.keySet());
     }
+
+    public void setSessions(List<SessionData> sessions) {
+        this.sessions = sessions;
+    }
+
+    public List<SessionData> getSessions() {
+        return sessions;
+    }
     
     public void addSession(SessionData s){
         sessions.add(s);
