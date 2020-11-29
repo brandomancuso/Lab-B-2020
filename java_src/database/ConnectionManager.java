@@ -53,7 +53,7 @@ public class ConnectionManager {
             throw new NoConfigException("You need to configure the database first!");
         }
         if(checkDatabaseExistence()) {
-            String sql = "SELECT * FROM ip_user WHERE adminstrator = true";
+            String sql = "SELECT * FROM ip_user WHERE administrator = true";
             try {
                 Connection c = this.getConnection();
                 PreparedStatement stmt = c.prepareStatement(sql);

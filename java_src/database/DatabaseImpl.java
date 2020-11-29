@@ -25,7 +25,6 @@ public class DatabaseImpl implements Database{
     
     private DatabaseImpl() {
         connManager = ConnectionManager.getConnectionManager();
-        updateIds();
     }
     
     public static Database getDatabase() {
@@ -149,7 +148,7 @@ public class DatabaseImpl implements Database{
     @Override
     public UserData updateUser(UserData user, String old) {
         String sql = "UPDATE ip_user SET nickname = ? , name = ? , surname = ? ,"
-                + " email = ? , password = ? , acrivation_code = ? , admin = ? , active = ? "
+                + " email = ? , password = ? , acrivation_code = ? , administrator = ? , active = ? "
                 + "WHERE nickname = ?";
         Connection c = null;
         try {
@@ -370,6 +369,7 @@ public class DatabaseImpl implements Database{
     @Override
     public void createDatabase() {
         connManager.createDatabase();
+        updateIds();
     }
 
     @Override
