@@ -1,11 +1,8 @@
  package server.game;
 
-import client.ClientGameStub;
 import entity.*;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Session {
     private SessionData sessionData;
@@ -62,6 +59,7 @@ public class Session {
     
     public void startAfterGame(Thread timerThread)
     {
+        //checkword
         observerClientSet.forEach((key,value)->
         {
             try {
@@ -70,15 +68,23 @@ public class Session {
                 //check the words requested
                 int pointPlayer=checkWord(value.getNickname(), value.getWordsFound());
                 //Set the point for the player
-                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);     
+                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer); 
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }
         });
         
-        //send the word with points to everyone after checking every word
-        //value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPoints);
-        //value.getClientGameStub().changeGameState(2);//change in watching Result State
+        //send result
+        observerClientSet.forEach((key,value)->
+        {
+            try {
+                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());
+                value.getClientGameStub().changeGameState(2);//change in watching Result State
+             } catch (RemoteException ex) {
+                System.err.println(ex);
+            }
+        });
+        
         
         timerThread.start();
         try {
@@ -100,12 +106,14 @@ public class Session {
              {
                  wordTmp.setPoints(calculateScore(wordFound));
                  wordTmp.setCorrect(false);
+                 pointPlayer=0;
              }
               else
                 if (!dictionary.exists(wordFound))
                     {
                          wordTmp.setPoints(calculateScore(wordFound));
                          wordTmp.setCorrect(false);
+                         pointPlayer=0;
                     }
                  else
                      if(isDuplicated(wordFound))
@@ -123,7 +131,7 @@ public class Session {
 
              sessionData.addWord(nickname, wordTmp);   
        }
-       return pointPlayer;
+       return pointPlayer;//I save the real pointPlayer not the false one for the DataBase
     }   
     
     public String[] getWordMatrix()
