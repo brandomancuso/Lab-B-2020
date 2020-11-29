@@ -13,7 +13,7 @@ public class Term implements Serializable{
 	public Term(String key) {
 		super();
 		this.key = key;
-		this.definitionSet=new ArrayList<Definition>();
+		this.definitionSet=new ArrayList<>();
 	}
 	
 	public Term(String key, List<Definition> definitionSet) {

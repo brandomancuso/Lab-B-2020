@@ -18,7 +18,7 @@ public class PersistentSignal {
         }
         
         if(interruptFlag)
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();//it's the only way to capture the game thread and request to interrupt itself
         timeout = false;
 
     }

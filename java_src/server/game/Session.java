@@ -25,7 +25,7 @@ public class Session {
         this.numSession=numSession;
     }
  
-    //method called by Game Class 
+//methods called by Game Class 
     public void startBeforeGame(Thread timerThread)
     {
         timerThread.start();
@@ -74,7 +74,7 @@ public class Session {
             }
         });
         
-        //send result
+        //send result to client
         observerClientSet.forEach((key,value)->
         {
             try {
@@ -95,7 +95,8 @@ public class Session {
             System.err.println(ex);
         }
     }
-      
+  
+//utility methods    
     private int checkWord(String nickname,List<String> wordFoundList)
     {
        int pointPlayer=0;
@@ -134,17 +135,6 @@ public class Session {
        return pointPlayer;//I save the real pointPlayer not the false one for the DataBase
     }   
     
-    public String[] getWordMatrix()
-    {
-        return wordsMatrix.getWordsMatrix();
-    }
-    
-    public SessionData getSessionData()
-    {
-        return sessionData;
-    }
-   
-    //utility method   
     private boolean isDuplicated (String wordFound)
     {
         Map<String, List<WordData>> wordFoundMap= new HashMap<>(sessionData.getFoundWords());//i take from the return the hashmap of words found
@@ -176,5 +166,15 @@ public class Session {
             default:
                  return 11;           
         }
+    }
+    
+    public String[] getWordMatrix()
+    {
+        return wordsMatrix.getWordsMatrix();
+    }
+    
+    public SessionData getSessionData()
+    {
+        return sessionData;
     }
 }

@@ -1,6 +1,7 @@
  package server.game;
 
 import client.ClientGameStub;
+import database.Database;
 import entity.GameData;
 import entity.WordData;
 import java.io.File;
@@ -30,10 +31,12 @@ public class Game implements ServerGameStub{
     private ServerServiceImpl serverServiceImpl;//the reference is for call the methods for disconnect and update the player number 
     private Boolean isLobbyState;//to know which method call according to whether or not the game is in lobby frame
     private Boolean boolNextRound;
+    private Database dbReference;
     
-    public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub,ServerServiceImpl serverServiceImpl)
+    public Game (GameData gameData,String hostNickname,ClientGameStub clientGameStub,ServerServiceImpl serverServiceImpl,Database dbReDatabase)
     {
         this.gameData=gameData;
+        this.dbReference=dbReDatabase;
         observerClientSet=new HashMap<>();
         persistentSignal=new PersistentSignal();
         timer=new Timer(persistentSignal);
@@ -79,11 +82,12 @@ public class Game implements ServerGameStub{
                 timer.setTime(30);
                 isLobbyState=false;
             }
+            //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
             currentSession.startBeforeGame(timerThread=new Thread(timer));
             timer.setTime(180);
-            currentSession.startBeforeGame(timerThread=new Thread(timer));
+            currentSession.startRealGame(timerThread=new Thread(timer));
             timer.setTime(180);
-            currentSession.startBeforeGame(timerThread=new Thread(timer));
+            currentSession.startAfterGame(timerThread=new Thread(timer));
             //check if another session has to be started
             for(String nickname : gameData.getPlayersList())
             {
@@ -97,15 +101,18 @@ public class Game implements ServerGameStub{
             
             i++;
         }
-        //TO-DO make transit the client to the winner state and send the winners with notifyInfoGame()
+        //transit the client to the winner state and send the winners with notifyInfoGame()
         observerClientSet.forEach((key,value)->{
             try {
+                value.getClientGameStub().notifyInfoGame(winnerNickname);
                 value.getClientGameStub().changeGameState(3);
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }
         });
-        //updateGame(gameData); to save the results of the all sessions
+        
+        //to save the results of the all sessions
+        dbReference.updateGame(gameData); 
     }
     
     private void RemovePartecipant(String nicknamePlayer)

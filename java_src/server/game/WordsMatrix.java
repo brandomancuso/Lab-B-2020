@@ -14,7 +14,7 @@ public WordsMatrix (String[][] grid)
 */
 public class WordsMatrix {
         //Letter Schema
-        private String[][] diceFaces=
+        private final String[][] diceFaces=
         { 
             {"B","A","O","O","Q","M"},
             {"U","T","E","S","L","P"},
@@ -33,9 +33,9 @@ public class WordsMatrix {
             {"D","C","M","P","A","E"},
             {"E","R","I","N","S","H"}
         }; 
-	private static int DIM = 4;
-	private Dice[] dices;
-	private Dice[][] matrix;
+	private final static int DIM = 4;
+	private final Dice[] dices;
+	private final Dice[][] matrix;
 
 	
 	public WordsMatrix(){

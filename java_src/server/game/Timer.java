@@ -5,7 +5,7 @@ import java.util.Observable;
 public class Timer extends Observable implements Runnable 
 {
     private int time;//the variable time counts the seconds remained
-    private PersistentSignal persistentSignal;
+    private final PersistentSignal persistentSignal;
     
     public Timer (PersistentSignal persistentSignal)
     {
