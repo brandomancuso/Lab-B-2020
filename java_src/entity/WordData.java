@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class WordData implements Serializable{
     private String word;
     private int points;
+    private int realPoints;
     private boolean correct;
     private boolean duplicate;
     private boolean defRequested;

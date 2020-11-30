@@ -29,16 +29,16 @@ public class ServerServiceImpl implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList;
     private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
-    private Stack<Integer> freePort;
-    private Map<Integer, Integer> occupiedPort;
+    //private Stack<Integer> freePort;
+    //private Map<Integer, Integer> occupiedPort;
     private Database dbReference;
     
     public ServerServiceImpl() throws RemoteException{
         clientsList = new HashMap<>();
         usersList = new HashMap<>();
         gamesList = new HashMap<>();
-        freePort = new Stack();
-        occupiedPort = new HashMap<>();
+        //freePort = new Stack();
+        //occupiedPort = new HashMap<>();
         dbReference = DatabaseImpl.getDatabase();
     }
 
@@ -142,20 +142,37 @@ public class ServerServiceImpl implements ServerServiceStub{
 
     @Override
     public ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException {
+        Boolean flag=true;
+        ServerGameStub gameStub=null;
         ClientServiceStub user = clientsList.get(nickname);
         GameData gameData = new GameData(gameTitle, numPlayers);
         gameData = dbReference.addGame(gameData);
-        Game game = new Game(gameData, nickname, client, this);
+        Game game = new Game(gameData, nickname, client, this, dbReference);
         gamesList.put(gameData.getId(), game);
-        ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
-        occupiedPort.put(gameData.getId(),freePort.pop());
-        //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
+        
+        while (flag)
+        {
+            try
+            {
+                //it try to connect on random port(Port 0 is used for listeners to let the OS pick up a non-assigned port and it always works (unless there is really no port available which is nearly impossible))
+                flag=false;
+                gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, 0);
+            }
+            catch (RemoteException e)
+            {
+                flag=true;//if the connection tempt somehow went wrong
+            }
+        }
+        
         return gameStub;
+        //ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
+        //occupiedPort.put(gameData.getId(),freePort.pop());
+        //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
     }
     
     public void disconnectGame(Integer gameId){
         gamesList.remove(gameId);
-        freePort.push(occupiedPort.remove(gameId));
+        //freePort.push(occupiedPort.remove(gameId));
         //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
     }
     

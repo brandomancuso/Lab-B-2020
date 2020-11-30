@@ -1,11 +1,8 @@
  package server.game;
 
-import client.ClientGameStub;
 import entity.*;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Session {
     private SessionData sessionData;
@@ -28,7 +25,7 @@ public class Session {
         this.numSession=numSession;
     }
  
-    //method called by Game Class 
+//methods called by Game Class 
     public void startBeforeGame(Thread timerThread)
     {
         timerThread.start();
@@ -62,6 +59,7 @@ public class Session {
     
     public void startAfterGame(Thread timerThread)
     {
+        //checkword
         observerClientSet.forEach((key,value)->
         {
             try {
@@ -70,15 +68,23 @@ public class Session {
                 //check the words requested
                 int pointPlayer=checkWord(value.getNickname(), value.getWordsFound());
                 //Set the point for the player
-                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);     
+                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer); 
             } catch (RemoteException ex) {
                 System.err.println(ex);
             }
         });
         
-        //send the word with points to everyone after checking every word
-        //value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPoints);
-        //value.getClientGameStub().changeGameState(2);//change in watching Result State
+        //send result to client
+        observerClientSet.forEach((key,value)->
+        {
+            try {
+                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());
+                value.getClientGameStub().changeGameState(2);//change in watching Result State
+             } catch (RemoteException ex) {
+                System.err.println(ex);
+            }
+        });
+        
         
         timerThread.start();
         try {
@@ -89,7 +95,8 @@ public class Session {
             System.err.println(ex);
         }
     }
-      
+  
+//utility methods    
     private int checkWord(String nickname,List<String> wordFoundList)
     {
        int pointPlayer=0;
@@ -100,12 +107,14 @@ public class Session {
              {
                  wordTmp.setPoints(calculateScore(wordFound));
                  wordTmp.setCorrect(false);
+                 pointPlayer=0;
              }
               else
                 if (!dictionary.exists(wordFound))
                     {
                          wordTmp.setPoints(calculateScore(wordFound));
                          wordTmp.setCorrect(false);
+                         pointPlayer=0;
                     }
                  else
                      if(isDuplicated(wordFound))
@@ -123,20 +132,9 @@ public class Session {
 
              sessionData.addWord(nickname, wordTmp);   
        }
-       return pointPlayer;
+       return pointPlayer;//I save the real pointPlayer not the false one for the DataBase
     }   
     
-    public String[] getWordMatrix()
-    {
-        return wordsMatrix.getWordsMatrix();
-    }
-    
-    public SessionData getSessionData()
-    {
-        return sessionData;
-    }
-   
-    //utility method   
     private boolean isDuplicated (String wordFound)
     {
         Map<String, List<WordData>> wordFoundMap= new HashMap<>(sessionData.getFoundWords());//i take from the return the hashmap of words found
@@ -168,5 +166,15 @@ public class Session {
             default:
                  return 11;           
         }
+    }
+    
+    public String[] getWordMatrix()
+    {
+        return wordsMatrix.getWordsMatrix();
+    }
+    
+    public SessionData getSessionData()
+    {
+        return sessionData;
     }
 }

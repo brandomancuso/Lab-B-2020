@@ -12,7 +12,6 @@ public class ObserverClient implements Observer  {
     private List<String> wordsFound;
     private final Game game;//to have access to exit method
     private final String nickname;//i need to display the nickname of the person who exit the game
-    private Timer timer;//to have access to the method of observable
     
     public ObserverClient (String nickname,ClientGameStub client,Game game,Timer timer)
     {
@@ -20,8 +19,7 @@ public class ObserverClient implements Observer  {
         this.nickname=nickname;
         this.client=client;
         this.game=game;
-        this.timer=timer;
-        timer.addObserver(this);
+        timer.addObserver(this);//the reference isn't saved because i have just to add me as observer
     }
     
     @Override

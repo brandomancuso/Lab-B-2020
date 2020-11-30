@@ -76,6 +76,10 @@ public class GameData implements Serializable{
         return playerPoints.get(nickname);
     }
     
+    public Map<String, Integer> getPlayerPoints() {
+        return playerPoints;
+    }
+    
     public List<String> getPlayersList() {
         return new LinkedList<>(playerPoints.keySet());
     }
