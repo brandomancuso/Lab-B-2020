@@ -18,9 +18,17 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     private int gameState;
     private Lobby guiLobby;
 
-    public ClientGameImpl(Lobby parGuiLobby) throws RemoteException {
+    public ClientGameImpl() throws RemoteException {
         lobby = new ArrayList<String>();
+    }
+
+    //SETTER
+    public void setGuiLobby(Lobby parGuiLobby) {
         guiLobby = parGuiLobby;
+    }
+
+    public void setGuiGame() {
+        
     }
 
     //GETTER

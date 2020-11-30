@@ -43,6 +43,7 @@ public class ControlFrame extends javax.swing.JFrame {
     ServerServiceStub serviceStub;
     UserData loggedUser;
     List<GameData> gameList;
+    ClientGameImpl clientGame;
 
     public ControlFrame() {
         initComponents();
@@ -844,8 +845,13 @@ public class ControlFrame extends javax.swing.JFrame {
         }
         ServerGameStub serverGameStub = null;
         try {
-            Lobby lobby = new Lobby(this, true, loggedUser);
-            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, lobby.getClientGame());
+            //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
+            this.clientGame = new ClientGameImpl();
+
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
+            Lobby lobby = new Lobby(this, true, serverGameStub, loggedUser);
+            this.clientGame.setGuiLobby(lobby);
+            lobby.setClientGameStub(clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
@@ -859,8 +865,12 @@ public class ControlFrame extends javax.swing.JFrame {
         int gameIndex = this.jTableGameList.getSelectedRow();
 
         try {
-            Lobby lobby = new Lobby(this, true, loggedUser);
-            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), lobby.getClientGame());
+            this.clientGame = new ClientGameImpl();
+
+            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
+            Lobby lobby = new Lobby(this, true, serverGameStub, loggedUser);
+            this.clientGame.setGuiLobby(lobby);
+            lobby.setClientGameStub(clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
@@ -1006,7 +1016,7 @@ public class ControlFrame extends javax.swing.JFrame {
         //CLEAR the game list
         gameList.clear();
         //GET fresh game list
-        gameList = clientService.getGamesList();
+        gameList = clientService.getGamesList(); //controllare che nn sia nullo!
 
         //TEST ADDING VALUES
         GameData test = new GameData("PartitaEdoardoBianchi", 3);

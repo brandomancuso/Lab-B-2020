@@ -23,7 +23,7 @@ import server.game.ServerGameStub;
 public class Lobby extends javax.swing.JDialog {
 
     ServerGameStub gameStub;
-    ClientGameImpl clientgame;
+    ClientGameImpl clientGame;
     UserData loggedUser;
 
     /**
@@ -33,21 +33,17 @@ public class Lobby extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.gameStub = gameStub;
-        try {
-            this.clientgame = new ClientGameImpl(this);
-        } catch (RemoteException ex) {
-            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
-        }
         this.loggedUser = loggedUser;
 
         this.fillPartecipant();
     }
 
+    /*
     public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser) {
         super(parent, modal);
         initComponents();
         try {
-            this.clientgame = new ClientGameImpl(this);
+            this.clientGame = new ClientGameImpl();
         } catch (RemoteException ex) {
             Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -55,13 +51,18 @@ public class Lobby extends javax.swing.JDialog {
 
         this.fillPartecipant();
     }
-
+     */
     private Lobby(JFrame jFrame, boolean b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
     public synchronized ClientGameImpl getClientGame() {
-        return this.clientgame;
+        return this.clientGame;
+    }
+     */
+    public void setClientGameStub(ClientGameImpl clientGameImpl) {
+        this.clientGame = clientGameImpl;
     }
 
     public void setServerGameStub(ServerGameStub serverGameStub) {
@@ -174,7 +175,7 @@ public class Lobby extends javax.swing.JDialog {
 
     public void fillPartecipant() {
         List<String> names = new ArrayList<String>();
-        names = this.clientgame.getLobbyList();
+        names = this.clientGame.getLobbyList();
         this.jList_lobby.removeAll();
         this.jList_lobby = new JList(names.toArray());
     }
