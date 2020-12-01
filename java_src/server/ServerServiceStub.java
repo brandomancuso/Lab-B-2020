@@ -10,7 +10,7 @@ import server.game.ServerGameStub;
 import utils.Pair;
 
 public interface ServerServiceStub extends Remote{
-    Pair<String, UserData> login(String email, String password) throws RemoteException;
+    Pair<Integer, UserData> login(String email, String password) throws RemoteException;
     UserData updateUserData(UserData user, String oldUsername) throws RemoteException;
     String register(UserData newUser) throws RemoteException;
     boolean recoverPassword(String email) throws RemoteException;

@@ -148,7 +148,7 @@ public class DatabaseImpl implements Database{
     @Override
     public UserData updateUser(UserData user, String old) {
         String sql = "UPDATE ip_user SET nickname = ? , name = ? , surname = ? ,"
-                + " email = ? , password = ? , acrivation_code = ? , administrator = ? , active = ? "
+                + " email = ? , password = ? , activation_code = ? , administrator = ? , active = ? "
                 + "WHERE nickname = ?";
         Connection c = null;
         try {

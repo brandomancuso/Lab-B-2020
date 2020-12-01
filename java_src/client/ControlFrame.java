@@ -46,6 +46,8 @@ public class ControlFrame extends javax.swing.JFrame {
     UserData loggedUser;
     List<GameData> gameList;
     ClientGameImpl clientGame;
+    boolean pswMod = false;
+    boolean logged = false;
 
     public ControlFrame() {
         initComponents();
@@ -641,7 +643,7 @@ public class ControlFrame extends javax.swing.JFrame {
         jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
 
         text_password_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_password_profile.setText("jPasswordField1");
+        text_password_profile.setText("password");
         text_password_profile.setBorder(null);
         text_password_profile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -652,7 +654,7 @@ public class ControlFrame extends javax.swing.JFrame {
         jSeparator7.setBackground(new java.awt.Color(0, 0, 0));
 
         text_repeatPassword_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_repeatPassword_profile.setText("jPasswordField1");
+        text_repeatPassword_profile.setText("password");
         text_repeatPassword_profile.setBorder(null);
         text_repeatPassword_profile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -776,16 +778,28 @@ public class ControlFrame extends javax.swing.JFrame {
             return;
         }
         //CALL login method
-        boolean logged = false;
+        logged = false;
 
         try {
-            Pair<String, UserData> res = serviceStub.login(email, CryptMD5.crypt(password));
+            Pair<Integer, UserData> res = serviceStub.login(email, CryptMD5.crypt(password));
 
             if (res.getLast() != null) {
                 loggedUser = res.getLast();
                 logged = true;
             } else {
-                showMessageDialog(null, res.getFirst());
+                switch (res.getFirst()) {
+                    case 0:
+                        showMessageDialog(null, "Email errata!");
+                        break;
+                    case 1:
+                        showMessageDialog(null, "Password errata!");
+                        break;
+                    case 2:
+                        VerifyUser verify = new VerifyUser(this, true);
+                        verify.setVisible(true);
+                        break;
+                }
+
             }
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -835,7 +849,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_profileActionPerformed
         // TODO add your handling code here:
-        
+
         //fillUserProfileData(loggedUser);
         card.show(jPanel_main, "profile");
         showMessageDialog(null, loggedUser.getEmail());
@@ -922,11 +936,13 @@ public class ControlFrame extends javax.swing.JFrame {
     private void text_password_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_password_profileMouseClicked
         // TODO add your handling code here:
         this.btn_save_profile.setEnabled(true);
+        pswMod = true;
     }//GEN-LAST:event_text_password_profileMouseClicked
 
     private void text_repeatPassword_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_repeatPassword_profileMouseClicked
         // TODO add your handling code here:
         this.btn_save_profile.setEnabled(true);
+        pswMod = true;
     }//GEN-LAST:event_text_repeatPassword_profileMouseClicked
 
     private void btn_save_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_profileActionPerformed
@@ -943,7 +959,7 @@ public class ControlFrame extends javax.swing.JFrame {
             return;
         }
         //CHECK psw = repeatPsw
-        if (GuiUtility.isPasswordMatching(this.text_password_login, this.text_password_login) == false) {
+        if (GuiUtility.isPasswordMatching(this.text_password_profile, this.text_password_profile) == false) {
             showMessageDialog(null, "Le password non coincidono");
             return;
         }
@@ -953,7 +969,14 @@ public class ControlFrame extends javax.swing.JFrame {
         updatedUser.setFirstName(this.text_name_profile.getText());
         updatedUser.setLastName(this.text_surname_profile.getText());
         updatedUser.setNickname(this.text_username_profile.getText());
-        updatedUser.setPassword(Arrays.toString(this.text_password_profile.getPassword()));
+
+        updatedUser.setActivationCode("12345678");
+        if (pswMod) {
+            updatedUser.setPassword(CryptMD5.crypt(Arrays.toString(this.text_password_profile.getPassword())));
+            pswMod = false;
+        } else {
+            updatedUser.setPassword(loggedUser.getPassword());
+        }
 
         try {
             //CALL update method and update loggedUser with updatedUser
@@ -970,6 +993,15 @@ public class ControlFrame extends javax.swing.JFrame {
         try {
             //CALL logout method
             serviceStub.logout(this.loggedUser.getNickname());
+            loggedUser = null;
+            //fare graficamente logout
+            card.show(jPanel_main, "login");
+            logged = false;
+            btn_home.setEnabled(false);
+            btn_stats.setEnabled(false);
+            btn_profile.setEnabled(false);
+            btn_logout.setEnabled(false);
+
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1048,7 +1080,7 @@ public class ControlFrame extends javax.swing.JFrame {
         test2.addPlayer("rocco");
         gameList.add(test2);
         //END
-    
+
         //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
