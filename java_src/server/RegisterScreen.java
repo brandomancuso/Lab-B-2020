@@ -52,7 +52,7 @@ public class RegisterScreen extends JFrame implements ActionListener{
                 //TODO Inserimento amministratore nel DB
                 addAdminInDatabase(nickname,password, email);
                 
-                JOptionPane.showMessageDialog(null, "Registrazione Completata","Registrazione Amministratore", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Registrazione Completata","Registrazione Amministratore", JOptionPane.INFORMATION_MESSAGE);
                 this.setVisible(false);
                 ServerMain.showLogin();
             }

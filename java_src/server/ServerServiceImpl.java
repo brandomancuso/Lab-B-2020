@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Stack;
 import server.game.Game;
 import server.game.ServerGameStub;
@@ -80,12 +81,14 @@ public class ServerServiceImpl implements ServerServiceStub{
         //try{
             String registerResult;
             newUser.setActivationCode("12345678");
+            //newUser.setActivationCode(generateCode());
             UserData updatedNewUser = dbReference.addUser(newUser);
 
             if(updatedNewUser != null){
                 registerResult = "Registrazione completata!";
                 //TODO Invio mail all'utente tramite thread per diminuire il ritardo
                 //sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
+                //new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode())).start();
                 HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
                 return registerResult;
             }
@@ -109,18 +112,18 @@ public class ServerServiceImpl implements ServerServiceStub{
         UserData userResult = dbResult.getFirst();
         int infoResult = dbResult.getLast();
         
-        if(userResult != null){
-            loginResult = new Pair<>(null, userResult);
-            usersList.put(userResult.getNickname(), userResult);
+        if(infoResult == 1){
+            loginResult = new Pair<>("Password errata!", null);
             return loginResult;
         }
         else{
-            if(infoResult == 1){
+            if(infoResult == 0){
                 loginResult = new Pair<>("Email errata!", null);
                 return loginResult;
             }
             else{
-                loginResult = new Pair<>("Password errata!", null);
+                loginResult = new Pair<>(null, userResult);
+                usersList.put(userResult.getNickname(), userResult);
                 return loginResult;
             }
         }
@@ -181,7 +184,7 @@ public class ServerServiceImpl implements ServerServiceStub{
         
     }
     
-    private void sendEmail(String usr, String pwd, String to, String subject, String body) throws SendFailedException, MessagingException{
+    private void sendEmail(String usr, String pwd, String to, String subject, String body) throws MessagingException{
         String password=pwd;
 	String username=usr;
 	    	       
@@ -202,5 +205,16 @@ public class ServerServiceImpl implements ServerServiceStub{
 	msg.setText(body);
 	    
 	Transport.send(msg,username,password);
+    }
+    
+    private String generateCode(){
+        String code = new String();
+        Random rand = new Random();
+        
+        for(int i=0; i<8; i++){
+            Integer codeChar = rand.nextInt(10);
+            code.concat(codeChar.toString());
+        }
+        return code;
     }
 }

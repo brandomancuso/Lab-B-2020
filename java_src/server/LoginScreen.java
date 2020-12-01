@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import utils.Pair;
 
 public class LoginScreen extends JFrame implements ActionListener{
     private JTextField usernameTxt;
@@ -45,8 +46,8 @@ public class LoginScreen extends JFrame implements ActionListener{
             if(controlResult == null){
                 //TODO Aggiungere controlli accesso con DB
                 Database dbReference = DatabaseImpl.getDatabase();
-                UserData administrator = dbReference.getUser(username);
-                if(administrator != null){
+                Pair<UserData, Integer> administrator = dbReference.getUser(username, password);
+                if(administrator.getFirst() != null){
                     this.setVisible(false);
                     ServerMain.showHome();
                 }

@@ -777,11 +777,11 @@ public class ControlFrame extends javax.swing.JFrame {
         try {
             Pair<String, UserData> res = serviceStub.login(email, password);
 
-            if (res.getFirst() != null) {
+            if (res.getFirst() == null) {
                 loggedUser = serviceStub.login(email, password).getLast();
                 logged = true;
             } else {
-                showMessageDialog(null, res.getLast().toString());
+                showMessageDialog(null, res.getFirst().toString());
             }
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);

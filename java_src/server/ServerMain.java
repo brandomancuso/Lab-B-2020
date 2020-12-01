@@ -16,18 +16,19 @@ public class ServerMain {
             System.setSecurityManager(new SecurityManager());
         }
         dbConnect = new DbConnectScreen();
-        loginScreen = new LoginScreen();
-        registerScreen = new RegisterScreen();
-        homeScreen = new HomeScreen();
-
+        
         dbConnect.setVisible(true);
     }
     
     //Accedo al database e controllo la presenza di un amministratore
     public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost){
-       Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
-                .setHost(dbHost).setUser(dbUser)
-                .setPswd(dbPassword));
+        Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
+                 .setHost(dbHost).setUser(dbUser)
+                 .setPswd(dbPassword));
+
+        loginScreen = new LoginScreen();
+        registerScreen = new RegisterScreen();
+        homeScreen = new HomeScreen();
         
         if(dbReference != null){
             if(!dbReference.checkDatabaseExistence()){
