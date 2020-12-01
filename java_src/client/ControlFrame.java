@@ -15,6 +15,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,6 +28,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import server.ServerServiceStub;
 import server.game.ServerGameStub;
+import utils.CryptMD5;
 import utils.Pair;
 
 /**
@@ -43,10 +45,12 @@ public class ControlFrame extends javax.swing.JFrame {
     ServerServiceStub serviceStub;
     UserData loggedUser;
     List<GameData> gameList;
+    ClientGameImpl clientGame;
 
     public ControlFrame() {
         initComponents();
 
+        loggedUser = new UserData();
         try {
             Registry registry = LocateRegistry.getRegistry(1099);
             serviceStub = (ServerServiceStub) registry.lookup("Il Paroliere");
@@ -760,7 +764,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         String email = this.text_email_login.getText();
-        String password = Arrays.toString(this.text_password_login.getPassword());
+        String password = String.valueOf(this.text_password_login.getPassword());
         //CHECK fields
         if (email.equals("") || password.equals("")) {
             showMessageDialog(null, "Compilare i campi richiesti");
@@ -775,13 +779,13 @@ public class ControlFrame extends javax.swing.JFrame {
         boolean logged = false;
 
         try {
-            Pair<String, UserData> res = serviceStub.login(email, password);
+            Pair<String, UserData> res = serviceStub.login(email, CryptMD5.crypt(password));
 
-            if (res.getFirst() == null) {
-                loggedUser = serviceStub.login(email, password).getLast();
+            if (res.getLast() != null) {
+                loggedUser = res.getLast();
                 logged = true;
             } else {
-                showMessageDialog(null, res.getFirst().toString());
+                showMessageDialog(null, res.getFirst());
             }
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -831,8 +835,11 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_profileActionPerformed
         // TODO add your handling code here:
-        fillUserProfileData(loggedUser);
+        
+        //fillUserProfileData(loggedUser);
         card.show(jPanel_main, "profile");
+        showMessageDialog(null, loggedUser.getEmail());
+        fillUserProfileData(loggedUser);
     }//GEN-LAST:event_btn_profileActionPerformed
 
 
@@ -844,8 +851,13 @@ public class ControlFrame extends javax.swing.JFrame {
         }
         ServerGameStub serverGameStub = null;
         try {
-            Lobby lobby = new Lobby(this, true, loggedUser);
-            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, lobby.getClientGame());
+            //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
+            this.clientGame = new ClientGameImpl();
+
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
+            Lobby lobby = new Lobby(this, true, serverGameStub, loggedUser);
+            this.clientGame.setGuiLobby(lobby);
+            lobby.setClientGameStub(clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
@@ -859,8 +871,12 @@ public class ControlFrame extends javax.swing.JFrame {
         int gameIndex = this.jTableGameList.getSelectedRow();
 
         try {
-            Lobby lobby = new Lobby(this, true, loggedUser);
-            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), lobby.getClientGame());
+            this.clientGame = new ClientGameImpl();
+
+            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
+            Lobby lobby = new Lobby(this, true, serverGameStub, loggedUser);
+            this.clientGame.setGuiLobby(lobby);
+            lobby.setClientGameStub(clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
@@ -976,12 +992,7 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     //UTILITY
-    private DefaultTableModel createGametable() {
-        DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
-        headerBgRender.setBackground(Color.decode("#FFFFFF"));
-        headerBgRender.setForeground(Color.decode("#FFFFFF"));
-        DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
-        rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
+    private DefaultTableModel createGameTableModel() {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -990,38 +1001,54 @@ public class ControlFrame extends javax.swing.JFrame {
         };
         model.addColumn("");
         model.addColumn("");
-        this.jTableGameList.setModel(model);
-        this.jTableGameList.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(headerBgRender);
-        this.jTableGameList.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(headerBgRender);
-        this.jTableGameList.getColumnModel().getColumn(1).setCellRenderer(rightAlignmentRender);
-        this.jTableGameList.getColumnModel().getColumn(0).setPreferredWidth(350);
-        this.jTableGameList.getColumnModel().getColumn(1).setPreferredWidth(50);
-        this.jScrollPane3.getViewport().setBackground(Color.white);
+        //model.setRowCount(0);
         return model;
     }
 
+    private void clearTable(DefaultTableModel model) {
+        while (model.getRowCount() > 0) {
+            for (int i = 0; i < model.getRowCount(); ++i) {
+                model.removeRow(i);
+            }
+        }
+    }
+
     public void fillGameTable() {
+        this.jTableGameList.removeAll();
+        this.jTableGameList.updateUI();
         //CREATE custom table model
-        DefaultTableModel model = this.createGametable();
-        //CLEAR the game list
+        DefaultTableModel model = this.createGameTableModel();
+        //TABLE settings
+        DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
+        headerBgRender.setBackground(Color.decode("#FFFFFF"));
+        headerBgRender.setForeground(Color.decode("#FFFFFF"));
+        DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
+        rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
+
+        showMessageDialog(null, "code update check 5");
+        gameList = new ArrayList<GameData>();
         gameList.clear();
         //GET fresh game list
-        gameList = clientService.getGamesList();
+        gameList = clientService.getGamesList(); //controllare che nn sia nullo!
 
         //TEST ADDING VALUES
         GameData test = new GameData("PartitaEdoardoBianchi", 3);
+        test.setId(1);
         test.addPlayer("marco");
         test.addPlayer("giovanni");
         gameList.add(test);
         GameData test1 = new GameData("PartitaSandro", 6);
+        test1.setId(2);
         test1.addPlayer("sandro");
         test1.addPlayer("rocco");
         gameList.add(test1);
         GameData test2 = new GameData("PartitaMia", 5);
+        test2.setId(3);
         test2.addPlayer("gigi");
         test2.addPlayer("rocco");
         gameList.add(test2);
         //END
+    
         //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
@@ -1031,6 +1058,15 @@ public class ControlFrame extends javax.swing.JFrame {
                 model.addRow(rowData);
             }
         }
+
+        this.jTableGameList.setModel(model);
+        this.jTableGameList.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(headerBgRender);
+        this.jTableGameList.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(headerBgRender);
+        this.jTableGameList.getColumnModel().getColumn(1).setCellRenderer(rightAlignmentRender);
+        this.jTableGameList.getColumnModel().getColumn(0).setPreferredWidth(350);
+        this.jTableGameList.getColumnModel().getColumn(1).setPreferredWidth(50);
+        this.jScrollPane3.getViewport().setBackground(Color.white);
+        this.jTableGameList.updateUI();
     }
 
     /**
