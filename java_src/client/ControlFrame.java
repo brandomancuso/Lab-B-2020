@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import server.ServerServiceStub;
 import server.game.ServerGameStub;
+import utils.CryptMD5;
 import utils.Pair;
 
 /**
@@ -778,10 +779,10 @@ public class ControlFrame extends javax.swing.JFrame {
         boolean logged = false;
 
         try {
-            Pair<String, UserData> res = serviceStub.login(email, password);
+            Pair<String, UserData> res = serviceStub.login(email, CryptMD5.crypt(password));
 
             if (res.getLast() != null) {
-                loggedUser = serviceStub.login(email, password).getLast();
+                loggedUser = res.getLast();
                 logged = true;
             } else {
                 showMessageDialog(null, res.getFirst());

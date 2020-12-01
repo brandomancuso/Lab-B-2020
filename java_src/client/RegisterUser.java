@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JTextField;
 import server.ServerServiceStub;
+import utils.CryptMD5;
 
 /**
  *
@@ -379,8 +380,7 @@ public class RegisterUser extends javax.swing.JDialog {
         newUser.setFirstName(this.text_name.getText());
         newUser.setLastName(this.text_surname.getText());
         newUser.setNickname(this.text_username.getText());
-        //newUser.setPassword(Arrays.toString(this.text_password.getPassword()));
-        newUser.setPassword(String.valueOf(this.text_password.getPassword()));
+        newUser.setPassword(CryptMD5.crypt(String.valueOf(this.text_password.getPassword())));
         try {
             //CALL Register Method --> da sistemare
             stub.register(newUser);
