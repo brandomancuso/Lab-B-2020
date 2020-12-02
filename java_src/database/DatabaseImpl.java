@@ -129,7 +129,7 @@ public class DatabaseImpl implements Database{
             stmt.setString(5, user.getPassword());
             stmt.setString(6, user.getActivationCode());
             stmt.setBoolean(7, user.isAdmin());
-            stmt.setBoolean(8, user.isActive());
+            stmt.setBoolean(8, user.getActive());
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException ex) {
@@ -147,22 +147,52 @@ public class DatabaseImpl implements Database{
 
     @Override
     public UserData updateUser(UserData user, String old) {
-        String sql = "UPDATE ip_user SET nickname = ? , name = ? , surname = ? ,"
-                + " email = ? , password = ? , acrivation_code = ? , administrator = ? , active = ? "
-                + "WHERE nickname = ?";
+        if(old == null || user == null) throw new IllegalArgumentException();
+        boolean comma = false;
+        int req = 1;
+        StringBuilder sql = new StringBuilder("UPDATE ip_user SET ");
+        if(user.getNickname()!= null) {
+            sql.append("nickname = ? ");
+            req++;
+            comma = true;
+        }
+        if(user.getFirstName()!= null) {
+            sql.append("name = ?").append(comma ? ", " : " ");
+            req++;
+            comma = true;
+        }
+        if(user.getLastName()!= null) {
+            sql.append("surname = ?").append(comma ? ", " : " ");
+            req++;
+            comma = true;
+        }
+        if(user.getEmail()!= null) {
+            sql.append("email = ?").append(comma ? ", " : " ");
+            req++;
+            comma = true;
+        }
+        if(user.getPassword()!= null) {
+            sql.append("password = ?").append(comma ? ", " : " ");
+            req++;
+            comma = true;
+        }
+        if(user.getActive()!= null) {
+            sql.append("active = ?" );
+            req++;
+        }
+        sql.append("WHERE nickname = ?");
+        if(req == 1) throw new IllegalArgumentException("At least one field of user has to be non-null");
         Connection c = null;
         try {
             c = connManager.getConnection();
-            PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setString(1, user.getNickname());
-            stmt.setString(2, user.getFirstName());
-            stmt.setString(3, user.getLastName());
-            stmt.setString(4, user.getEmail());
-            stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getActivationCode());
-            stmt.setBoolean(7, user.isAdmin());
-            stmt.setBoolean(8, user.isActive());
-            stmt.setString(9, old);
+            PreparedStatement stmt = c.prepareStatement(sql.toString());
+            stmt.setString(req--, old);
+            if(user.getActive()!= null) stmt.setBoolean(req--, user.getActive());
+            if(user.getPassword()!= null) stmt.setString(req--, user.getPassword());
+            if(user.getEmail()!= null) stmt.setString(req--, user.getEmail());
+            if(user.getLastName()!= null) stmt.setString(req--, user.getLastName());
+            if(user.getFirstName()!= null) stmt.setString(req--, user.getFirstName());
+            if(user.getNickname()!= null) stmt.setString(req, user.getNickname());
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException ex) {
