@@ -157,27 +157,27 @@ public class DatabaseImpl implements Database{
             comma = true;
         }
         if(user.getFirstName()!= null) {
-            sql.append("name = ?").append(comma ? ", " : " ");
+            sql.append(comma ? ", " : "").append("name = ? ");
             req++;
             comma = true;
         }
         if(user.getLastName()!= null) {
-            sql.append("surname = ?").append(comma ? ", " : " ");
+            sql.append(comma ? ", " : "").append("surname = ? ");
             req++;
             comma = true;
         }
         if(user.getEmail()!= null) {
-            sql.append("email = ?").append(comma ? ", " : " ");
+            sql.append(comma ? ", " : "").append("email = ? ");
             req++;
             comma = true;
         }
         if(user.getPassword()!= null) {
-            sql.append("password = ?").append(comma ? ", " : " ");
+            sql.append(comma ? ", " : "").append("password = ? ");
             req++;
             comma = true;
         }
         if(user.getActive()!= null) {
-            sql.append("active = ?" );
+            sql.append(comma ? ", " : "").append("active = ? ");
             req++;
         }
         sql.append("WHERE nickname = ?");
