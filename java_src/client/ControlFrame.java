@@ -972,7 +972,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
         updatedUser.setActivationCode("12345678");
         if (pswMod) {
-            updatedUser.setPassword(CryptMD5.crypt(Arrays.toString(this.text_password_profile.getPassword())));
+            updatedUser.setPassword(CryptMD5.crypt(String.valueOf(this.text_password_profile.getPassword())));
             pswMod = false;
         } else {
             updatedUser.setPassword(loggedUser.getPassword());
