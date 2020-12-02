@@ -81,6 +81,7 @@ public class ServerServiceImpl implements ServerServiceStub {
         //try{
         String registerResult;
         newUser.setActivationCode("12345678");
+        newUser.setActive(false);
         //newUser.setActivationCode(generateCode());
         UserData updatedNewUser = dbReference.addUser(newUser);
 

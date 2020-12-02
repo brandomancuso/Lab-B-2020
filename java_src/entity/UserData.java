@@ -11,7 +11,7 @@ public class UserData implements Serializable{
     private String lastName;
     private String activationCode;
     private boolean admin;
-    private boolean active;
+    private Boolean active;
     
     private static final long serialVersionUID = 1L;
 
@@ -71,7 +71,7 @@ public class UserData implements Serializable{
         this.admin = admin;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 

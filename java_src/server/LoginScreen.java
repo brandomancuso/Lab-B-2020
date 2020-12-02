@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import utils.CryptMD5;
 import utils.Pair;
 
 public class LoginScreen extends JFrame implements ActionListener{
@@ -46,7 +47,7 @@ public class LoginScreen extends JFrame implements ActionListener{
             if(controlResult == null){
                 //TODO Aggiungere controlli accesso con DB
                 Database dbReference = DatabaseImpl.getDatabase();
-                Pair<UserData, Integer> administrator = dbReference.getUser(username, password);
+                Pair<UserData, Integer> administrator = dbReference.getUser(username, CryptMD5.crypt(password));
                 if(administrator.getFirst() != null){
                     this.setVisible(false);
                     ServerMain.showHome();
@@ -97,7 +98,7 @@ public class LoginScreen extends JFrame implements ActionListener{
         usernameTxt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel5.setText("Username");
+        jLabel5.setText("Email");
 
         jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel6.setText("Password");

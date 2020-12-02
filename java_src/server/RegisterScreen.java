@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import utils.CryptMD5;
 
 public class RegisterScreen extends JFrame implements ActionListener{
     private JTextField emailTxt;
@@ -49,7 +50,6 @@ public class RegisterScreen extends JFrame implements ActionListener{
             
             String controlResult = utility.controlRegisterResult(nickname, password, rPassword, email);
             if(controlResult == null){
-                //TODO Inserimento amministratore nel DB
                 addAdminInDatabase(nickname,password, email);
                 
                 JOptionPane.showMessageDialog(null, "Registrazione Completata","Registrazione Amministratore", JOptionPane.INFORMATION_MESSAGE);
@@ -240,8 +240,7 @@ public class RegisterScreen extends JFrame implements ActionListener{
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
         admin.setNickname(nickname);
-        //TODO Cifratura della password prima di aggiungerla al DB
-        admin.setPassword(password);
+        admin.setPassword(CryptMD5.crypt(password));
         
         Database dbReference = DatabaseImpl.getDatabase();
         dbReference.addUser(admin);
