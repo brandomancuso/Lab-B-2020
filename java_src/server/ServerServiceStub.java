@@ -18,4 +18,5 @@ public interface ServerServiceStub extends Remote{
     void logout(String nickname) throws RemoteException;
     ServerGameStub partecipate(String nickname, int gameId, ClientGameStub client) throws RemoteException;
     ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException;
+    boolean verifyUser(String verificationCode, String nickname) throws RemoteException;
 }

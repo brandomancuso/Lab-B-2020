@@ -14,25 +14,39 @@ import javax.mail.internet.MimeMessage;
 public class EmailSender implements Runnable{
     private final String HOST = ""; //Email da cui inviare la mail
     private final String PASSWORD = ""; //Password della mail da cui inviare la mail
-    private final String OBJECT = "Verifica il tuo account!"; //Oggetto della mail
-    private final String STANDARD_BODY = "Inserisci il tuo codice nell'applicazione per verificarlo.\nQuesto è il tuo codice di verifica: ";
+    private final String VERIFICATION_OBJECT = "Il Paroliere - Verifica il tuo account"; //Oggetto della mail
+    private final String RESET_PSW_OBJECT = "Il Paroliere - Modifica Password";
+    private final String VERIFICATION_BODY = "Inserisci il tuo codice nell'applicazione per attivare il tuo profilo."
+            + "\nQuesto è il tuo codice di verifica: ";
+    private final String RESET_PSW_BODY = "Hai richiesto il reset della password!\nQuesta è la tua nuova password: ";
     private final int VALIDATION_TIME = 600000; //Tempo per verificare l'account
     
     private String destinatario;
-    private String generatedCode;
+    private String messageContent;
+    private int mailType; //1 = codice di verifica  2 = reset password
     
-    public EmailSender(String dest, String code){
+    public EmailSender(String dest, String content, int mailType){
         this.destinatario = dest;
-        this.generatedCode = code;
+        this.messageContent = content;
+        this.mailType = mailType;
     }
     
     @Override
-    public void run() {
-        String emailBody = new String();
-        emailBody.concat(generatedCode);
+    public void run(){
         try {
-            sendEmail(HOST, PASSWORD, destinatario, OBJECT, emailBody);
-            //TODO Aggiunta Timer di 10 minuti
+            String emailBody;
+            switch(mailType){
+                case 1:
+                    emailBody = this.VERIFICATION_BODY + this.messageContent;
+                    sendEmail(HOST, PASSWORD, destinatario, this.VERIFICATION_OBJECT, emailBody);
+                    //TODO Aggiunta Timer di 10 minuti
+                    break;
+                case 2:
+                    emailBody = this.RESET_PSW_BODY + this.messageContent;
+                    sendEmail(HOST, PASSWORD, destinatario, this.RESET_PSW_OBJECT, emailBody);
+                    //TODO Aggiunta Timer di 10 minuti
+                    break;
+            }
         } catch (MessagingException ex) {
             Logger.getLogger(EmailSender.class.getName()).log(Level.SEVERE, null, ex);
         }

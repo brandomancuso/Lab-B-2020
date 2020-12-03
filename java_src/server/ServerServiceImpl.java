@@ -48,13 +48,9 @@ public class ServerServiceImpl implements ServerServiceStub {
     public boolean recoverPassword(String email) throws RemoteException {
         //mi serve il nickname dell'utente per avere il riferimento per aggiornare il database
         //invio la mail
-        try {
-            sendEmail("", "", email, "Verifica account Il Paroliere", "");
-            return false;
-        } catch (MessagingException e) {
-            HomeScreen.stampEvent("Invio email fallito!");
-            return false;
-        }
+        String tempPsw = generatePassword();
+        new Thread(new EmailSender(email, tempPsw, 2)).start();
+        return true;
     }
 
     @Override
@@ -80,16 +76,14 @@ public class ServerServiceImpl implements ServerServiceStub {
     public String register(UserData newUser) throws RemoteException {
         //try{
         String registerResult;
-        newUser.setActivationCode("12345678");
         newUser.setActive(false);
-        //newUser.setActivationCode(generateCode());
+        newUser.setActivationCode(generateCode());
         UserData updatedNewUser = dbReference.addUser(newUser);
 
         if (updatedNewUser != null) {
             registerResult = "Registrazione completata!";
             //TODO Invio mail all'utente tramite thread per diminuire il ritardo
-            //sendEmail("", "", updatedNewUser.getEmail(), "Verifica account Il Paroliere", "");
-            //new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode())).start();
+            //new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), 1)).start();
             HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
             return registerResult;
         } else {
@@ -110,15 +104,40 @@ public class ServerServiceImpl implements ServerServiceStub {
         Pair<Integer, UserData> loginResult;
         Pair<UserData, Integer> dbResult = dbReference.getUser(email, password);
         if (dbResult.getFirst() != null) {
-            loginResult = new Pair<>(null, dbResult.getFirst());
-            usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+            if(dbResult.getFirst().getActive()){
+                loginResult = new Pair<>(null, dbResult.getFirst());
+                usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+            }
+            else{
+                loginResult = new Pair<>(2, null);
+            }
         } else {
             int controlCode = dbResult.getLast();
             loginResult = new Pair<>(controlCode, null);
         }
         return loginResult;
     }
-
+    
+    @Override
+    public boolean verifyUser(String verificationCode, String nickname){
+        UserData dbResult = dbReference.getUser(nickname);
+        boolean result = false;
+        
+        if(dbResult != null){
+            if(dbResult.getActivationCode().equals(verificationCode)){
+                result = true;
+            }
+            else{
+                result = false;
+            }   
+        }
+        else{
+            result = false;
+        }
+        
+        return result;
+    }
+    
     @Override
     public ServerGameStub partecipate(String nickname, int gameId, ClientGameStub client) throws RemoteException {
         Pair<GameData, Boolean> result;
@@ -133,7 +152,7 @@ public class ServerServiceImpl implements ServerServiceStub {
         }
         return null;
     }
-
+    
     @Override
     public ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException {
         Boolean flag = true;
@@ -171,37 +190,27 @@ public class ServerServiceImpl implements ServerServiceStub {
 
     }
 
-    private void sendEmail(String usr, String pwd, String to, String subject, String body) throws MessagingException {
-        String password = pwd;
-        String username = usr;
-
-        String host = "smtp.office365.com";
-        String from = username;
-
-        Properties props = System.getProperties();
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.port", 587);
-
-        Session session = Session.getInstance(props);
-
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(from));
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
-        msg.setSubject(subject);
-        msg.setText(body);
-
-        Transport.send(msg, username, password);
-    }
-
     private String generateCode() {
         String code = new String();
         Random rand = new Random();
 
         for (int i = 0; i < 8; i++) {
             Integer codeChar = rand.nextInt(10);
-            code.concat(codeChar.toString());
+            code = code + codeChar.toString();
         }
         return code;
+    }
+
+    private String generatePassword() {
+        final String alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+        final int N = alphabet.length();
+        
+        Random r = new Random();
+        String newPswd = "";
+        
+        for(int i=0; i<8; i++){
+            newPswd = newPswd + alphabet.charAt(r.nextInt(N));
+        }
+        return newPswd;
     }
 }
