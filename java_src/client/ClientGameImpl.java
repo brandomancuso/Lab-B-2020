@@ -13,13 +13,16 @@ import java.util.Map;
  */
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
 
-    private List<String> lobby;
+    private List<String> lobbyList;
+    private List<String> playerWordList;
     private int timerValue;
     private int gameState;
     private Lobby guiLobby;
+    private GameWin guiGame;
 
     public ClientGameImpl() throws RemoteException {
-        lobby = new ArrayList<String>();
+        lobbyList = new ArrayList<String>();
+        playerWordList = new ArrayList<String>();
     }
 
     //SETTER
@@ -27,13 +30,13 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         guiLobby = parGuiLobby;
     }
 
-    public void setGuiGame() {
-        
+    public void setGuiGame(GameWin parGuiGame) {
+        guiGame = parGuiGame;
     }
 
     //GETTER
     public synchronized List<String> getLobbyList() {
-        return lobby;
+        return lobbyList;
     }
 
     public synchronized int getTimerValue() {
@@ -46,7 +49,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public List<String> getWords() throws RemoteException {
-        return null;
+        return playerWordList;
 
     }
 
@@ -59,15 +62,22 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     public void changeGameState(int gameState) throws RemoteException {
         this.gameState = gameState;
         switch (gameState) {
-            case 0: //waiting
+            case 0: //waiting --> blocco il bottone leave e parte il timer
+                this.guiLobby.disableLeaveBtn();
                 break;
-            case 1: //session
+            case 1: //session --> apro finestra di gioco
+                this.guiLobby.openGameWindow();
+                this.guiLobby.setVisible(false);
+                this.guiLobby.dispose();
                 break;
             case 2: //result
+                this.guiGame.disableInput();
+                playerWordList = this.guiGame.getPlayerWords();
+                //chiudo game e apro result win
                 break;
-            case 3: //win
+            case 3: //win --> transuto a lista di partita
                 break;
-            case 4: //abandoned
+            case 4: //abandoned --> transuto a lista di partita
                 break;
         }
     }
@@ -85,12 +95,13 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public void updateLobby(List<String> nickName) throws RemoteException {
-        lobby = nickName;
+        lobbyList = nickName;
         this.guiLobby.fillPartecipant();
     }
 
     @Override
     public void notifyInfoGame(List<String> nickName) throws RemoteException {
+        //metodo per notificare chi abbandona e chi vince
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
