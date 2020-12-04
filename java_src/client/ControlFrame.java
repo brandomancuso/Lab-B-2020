@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import server.ServerServiceStub;
 import server.game.ServerGameStub;
 import utils.CryptMD5;
@@ -1046,6 +1047,7 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     public void fillGameTable() {
+        this.clearTable((DefaultTableModel)this.jTableGameList.getModel());
         this.jTableGameList.removeAll();
         this.jTableGameList.updateUI();
         //CREATE custom table model
