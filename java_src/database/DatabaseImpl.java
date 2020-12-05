@@ -339,6 +339,7 @@ public class DatabaseImpl implements Database{
     @Override
     public Database configure(DatabaseConfig config) {
         connManager.configure(config);
+        updateIds();
         return this;
     }
     
@@ -399,7 +400,6 @@ public class DatabaseImpl implements Database{
     @Override
     public void createDatabase() {
         connManager.createDatabase();
-        updateIds();
     }
 
     @Override
