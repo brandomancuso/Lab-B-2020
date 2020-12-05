@@ -21,6 +21,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     private GameWin guiGame;
 
     public ClientGameImpl() throws RemoteException {
+        super(9000);
         lobbyList = new ArrayList<String>();
         playerWordList = new ArrayList<String>();
     }

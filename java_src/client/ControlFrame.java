@@ -49,10 +49,12 @@ public class ControlFrame extends javax.swing.JFrame {
     ClientGameImpl clientGame;
     boolean pswMod = false;
     boolean logged = false;
+    DefaultTableModel gameTableModel;
 
     public ControlFrame() {
+        gameTableModel = this.createGameTableModel();
         initComponents();
-
+        initCustom();
         loggedUser = new UserData();
         try {
             Registry registry = LocateRegistry.getRegistry(1099);
@@ -452,29 +454,7 @@ public class ControlFrame extends javax.swing.JFrame {
         jScrollPane3.setBorder(null);
 
         jTableGameList.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
-        jTableGameList.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Title 1", "Title 2"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        jTableGameList.setModel(gameTableModel);
         jTableGameList.setGridColor(new java.awt.Color(255, 255, 255));
         jTableGameList.setSelectionBackground(new java.awt.Color(23, 113, 230));
         jTableGameList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -765,6 +745,22 @@ public class ControlFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initCustom() {
+        //TABLE settings
+        DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
+        headerBgRender.setBackground(Color.decode("#FFFFFF"));
+        headerBgRender.setForeground(Color.decode("#FFFFFF"));
+        DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
+        rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
+
+        this.jTableGameList.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(headerBgRender);
+        this.jTableGameList.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(headerBgRender);
+        this.jTableGameList.getColumnModel().getColumn(1).setCellRenderer(rightAlignmentRender);
+        this.jTableGameList.getColumnModel().getColumn(0).setPreferredWidth(350);
+        this.jTableGameList.getColumnModel().getColumn(1).setPreferredWidth(50);
+        this.jScrollPane3.getViewport().setBackground(Color.white);
+    }
+
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         String email = this.text_email_login.getText();
         String password = String.valueOf(this.text_password_login.getPassword());
@@ -868,11 +864,10 @@ public class ControlFrame extends javax.swing.JFrame {
         try {
             //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
             this.clientGame = new ClientGameImpl();
-
-            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
-            lobby.setServerGameStub(serverGameStub);
             this.clientGame.setGuiLobby(lobby);
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
+            lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -886,11 +881,10 @@ public class ControlFrame extends javax.swing.JFrame {
 
         try {
             this.clientGame = new ClientGameImpl();
-
-            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
-            lobby.setServerGameStub(serverGameStub);
             this.clientGame.setGuiLobby(lobby);
+            serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
+            lobby.setServerGameStub(serverGameStub);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -1030,6 +1024,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 return false;
             }
         };
+
         model.addColumn("");
         model.addColumn("");
         //model.setRowCount(0);
@@ -1045,23 +1040,17 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     public void fillGameTable() {
-        this.clearTable((DefaultTableModel)this.jTableGameList.getModel());
-        this.jTableGameList.removeAll();
-        this.jTableGameList.updateUI();
-        //CREATE custom table model
-        DefaultTableModel model = this.createGameTableModel();
-        //TABLE settings
-        DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
-        headerBgRender.setBackground(Color.decode("#FFFFFF"));
-        headerBgRender.setForeground(Color.decode("#FFFFFF"));
-        DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
-        rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
+        //this.clearTable((DefaultTableModel) this.jTableGameList.getModel());
+        // this.jTableGameList.removeAll();
+        //this.jTableGameList.updateUI();
 
-        showMessageDialog(null, "code update check 5");
-        gameList = new ArrayList<GameData>();
-        gameList.clear();
+        this.clearTable(gameTableModel);
+
+        showMessageDialog(null, "code update check 6");
+
         //GET fresh game list
-        gameList = clientService.getGamesList(); //controllare che nn sia nullo!
+        //gameList = clientService.getGamesList(); //controllare che nn sia nullo!
+        gameList = new ArrayList<GameData>();
 
         //TEST ADDING VALUES
         GameData test = new GameData("PartitaEdoardoBianchi", 3);
@@ -1087,18 +1076,11 @@ public class ControlFrame extends javax.swing.JFrame {
             if (tmp != null) {
                 rowData[0] = tmp.getId() + " " + tmp.getName() + " " + "Creatore";
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
-                model.addRow(rowData);
+                gameTableModel.addRow(rowData);
             }
         }
 
-        this.jTableGameList.setModel(model);
-        this.jTableGameList.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(headerBgRender);
-        this.jTableGameList.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(headerBgRender);
-        this.jTableGameList.getColumnModel().getColumn(1).setCellRenderer(rightAlignmentRender);
-        this.jTableGameList.getColumnModel().getColumn(0).setPreferredWidth(350);
-        this.jTableGameList.getColumnModel().getColumn(1).setPreferredWidth(50);
-        this.jScrollPane3.getViewport().setBackground(Color.white);
-        this.jTableGameList.updateUI();
+        //this.jTableGameList.updateUI();
     }
 
     /**
