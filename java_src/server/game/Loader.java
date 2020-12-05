@@ -1,6 +1,7 @@
  package server.game;
 
 
+import entity.Term;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

@@ -1,5 +1,6 @@
  package server.game;
 
+import entity.Term;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;

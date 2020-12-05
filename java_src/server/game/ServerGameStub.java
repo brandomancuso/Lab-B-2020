@@ -1,5 +1,6 @@
  package server.game;
 
+import entity.Term;
 import entity.WordData;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

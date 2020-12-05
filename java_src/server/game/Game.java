@@ -1,5 +1,6 @@
  package server.game;
 
+import entity.Term;
 import client.ClientGameStub;
 import database.Database;
 import entity.GameData;
