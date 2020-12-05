@@ -7,28 +7,21 @@ import database.DatabaseImpl;
 import entity.GameData;
 import entity.UserData;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Stack;
 import server.game.Game;
 import server.game.ServerGameStub;
 import utils.Pair;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.SendFailedException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
-public class ServerServiceImpl implements ServerServiceStub {
+public class ServerServiceImpl extends Observable implements ServerServiceStub{
 
-    private Map<String, ClientServiceStub> clientsList;
+    private Map<String, ClientServiceStub> clientsList; //Per aggiornare client singoli
+    private WrappedObserver updater; //Per aggiornare tutti i client tramite interfaccia Observer/Observable
     private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
     //private Stack<Integer> freePort;
@@ -42,6 +35,7 @@ public class ServerServiceImpl implements ServerServiceStub {
         //freePort = new Stack();
         //occupiedPort = new HashMap<>();
         dbReference = DatabaseImpl.getDatabase();
+        updater = new WrappedObserver();
     }
 
     @Override
@@ -50,12 +44,14 @@ public class ServerServiceImpl implements ServerServiceStub {
         //invio la mail
         String tempPsw = generatePassword();
         new Thread(new EmailSender(email, tempPsw, 2)).start();
+        //TODO modifica password dell'utente nel database
         return true;
     }
 
     @Override
     public void addObserver(String nickname, ClientServiceStub client) throws RemoteException {
         clientsList.put(nickname, client);
+        updater.addRemoteObserver(client);
     }
 
     @Override
@@ -71,10 +67,8 @@ public class ServerServiceImpl implements ServerServiceStub {
         return updatedUser;
     }
 
-    //TODO Modificare da String a boolean
     @Override
     public String register(UserData newUser) throws RemoteException {
-        //try{
         String registerResult;
         newUser.setActive(false);
         newUser.setActivationCode(generateCode());
@@ -91,12 +85,6 @@ public class ServerServiceImpl implements ServerServiceStub {
             HomeScreen.stampEvent(updatedNewUser.getNickname() + ": errore durante la registrazione!");
             return registerResult;
         }
-        //}
-        /*catch(MessagingException e){
-            e.printStackTrace();
-            HomeScreen.stampEvent("Invio email fallito!");
-            return null;
-        }*/
     }
 
     @Override
@@ -126,6 +114,8 @@ public class ServerServiceImpl implements ServerServiceStub {
         if(dbResult != null){
             if(dbResult.getActivationCode().equals(verificationCode)){
                 result = true;
+                dbResult.setActive(true);
+                dbReference.updateUser(dbResult, dbResult.getNickname());
             }
             else{
                 result = false;
@@ -145,6 +135,7 @@ public class ServerServiceImpl implements ServerServiceStub {
         if (game != null) {
             result = game.AddPartecipant(nickname, client);
             if (result.getLast()) {
+                this.notifyObservers(gamesList);
                 return game;
             } else {
                 return null;
@@ -172,7 +163,7 @@ public class ServerServiceImpl implements ServerServiceStub {
                 flag = true;//if the connection tempt somehow went wrong
             }
         }
-
+        this.notifyObservers(gamesList);
         return gameStub;
         //ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
         //occupiedPort.put(gameData.getId(),freePort.pop());
