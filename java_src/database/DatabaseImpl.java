@@ -239,7 +239,7 @@ public class DatabaseImpl implements Database{
     @Override
     public GameData addGame(GameData gameData) {
         String sql = "INSERT INTO game (id, name) VALUES (?, ?)";
-        gameData.setId(GAME_ID++);
+        gameData.setId(++GAME_ID);
         Connection conn = null;
         try {
             conn = connManager.getConnection();
@@ -353,7 +353,7 @@ public class DatabaseImpl implements Database{
             rs = stmt.executeQuery();
             if(rs.next()){
                 int val = rs.getInt(1);
-                GAME_ID = ++val;
+                GAME_ID = val;
             }
             rs.close();
             stmt.close();
