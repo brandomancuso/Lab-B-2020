@@ -54,7 +54,7 @@ public class Game implements ServerGameStub{
     private void loadDictionary()
     {
         Loader loader=new Loader();
-	String file_dizionario= "dict-it.oxt";
+	String file_dizionario= "resources/dict-it.oxt";
 	File dizionario=new File(file_dizionario);
         try {
             dictionary=loader.loadDictionaryFromFile(dizionario);

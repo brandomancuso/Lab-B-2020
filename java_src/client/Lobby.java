@@ -30,20 +30,16 @@ public class Lobby extends javax.swing.JDialog {
     /**
      * Creates new form Lobby
      */
-    public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser) {
+    public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser, ClientGameImpl parClientGame) {
         super(parent, modal);
         initComponents();
         this.loggedUser = loggedUser;
-
+        this.clientGame = parClientGame;
         this.fillPartecipant();
     }
 
     private Lobby(JFrame jFrame, boolean b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void setClientGameStub(ClientGameImpl clientGameImpl) {
-        this.clientGame = clientGameImpl;
     }
 
     public void setServerGameStub(ServerGameStub serverGameStub) {

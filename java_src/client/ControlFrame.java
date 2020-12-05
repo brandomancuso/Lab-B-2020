@@ -870,8 +870,7 @@ public class ControlFrame extends javax.swing.JFrame {
             this.clientGame = new ClientGameImpl();
 
             serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
-            Lobby lobby = new Lobby(this, true, loggedUser);
-            lobby.setClientGameStub(clientGame);
+            Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             lobby.setServerGameStub(serverGameStub);
             this.clientGame.setGuiLobby(lobby);
             lobby.setVisible(true);
@@ -889,8 +888,7 @@ public class ControlFrame extends javax.swing.JFrame {
             this.clientGame = new ClientGameImpl();
 
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
-            Lobby lobby = new Lobby(this, true, loggedUser);
-            lobby.setClientGameStub(clientGame);
+            Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             lobby.setServerGameStub(serverGameStub);
             this.clientGame.setGuiLobby(lobby);
             lobby.setVisible(true);
