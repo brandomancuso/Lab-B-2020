@@ -46,6 +46,7 @@
 		<copy file="${lib.dir}/activation.jar" todir="${dist.dir}/lib"/>
 		<copy file="${dbsrc.dir}/db_src_ip.sql" todir="${dist.dir}/sql_src"/>
                 <copy file="${res.dir}/policy.policy" todir="${dist.dir}/resources"/>
+                <copy file="${res.dir}/dict-it.oxt" todir="${dist.dir}/resources"/>
 	</target>
 	
 	<target name="docs" depends="compile">

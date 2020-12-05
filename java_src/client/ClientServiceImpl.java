@@ -24,6 +24,7 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     private ControlFrame gui;
 
     private ClientServiceImpl(ControlFrame parGui) throws RemoteException { //togliere parametro e mettere setter per le gui, quindi lobby e partita
+        super(9001);
         statsData = new StatsData();
         gamesList = new ArrayList<GameData>();
         this.gui = parGui;

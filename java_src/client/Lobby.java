@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.ListModel;
 import server.game.ServerGameStub;
 
 /**
@@ -26,24 +28,23 @@ public class Lobby extends javax.swing.JDialog {
     ServerGameStub gameStub;
     ClientGameImpl clientGame;
     UserData loggedUser;
+    DefaultListModel lobbyListModel;
 
     /**
      * Creates new form Lobby
      */
-    public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser) {
+    public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser, ClientGameImpl parClientGame) {
         super(parent, modal);
+        lobbyListModel = new DefaultListModel<String>();
         initComponents();
         this.loggedUser = loggedUser;
-
+        this.clientGame = parClientGame;
+        
         this.fillPartecipant();
     }
 
     private Lobby(JFrame jFrame, boolean b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void setClientGameStub(ClientGameImpl clientGameImpl) {
-        this.clientGame = clientGameImpl;
     }
 
     public void setServerGameStub(ServerGameStub serverGameStub) {
@@ -97,11 +98,7 @@ public class Lobby extends javax.swing.JDialog {
         label_partecipantWait.setText("Attesa partecipanti");
 
         jList_lobby.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        jList_lobby.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList_lobby.setModel(lobbyListModel);
         jList_lobby.setEnabled(false);
         jScrollPane1.setViewportView(jList_lobby);
 
@@ -163,10 +160,11 @@ public class Lobby extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_leaveActionPerformed
 
     public void fillPartecipant() {
-        List<String> names = new ArrayList<String>();
-        names = this.clientGame.getLobbyList();
-        this.jList_lobby.removeAll();
-        this.jList_lobby = new JList(names.toArray());
+        List<String> names = this.clientGame.getLobbyList();
+        //this.jList_lobby.removeAll();
+        //this.jList_lobby = new JList(names.toArray());
+        this.lobbyListModel.removeAllElements();
+        this.lobbyListModel.addAll(names);
     }
 
     public void updateTimer(int value) {
