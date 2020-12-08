@@ -410,9 +410,19 @@ public class RegisterUser extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_registerActionPerformed
 
     private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
-        // TODO add your handling code here:
+        boolean res = false;
 
+        try {
+            res = this.stub.verifyUser(this.text_verificationCode.getText(), this.text_username.getText());
+        } catch (RemoteException ex) {
+            Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+        if (res) {
+            showMessageDialog(null, "Account verificato con successo!");
+            this.setVisible(false);
+            this.dispose();
+        }
     }//GEN-LAST:event_btn_verifyActionPerformed
 
     private void text_nameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_nameMouseClicked

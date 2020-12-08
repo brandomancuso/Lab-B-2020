@@ -1,11 +1,16 @@
 package client;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JPasswordField;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -46,5 +51,28 @@ public class GuiUtility {
             result = true;
         }
         return result;
+    }
+
+    public static void clearTable(DefaultTableModel model) {
+        while (model.getRowCount() > 0) {
+            for (int i = 0; i < model.getRowCount(); ++i) {
+                model.removeRow(i);
+            }
+        }
+    }
+
+    public static DefaultTableModel createCustomTableModel(int parNumCols) {
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        for (int i = 0; i < parNumCols; i++) {
+            model.addColumn("");
+        }
+
+        return model;
     }
 }

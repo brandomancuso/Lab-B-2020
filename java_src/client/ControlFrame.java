@@ -52,7 +52,7 @@ public class ControlFrame extends javax.swing.JFrame {
     DefaultTableModel gameTableModel;
 
     public ControlFrame() {
-        gameTableModel = this.createGameTableModel();
+        gameTableModel = GuiUtility.createCustomTableModel(2);
         initComponents();
         initCustom();
         loggedUser = new UserData();
@@ -1017,34 +1017,12 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     //UTILITY
-    private DefaultTableModel createGameTableModel() {
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        model.addColumn("");
-        model.addColumn("");
-        //model.setRowCount(0);
-        return model;
-    }
-
-    private void clearTable(DefaultTableModel model) {
-        while (model.getRowCount() > 0) {
-            for (int i = 0; i < model.getRowCount(); ++i) {
-                model.removeRow(i);
-            }
-        }
-    }
-
     public void fillGameTable() {
         //this.clearTable((DefaultTableModel) this.jTableGameList.getModel());
         // this.jTableGameList.removeAll();
         //this.jTableGameList.updateUI();
 
-        this.clearTable(gameTableModel);
+        GuiUtility.clearTable(gameTableModel);
 
         showMessageDialog(null, "code update check 6");
 

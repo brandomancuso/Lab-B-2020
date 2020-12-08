@@ -5,10 +5,16 @@
  */
 package client;
 
+import entity.GameData;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import server.game.ServerGameStub;
 
 /**
@@ -19,16 +25,19 @@ public class GameWin extends javax.swing.JDialog {
 
     ServerGameStub gameStub;
     ClientGameImpl clientGame;
-    DefaultListModel<String> listModel;
+    DefaultListModel wordListModel;
+    DefaultTableModel scoreTableModel;
 
     /**
      * Creates new form GameWin
      */
     public GameWin(java.awt.Dialog parent, boolean modal) {
         super(parent, modal);
+        wordListModel = new DefaultListModel<String>();
+        scoreTableModel = GuiUtility.createCustomTableModel(2);
         initComponents();
-        listModel = new DefaultListModel<>();
-        this.jList_gameWord = new JList<>(listModel);
+        initScoreTable();
+
     }
 
     /**
@@ -55,6 +64,8 @@ public class GameWin extends javax.swing.JDialog {
         btn_game_leave = new javax.swing.JButton();
         jLabel_timerValue = new javax.swing.JLabel();
         jLabelGameSession = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableScore = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -78,7 +89,7 @@ public class GameWin extends javax.swing.JDialog {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -109,11 +120,7 @@ public class GameWin extends javax.swing.JDialog {
         });
 
         jList_gameWord.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        jList_gameWord.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList_gameWord.setModel(wordListModel);
         jList_gameWord.setEnabled(false);
         jScrollPane1.setViewportView(jList_gameWord);
 
@@ -143,26 +150,31 @@ public class GameWin extends javax.swing.JDialog {
         jLabelGameSession.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelGameSession.setText("Sessione Corrente: #1");
 
+        jTableScore.setModel(scoreTableModel);
+        jScrollPane2.setViewportView(jTableScore);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabelGameName, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabelGameName, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(btn_game_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabelGameScore, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabelGameSession, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabelGameSession, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelGameScore, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                .addGap(18, 18, 18)
                 .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelGameTime, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -170,7 +182,7 @@ public class GameWin extends javax.swing.JDialog {
                 .addComponent(jLabel_timerValue, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(147, 147, 147)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_game_addWord, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                    .addComponent(btn_game_addWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(text_game_addWord)
                     .addComponent(jScrollPane1)
                     .addComponent(jSeparator1))
@@ -180,7 +192,6 @@ public class GameWin extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -204,6 +215,8 @@ public class GameWin extends javax.swing.JDialog {
                                 .addComponent(jLabelGameSession, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(46, 46, 46)
                                 .addComponent(jLabelGameScore, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btn_game_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())
@@ -224,6 +237,22 @@ public class GameWin extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initScoreTable() {
+        //TABLE settings
+        DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
+        headerBgRender.setBackground(Color.decode("#FFFFFF"));
+        headerBgRender.setForeground(Color.decode("#FFFFFF"));
+        DefaultTableCellRenderer rightAlignmentRender = new DefaultTableCellRenderer();
+        rightAlignmentRender.setHorizontalAlignment(JLabel.RIGHT);
+
+        this.jTableScore.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(headerBgRender);
+        this.jTableScore.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(headerBgRender);
+        this.jTableScore.getColumnModel().getColumn(1).setCellRenderer(rightAlignmentRender);
+        this.jTableScore.getColumnModel().getColumn(0).setPreferredWidth(350);
+        this.jTableScore.getColumnModel().getColumn(1).setPreferredWidth(50);
+        this.jScrollPane2.getViewport().setBackground(Color.white);
+    }
+
     public void setClientGameStub(ClientGameImpl clientGameImpl) {
         this.clientGame = clientGameImpl;
     }
@@ -240,8 +269,8 @@ public class GameWin extends javax.swing.JDialog {
     public List<String> getPlayerWords() {
         List<String> playerWords = new ArrayList<String>();
 
-        for (int i = 0; i < jList_gameWord.getModel().getSize(); i++) {
-            playerWords.add(jList_gameWord.getModel().getElementAt(i));
+        for (int i = 0; i < wordListModel.getSize(); i++) {
+            playerWords.add(String.valueOf(wordListModel.getElementAt(i)));
         }
 
         return playerWords;
@@ -250,8 +279,7 @@ public class GameWin extends javax.swing.JDialog {
     private void btn_game_addWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_addWordActionPerformed
 
         if (!this.text_game_addWord.getText().equals("")) {
-            listModel.addElement(this.text_game_addWord.getText());
-            this.jList_gameWord.updateUI();
+            wordListModel.addElement(this.text_game_addWord.getText());
         }
     }//GEN-LAST:event_btn_game_addWordActionPerformed
 
@@ -259,6 +287,24 @@ public class GameWin extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.text_game_addWord.setText("");
     }//GEN-LAST:event_text_addWordMouseClicked
+
+    //UTILITY
+    public void fillGameTable() {
+        GuiUtility.clearTable(scoreTableModel);
+
+        //ADD to table
+        /*
+        Object rowData[] = new Object[2];
+        for (GameData tmp : ) {
+            if (tmp != null) {
+                rowData[0] = tmp.getId() + " " + tmp.getName() + " " + "Creatore";
+                rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
+                scoreTableModel.addRow(rowData);
+            }
+        }*/
+    }
+
+
 
     /**
      * @param args the command line arguments
@@ -305,7 +351,6 @@ public class GameWin extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_game_addWord;
     private javax.swing.JButton btn_game_leave;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelGameName;
     private javax.swing.JLabel jLabelGameScore;
@@ -313,13 +358,13 @@ public class GameWin extends javax.swing.JDialog {
     private javax.swing.JLabel jLabelGameTime;
     private javax.swing.JLabel jLabel_timerValue;
     private javax.swing.JList<String> jList_gameWord;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel_title;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JTable jTableScore;
     private javax.swing.JTextField text_game_addWord;
     // End of variables declaration//GEN-END:variables
 }
