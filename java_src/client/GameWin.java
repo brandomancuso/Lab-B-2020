@@ -66,6 +66,23 @@ public class GameWin extends javax.swing.JDialog {
         jLabelGameSession = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableScore = new javax.swing.JTable();
+        jPanelGrid = new javax.swing.JPanel();
+        lableGrid1 = new javax.swing.JLabel();
+        lableGrid2 = new javax.swing.JLabel();
+        lableGrid3 = new javax.swing.JLabel();
+        lableGrid4 = new javax.swing.JLabel();
+        lableGrid5 = new javax.swing.JLabel();
+        lableGrid6 = new javax.swing.JLabel();
+        lableGrid7 = new javax.swing.JLabel();
+        lableGrid8 = new javax.swing.JLabel();
+        lableGrid9 = new javax.swing.JLabel();
+        lableGrid10 = new javax.swing.JLabel();
+        lableGrid11 = new javax.swing.JLabel();
+        lableGrid12 = new javax.swing.JLabel();
+        lableGrid13 = new javax.swing.JLabel();
+        lableGrid14 = new javax.swing.JLabel();
+        lableGrid15 = new javax.swing.JLabel();
+        lableGrid16 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -110,7 +127,7 @@ public class GameWin extends javax.swing.JDialog {
 
         btn_game_addWord.setBackground(new java.awt.Color(79, 36, 107));
         btn_game_addWord.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        btn_game_addWord.setForeground(new java.awt.Color(255, 255, 255));
+        btn_game_addWord.setForeground(new java.awt.Color(176, 219, 148));
         btn_game_addWord.setText("AGGIUNGI");
         btn_game_addWord.setBorder(null);
         btn_game_addWord.addActionListener(new java.awt.event.ActionListener() {
@@ -153,40 +170,130 @@ public class GameWin extends javax.swing.JDialog {
         jTableScore.setModel(scoreTableModel);
         jScrollPane2.setViewportView(jTableScore);
 
+        jPanelGrid.setBackground(new java.awt.Color(215, 206, 222));
+        jPanelGrid.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 3, 3, 3, new java.awt.Color(79, 36, 107)));
+        jPanelGrid.setLayout(new java.awt.GridLayout(4, 4, 5, 5));
+
+        lableGrid1.setBackground(new java.awt.Color(255, 255, 255));
+        lableGrid1.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid1.setText("A");
+        jPanelGrid.add(lableGrid1);
+
+        lableGrid2.setBackground(new java.awt.Color(255, 255, 255));
+        lableGrid2.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid2.setText("B");
+        jPanelGrid.add(lableGrid2);
+
+        lableGrid3.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid3.setText("C");
+        jPanelGrid.add(lableGrid3);
+
+        lableGrid4.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid4.setText("D");
+        jPanelGrid.add(lableGrid4);
+
+        lableGrid5.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid5.setText("E");
+        jPanelGrid.add(lableGrid5);
+
+        lableGrid6.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid6.setText("F");
+        jPanelGrid.add(lableGrid6);
+
+        lableGrid7.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid7.setText("G");
+        jPanelGrid.add(lableGrid7);
+
+        lableGrid8.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid8.setText("H");
+        jPanelGrid.add(lableGrid8);
+
+        lableGrid9.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid9.setText("I");
+        jPanelGrid.add(lableGrid9);
+
+        lableGrid10.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid10.setText("J");
+        jPanelGrid.add(lableGrid10);
+
+        lableGrid11.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid11.setText("K");
+        jPanelGrid.add(lableGrid11);
+
+        lableGrid12.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid12.setText("L");
+        jPanelGrid.add(lableGrid12);
+
+        lableGrid13.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid13.setText("M");
+        jPanelGrid.add(lableGrid13);
+
+        lableGrid14.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid14.setText("N");
+        jPanelGrid.add(lableGrid14);
+
+        lableGrid15.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid15.setText("O");
+        jPanelGrid.add(lableGrid15);
+
+        lableGrid16.setFont(new java.awt.Font("Berlin Sans FB", 0, 48)); // NOI18N
+        lableGrid16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lableGrid16.setText("P");
+        jPanelGrid.add(lableGrid16);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabelGameName, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabelGameSession, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabelGameScore, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(btn_game_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabelGameTime)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel_timerValue, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelGrid, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabelGameName, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(btn_game_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabelGameSession, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelGameScore, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabelGameTime, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel_timerValue, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(147, 147, 147)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_game_addWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(text_game_addWord)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jSeparator1))
-                .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jSeparator1)
+                    .addComponent(btn_game_addWord, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,20 +302,22 @@ public class GameWin extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 35, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(text_game_addWord, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jPanelGrid, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(text_game_addWord, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(52, 52, 52)
-                                .addComponent(btn_game_addWord, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btn_game_addWord, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabelGameTime, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel_timerValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(6, 6, 6))
+                                .addGap(15, 15, 15))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabelGameName, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -217,8 +326,9 @@ public class GameWin extends javax.swing.JDialog {
                                 .addComponent(jLabelGameScore, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btn_game_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btn_game_leave, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addComponent(jSeparator7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -289,7 +399,7 @@ public class GameWin extends javax.swing.JDialog {
     }//GEN-LAST:event_text_addWordMouseClicked
 
     //UTILITY
-    public void fillGameTable() {
+    public void fillScoreTable() {
         GuiUtility.clearTable(scoreTableModel);
 
         //ADD to table
@@ -360,11 +470,28 @@ public class GameWin extends javax.swing.JDialog {
     private javax.swing.JList<String> jList_gameWord;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanelGrid;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JTable jTableScore;
+    private javax.swing.JLabel lableGrid1;
+    private javax.swing.JLabel lableGrid10;
+    private javax.swing.JLabel lableGrid11;
+    private javax.swing.JLabel lableGrid12;
+    private javax.swing.JLabel lableGrid13;
+    private javax.swing.JLabel lableGrid14;
+    private javax.swing.JLabel lableGrid15;
+    private javax.swing.JLabel lableGrid16;
+    private javax.swing.JLabel lableGrid2;
+    private javax.swing.JLabel lableGrid3;
+    private javax.swing.JLabel lableGrid4;
+    private javax.swing.JLabel lableGrid5;
+    private javax.swing.JLabel lableGrid6;
+    private javax.swing.JLabel lableGrid7;
+    private javax.swing.JLabel lableGrid8;
+    private javax.swing.JLabel lableGrid9;
     private javax.swing.JTextField text_game_addWord;
     // End of variables declaration//GEN-END:variables
 }
