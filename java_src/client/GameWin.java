@@ -27,16 +27,19 @@ public class GameWin extends javax.swing.JDialog {
     ClientGameImpl clientGame;
     DefaultListModel wordListModel;
     DefaultTableModel scoreTableModel;
+    int sessionNum = 0;
+    String gameName = "";
 
     /**
      * Creates new form GameWin
      */
-    public GameWin(java.awt.Dialog parent, boolean modal) {
+    public GameWin(java.awt.Dialog parent, boolean modal, String gameName) {
         super(parent, modal);
         wordListModel = new DefaultListModel<String>();
         scoreTableModel = GuiUtility.createCustomTableModel(2);
         initComponents();
         initScoreTable();
+        this.jLabelGameName.setText("Partita: " + gameName);
 
     }
 
@@ -446,7 +449,7 @@ public class GameWin extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                GameWin dialog = new GameWin(new javax.swing.JDialog(), true);
+                GameWin dialog = new GameWin(new javax.swing.JDialog(), true, "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

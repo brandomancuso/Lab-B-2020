@@ -860,14 +860,16 @@ public class ControlFrame extends javax.swing.JFrame {
             showMessageDialog(null, "Inserire un nome della partita");
             return;
         }
+        String gameName = this.text_gameName_home.getText();
         ServerGameStub serverGameStub = null;
         try {
             //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
             this.clientGame = new ClientGameImpl();
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             this.clientGame.setGuiLobby(lobby);
-            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), gameName, this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
             lobby.setServerGameStub(serverGameStub);
+            lobby.setGameName(gameName);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -879,12 +881,14 @@ public class ControlFrame extends javax.swing.JFrame {
         ServerGameStub serverGameStub = null;
         int gameIndex = this.jTableGameList.getSelectedRow();
 
+        String gameName = gameList.get(gameIndex).getName();
         try {
             this.clientGame = new ClientGameImpl();
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             this.clientGame.setGuiLobby(lobby);
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
             lobby.setServerGameStub(serverGameStub);
+            lobby.setGameName(gameName);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);

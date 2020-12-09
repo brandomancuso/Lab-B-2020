@@ -29,6 +29,7 @@ public class Lobby extends javax.swing.JDialog {
     ClientGameImpl clientGame;
     UserData loggedUser;
     DefaultListModel lobbyListModel;
+    String gameName = "";
 
     /**
      * Creates new form Lobby
@@ -39,7 +40,7 @@ public class Lobby extends javax.swing.JDialog {
         initComponents();
         this.loggedUser = loggedUser;
         this.clientGame = parClientGame;
-        
+
         this.fillPartecipant();
     }
 
@@ -51,12 +52,19 @@ public class Lobby extends javax.swing.JDialog {
         this.gameStub = serverGameStub;
     }
 
+    public void setGameName(String parName) {
+        this.gameName = parName;
+    }
+
     public void openGameWindow() {
-        GameWin guiGame = new GameWin(this, true);
+        GameWin guiGame = new GameWin(this, true, this.gameName);
         guiGame.setClientGameStub(clientGame);
         guiGame.setServerGameStub(gameStub);
         this.clientGame.setGuiGame(guiGame);
         guiGame.setVisible(true);
+
+        this.setVisible(false);
+        this.dispose();
     }
 
     /**
