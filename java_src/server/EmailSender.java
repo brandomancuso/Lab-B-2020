@@ -12,8 +12,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class EmailSender implements Runnable{
-    private final String HOST = ""; //Email da cui inviare la mail
-    private final String PASSWORD = ""; //Password della mail da cui inviare la mail
+    private final String HOST = "andreafedeli@live.com"; //Email da cui inviare la mail
+    private final String PASSWORD = "Pokelink95Sdrogo"; //Password della mail da cui inviare la mail
     private final String VERIFICATION_OBJECT = "Il Paroliere - Verifica il tuo account"; //Oggetto della mail
     private final String RESET_PSW_OBJECT = "Il Paroliere - Modifica Password";
     private final String VERIFICATION_BODY = "Inserisci il tuo codice nell'applicazione per attivare il tuo profilo."

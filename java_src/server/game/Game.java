@@ -173,7 +173,11 @@ public class Game implements ServerGameStub {
             System.err.println(ex);
         }
     }
-
+    
+    public GameData getGameData(){
+        return this.gameData;
+    }
+    
     //remote methods for client purpose via RMI
     @Override
     public synchronized Term requestWordDef(WordData word) throws RemoteException {
@@ -209,4 +213,5 @@ public class Game implements ServerGameStub {
             exit(nickname);
         }
     }
+    
 }

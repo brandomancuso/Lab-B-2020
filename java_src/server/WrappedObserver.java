@@ -9,26 +9,21 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class WrappedObserver implements Observer{
-    List<ClientServiceStub> clients;
+    ClientServiceStub client;
     
-    public WrappedObserver(){
-        this.clients = new ArrayList<>();
-    }
-    
-    public void addRemoteObserver(ClientServiceStub remoteClient){
-        this.clients.add(remoteClient);
+    public WrappedObserver(ServerServiceImpl server, ClientServiceStub client){
+        server.addObserver(this);
+        this.client = client;
     }
     
     @Override
     public void update(Observable o, Object arg) {
-        List<GameData> games = (List<GameData>)arg;
         try{
-           for(ClientServiceStub c : clients){
-               c.update(games);
-           }
+           client.update((List<GameData>)arg);
         }
         catch(RemoteException e){
             o.deleteObserver(this);
+            ((ServerServiceImpl)o).removeObserver(client);
         }
     }   
 }

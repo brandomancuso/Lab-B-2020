@@ -8,7 +8,10 @@ import entity.GameData;
 import entity.UserData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Properties;
@@ -19,9 +22,7 @@ import server.game.ServerGameStub;
 import utils.Pair;
 
 public class ServerServiceImpl extends Observable implements ServerServiceStub{
-
     private Map<String, ClientServiceStub> clientsList; //Per aggiornare client singoli
-    private WrappedObserver updater; //Per aggiornare tutti i client tramite interfaccia Observer/Observable
     private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
     //private Stack<Integer> freePort;
@@ -35,7 +36,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         //freePort = new Stack();
         //occupiedPort = new HashMap<>();
         dbReference = DatabaseImpl.getDatabase();
-        updater = new WrappedObserver();
     }
 
     @Override
@@ -51,7 +51,10 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public void addObserver(String nickname, ClientServiceStub client) throws RemoteException {
         clientsList.put(nickname, client);
-        updater.addRemoteObserver(client);
+        List<GameData> list = (List<GameData>)castToList();
+        //client.update(list);
+        System.out.print("Incredibile");
+        WrappedObserver wo = new WrappedObserver(this, client);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if (updatedNewUser != null) {
             registerResult = "Registrazione completata!";
             //TODO Invio mail all'utente tramite thread per diminuire il ritardo
-            //new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), 1)).start();
+            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), 1)).start();
             HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
             return registerResult;
         } else {
@@ -135,7 +138,8 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if (game != null) {
             result = game.AddPartecipant(nickname, client);
             if (result.getLast()) {
-                this.notifyObservers(gamesList);
+                this.setChanged();
+                this.notifyObservers(castToList());
                 return game;
             } else {
                 return null;
@@ -163,7 +167,8 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
                 flag = true;//if the connection tempt somehow went wrong
             }
         }
-        this.notifyObservers(gamesList);
+        this.setChanged();
+        this.notifyObservers(castToList());
         return gameStub;
         //ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
         //occupiedPort.put(gameData.getId(),freePort.pop());
@@ -176,6 +181,10 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
     }
 
+    public void removeObserver(ClientServiceStub client){
+        clientsList.remove(client);
+    }
+    
     //Metodo per aggiornare numero di giocatori nella singola partita
     public void updateNumPlayer(Integer gameId) {
 
@@ -203,5 +212,15 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             newPswd = newPswd + alphabet.charAt(r.nextInt(N));
         }
         return newPswd;
+    }
+    
+    private List<GameData> castToList(){
+       ArrayList<Game> tempList  = new ArrayList<Game>( gamesList.values() );
+       ArrayList<GameData> returnedList = new ArrayList();
+       for(Game g : tempList){
+           returnedList.add(g.getGameData());
+       }
+       
+       return returnedList;
     }
 }

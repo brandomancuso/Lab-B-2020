@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  *
@@ -46,8 +47,8 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
         return statsData;
     }
 
-    public synchronized List<GameData> getGamesList() {
-        return gamesList;
+    public synchronized ArrayList<GameData> getGamesList() {
+        return (ArrayList<GameData>)gamesList;
     }
 
     //METHODS
@@ -58,7 +59,11 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     @Override
     public synchronized void update(List<GameData> games) throws RemoteException {
-        gamesList = games;
+        //gamesList = games;
+        for(GameData g : games){
+            gamesList.add(g);
+        }
+        System.out.println("update "+gamesList.size());
         gui.fillGameTable();
         //capire quando sono nella finestra home e chiamare il metodo per refillare la tabella partite
         

@@ -783,6 +783,7 @@ public class ControlFrame extends javax.swing.JFrame {
             if (res.getLast() != null) {
                 loggedUser = res.getLast();
                 logged = true;
+                serviceStub.addObserver(res.getLast().getNickname(), clientService);
             } else {
                 switch (res.getFirst()) {
                     case 0:
@@ -1043,17 +1044,19 @@ public class ControlFrame extends javax.swing.JFrame {
         //this.clearTable((DefaultTableModel) this.jTableGameList.getModel());
         // this.jTableGameList.removeAll();
         //this.jTableGameList.updateUI();
-
+        
         this.clearTable(gameTableModel);
-
+        
         showMessageDialog(null, "code update check 6");
 
         //GET fresh game list
-        //gameList = clientService.getGamesList(); //controllare che nn sia nullo!
-        gameList = new ArrayList<GameData>();
+        System.out.println("Prima");
+        gameList = clientService.getGamesList(); //controllare che nn sia nullo!
+        System.out.println("filltable "+clientService.getGamesList().size());
+        //gameList = new ArrayList<GameData>();
 
         //TEST ADDING VALUES
-        GameData test = new GameData("PartitaEdoardoBianchi", 3);
+        /*GameData test = new GameData("PartitaEdoardoBianchi", 3);
         test.setId(1);
         test.addPlayer("marco");
         test.addPlayer("giovanni");
@@ -1069,7 +1072,7 @@ public class ControlFrame extends javax.swing.JFrame {
         test2.addPlayer("rocco");
         gameList.add(test2);
         //END
-
+*/
         //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
