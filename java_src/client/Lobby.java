@@ -29,6 +29,8 @@ public class Lobby extends javax.swing.JDialog {
     ClientGameImpl clientGame;
     UserData loggedUser;
     DefaultListModel lobbyListModel;
+    String gameName = "";
+    List<String> playerNames;
 
     /**
      * Creates new form Lobby
@@ -36,10 +38,11 @@ public class Lobby extends javax.swing.JDialog {
     public Lobby(java.awt.Frame parent, boolean modal, UserData loggedUser, ClientGameImpl parClientGame) {
         super(parent, modal);
         lobbyListModel = new DefaultListModel<String>();
+        playerNames = new ArrayList<>();
         initComponents();
         this.loggedUser = loggedUser;
         this.clientGame = parClientGame;
-        
+
         this.fillPartecipant();
     }
 
@@ -51,12 +54,20 @@ public class Lobby extends javax.swing.JDialog {
         this.gameStub = serverGameStub;
     }
 
+    public void setGameName(String parName) {
+        this.gameName = parName;
+    }
+
     public void openGameWindow() {
-        GameWin guiGame = new GameWin(this, true);
+        GameWin guiGame = new GameWin(this, true, this.gameName);
+        guiGame.setPlayerList(playerNames); //--> lobbylist
         guiGame.setClientGameStub(clientGame);
         guiGame.setServerGameStub(gameStub);
         this.clientGame.setGuiGame(guiGame);
         guiGame.setVisible(true);
+
+        //this.setVisible(false);
+        //this.dispose();
     }
 
     /**
@@ -160,11 +171,11 @@ public class Lobby extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_leaveActionPerformed
 
     public void fillPartecipant() {
-        List<String> names = this.clientGame.getLobbyList();
+        playerNames = this.clientGame.getLobbyList();
         //this.jList_lobby.removeAll();
-        //this.jList_lobby = new JList(names.toArray());
+        //this.jList_lobby = new JList(playerNames.toArray());
         this.lobbyListModel.removeAllElements();
-        this.lobbyListModel.addAll(names);
+        this.lobbyListModel.addAll(playerNames);
     }
 
     public void updateTimer(int value) {

@@ -52,7 +52,7 @@ public class ControlFrame extends javax.swing.JFrame {
     DefaultTableModel gameTableModel;
 
     public ControlFrame() {
-        gameTableModel = this.createGameTableModel();
+        gameTableModel = GuiUtility.createCustomTableModel(2);
         initComponents();
         initCustom();
         loggedUser = new UserData();
@@ -861,14 +861,16 @@ public class ControlFrame extends javax.swing.JFrame {
             showMessageDialog(null, "Inserire un nome della partita");
             return;
         }
+        String gameName = this.text_gameName_home.getText();
         ServerGameStub serverGameStub = null;
         try {
             //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
             this.clientGame = new ClientGameImpl();
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             this.clientGame.setGuiLobby(lobby);
-            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), this.text_gameName_home.getText(), this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
+            serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), gameName, this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
             lobby.setServerGameStub(serverGameStub);
+            lobby.setGameName(gameName);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -880,12 +882,14 @@ public class ControlFrame extends javax.swing.JFrame {
         ServerGameStub serverGameStub = null;
         int gameIndex = this.jTableGameList.getSelectedRow();
 
+        String gameName = gameList.get(gameIndex).getName();
         try {
             this.clientGame = new ClientGameImpl();
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             this.clientGame.setGuiLobby(lobby);
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
             lobby.setServerGameStub(serverGameStub);
+            lobby.setGameName(gameName);
             lobby.setVisible(true);
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -1018,45 +1022,16 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     //UTILITY
-    private DefaultTableModel createGameTableModel() {
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        model.addColumn("");
-        model.addColumn("");
-        //model.setRowCount(0);
-        return model;
-    }
-
-    private void clearTable(DefaultTableModel model) {
-        while (model.getRowCount() > 0) {
-            for (int i = 0; i < model.getRowCount(); ++i) {
-                model.removeRow(i);
-            }
-        }
-    }
-
     public void fillGameTable() {
-        //this.clearTable((DefaultTableModel) this.jTableGameList.getModel());
-        // this.jTableGameList.removeAll();
-        //this.jTableGameList.updateUI();
-        
-        this.clearTable(gameTableModel);
-        
-        showMessageDialog(null, "code update check 6");
+        GuiUtility.clearTable(gameTableModel);
 
+        showMessageDialog(null, "code update check 7");
         //GET fresh game list
-        System.out.println("Prima");
         gameList = clientService.getGamesList(); //controllare che nn sia nullo!
-        System.out.println("filltable "+clientService.getGamesList().size());
         //gameList = new ArrayList<GameData>();
 
-        //TEST ADDING VALUES
-        /*GameData test = new GameData("PartitaEdoardoBianchi", 3);
+        /*//TEST ADDING VALUES
+        GameData test = new GameData("PartitaEdoardoBianchi", 3);
         test.setId(1);
         test.addPlayer("marco");
         test.addPlayer("giovanni");
