@@ -60,14 +60,14 @@ public class Lobby extends javax.swing.JDialog {
 
     public void openGameWindow() {
         GameWin guiGame = new GameWin(this, true, this.gameName);
-        guiGame.setPlayerList(playerNames);
+        guiGame.setPlayerList(playerNames); //--> lobbylist
         guiGame.setClientGameStub(clientGame);
         guiGame.setServerGameStub(gameStub);
         this.clientGame.setGuiGame(guiGame);
         guiGame.setVisible(true);
 
-        this.setVisible(false);
-        this.dispose();
+        //this.setVisible(false);
+        //this.dispose();
     }
 
     /**

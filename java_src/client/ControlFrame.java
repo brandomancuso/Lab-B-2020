@@ -1022,19 +1022,14 @@ public class ControlFrame extends javax.swing.JFrame {
 
     //UTILITY
     public void fillGameTable() {
-        //this.clearTable((DefaultTableModel) this.jTableGameList.getModel());
-        // this.jTableGameList.removeAll();
-        //this.jTableGameList.updateUI();
-
         GuiUtility.clearTable(gameTableModel);
 
-        showMessageDialog(null, "code update check 6");
-
+        showMessageDialog(null, "code update check 7");
         //GET fresh game list
-        //gameList = clientService.getGamesList(); //controllare che nn sia nullo!
-        gameList = new ArrayList<GameData>();
+        gameList = clientService.getGamesList(); //controllare che nn sia nullo!
+        //gameList = new ArrayList<GameData>();
 
-        //TEST ADDING VALUES
+        /*//TEST ADDING VALUES
         GameData test = new GameData("PartitaEdoardoBianchi", 3);
         test.setId(1);
         test.addPlayer("marco");
@@ -1051,7 +1046,7 @@ public class ControlFrame extends javax.swing.JFrame {
         test2.addPlayer("rocco");
         gameList.add(test2);
         //END
-
+*/
         //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {

@@ -27,6 +27,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         storePointPlayer = new HashMap<>();
         lobbyList = new ArrayList<String>();
         playerWordList = new ArrayList<String>();
+        guiGame = null;
     }
 
     //SETTER
@@ -77,15 +78,22 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiLobby.openGameWindow();
                 this.guiLobby.setVisible(false);
                 this.guiLobby.dispose();
+/*
+                if (this.guiGame == null) {
+                    //creo guiGame nuovo
+                } else {
+                    this.guiGame.setVisible(true);
+                }*/
                 break;
             case 2: //result
                 this.guiGame.disableInput();
                 playerWordList = this.guiGame.getPlayerWords();
+                this.guiGame.setVisible(false);
                 //chiudo game e apro result win
                 break;
-            case 3: //win --> transuto a lista di partita
+            case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
                 break;
-            case 4: //abandoned --> transuto a lista di partita
+            case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
                 break;
         }
     }
