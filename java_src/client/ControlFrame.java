@@ -808,7 +808,8 @@ public class ControlFrame extends javax.swing.JFrame {
             btn_profile.setEnabled(true);
             btn_logout.setEnabled(true);
             card.show(jPanel_main, "home");
-            this.fillGameTable();
+            gameList = clientService.getGamesList();
+            this.fillGameTable(gameList);
         }
     }//GEN-LAST:event_btn_loginActionPerformed
 
@@ -836,7 +837,8 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_homeActionPerformed
         // TODO add your handling code here:
-        this.fillGameTable();
+        gameList = clientService.getGamesList();
+        this.fillGameTable(gameList);
         card.show(jPanel_main, "home");
     }//GEN-LAST:event_btn_homeActionPerformed
 
@@ -868,6 +870,7 @@ public class ControlFrame extends javax.swing.JFrame {
             this.clientGame = new ClientGameImpl();
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             this.clientGame.setGuiLobby(lobby);
+            this.clientGame.setGuiMain(this);
             serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), gameName, this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setGameName(gameName);
@@ -887,6 +890,7 @@ public class ControlFrame extends javax.swing.JFrame {
             this.clientGame = new ClientGameImpl();
             Lobby lobby = new Lobby(this, true, loggedUser, clientGame);
             this.clientGame.setGuiLobby(lobby);
+            this.clientGame.setGuiMain(this);
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setGameName(gameName);
@@ -1022,12 +1026,11 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     //UTILITY
-    public void fillGameTable() {
+    public void fillGameTable(List<GameData> parGameList) {
         GuiUtility.clearTable(gameTableModel);
 
-        showMessageDialog(null, "code update check 7");
-        //GET fresh game list
-        gameList = clientService.getGamesList(); //controllare che nn sia nullo!
+        //gameList = clientService.getGamesList(); //controllare che nn sia nullo!
+        gameList = parGameList;
         //gameList = new ArrayList<GameData>();
 
         /*//TEST ADDING VALUES
@@ -1047,7 +1050,7 @@ public class ControlFrame extends javax.swing.JFrame {
         test2.addPlayer("rocco");
         gameList.add(test2);
         //END
-*/
+         */
         //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
@@ -1057,8 +1060,6 @@ public class ControlFrame extends javax.swing.JFrame {
                 gameTableModel.addRow(rowData);
             }
         }
-
-        //this.jTableGameList.updateUI();
     }
 
     /**

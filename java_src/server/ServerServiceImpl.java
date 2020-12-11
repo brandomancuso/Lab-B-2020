@@ -52,7 +52,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     public void addObserver(String nickname, ClientServiceStub client) throws RemoteException {
         clientsList.put(nickname, client);
         List<GameData> list = (List<GameData>)castToList();
-        //client.update(list);
+        client.update(list);
         System.out.print("Incredibile");
         WrappedObserver wo = new WrappedObserver(this, client);
     }

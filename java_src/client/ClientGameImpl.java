@@ -20,10 +20,11 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     private int gameState;
     private Lobby guiLobby;
     private GameWin guiGame;
+    private ControlFrame guiMain;
     private Map<String, Integer> storePointPlayer;
 
     public ClientGameImpl() throws RemoteException {
-        super(9000);
+        super(0);
         storePointPlayer = new HashMap<>();
         lobbyList = new ArrayList<String>();
         playerWordList = new ArrayList<String>();
@@ -37,6 +38,10 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     public void setGuiGame(GameWin parGuiGame) {
         guiGame = parGuiGame;
+    }
+
+    public void setGuiMain(ControlFrame parGuiMain) {
+        guiMain = parGuiMain;
     }
 
     //GETTER
@@ -75,15 +80,14 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiLobby.disableLeaveBtn();
                 break;
             case 1: //session --> apro finestra di gioco
-                this.guiLobby.openGameWindow();
-                this.guiLobby.setVisible(false);
-                this.guiLobby.dispose();
-/*
                 if (this.guiGame == null) {
                     //creo guiGame nuovo
+                    this.guiLobby.openGameWindow();
                 } else {
                     this.guiGame.setVisible(true);
-                }*/
+                }
+                this.guiLobby.setVisible(false);
+                this.guiLobby.dispose();
                 break;
             case 2: //result
                 this.guiGame.disableInput();
@@ -94,6 +98,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
             case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
+                
                 break;
         }
     }
@@ -101,7 +106,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     @Override
     public void updateTimer(int timerValue) throws RemoteException {
         this.timerValue = timerValue;
-        this.guiLobby.updateTimer(timerValue);
+        this.guiLobby.updateTimer(this.timerValue);
     }
 
     @Override

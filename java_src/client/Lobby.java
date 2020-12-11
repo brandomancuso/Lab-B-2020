@@ -163,11 +163,14 @@ public class Lobby extends javax.swing.JDialog {
 
     private void btn_leaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_leaveActionPerformed
         try {
+            this.setVisible(false);
+            this.dispose();
             this.gameStub.leaveGame(loggedUser.getNickname());
         } catch (RemoteException ex) {
             Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.fillPartecipant();
+        //this.fillPartecipant();
+        
     }//GEN-LAST:event_btn_leaveActionPerformed
 
     public void fillPartecipant() {

@@ -21,13 +21,13 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     private static ClientServiceImpl csiSingleInstance = null;
 
     private StatsData statsData;
-    private List<GameData> gamesList;
+    private List<GameData> gameList;
     private ControlFrame gui;
 
     private ClientServiceImpl(ControlFrame parGui) throws RemoteException { //togliere parametro e mettere setter per le gui, quindi lobby e partita
-        super(9001);
+        super(0);
         statsData = new StatsData();
-        gamesList = new ArrayList<GameData>();
+        gameList = new ArrayList<GameData>();
         this.gui = parGui;
     }
 
@@ -47,8 +47,8 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
         return statsData;
     }
 
-    public synchronized ArrayList<GameData> getGamesList() {
-        return (ArrayList<GameData>)gamesList;
+    public synchronized List<GameData> getGamesList() {
+        return gameList;
     }
 
     //METHODS
@@ -59,14 +59,10 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     @Override
     public synchronized void update(List<GameData> games) throws RemoteException {
-        //gamesList = games;
-        for(GameData g : games){
-            gamesList.add(g);
-        }
-        System.out.println("update "+gamesList.size());
-        gui.fillGameTable();
+        gameList = games;
+        gui.fillGameTable(gameList);
         //capire quando sono nella finestra home e chiamare il metodo per refillare la tabella partite
-        
+
     }
 
     @Override
