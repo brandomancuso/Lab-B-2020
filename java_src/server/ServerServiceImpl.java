@@ -153,7 +153,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         Boolean flag = true;
         ServerGameStub gameStub = null;
         ClientServiceStub user = clientsList.get(nickname);
-        GameData gameData = new GameData(gameTitle, numPlayers);
+        GameData gameData = new GameData(gameTitle, numPlayers,nickname);
         gameData = dbReference.addGame(gameData);
         Game game = new Game(gameData, nickname, client, this, dbReference);
         gamesList.put(gameData.getId(), game);
@@ -177,6 +177,8 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
 
     public void disconnectGame(Integer gameId) {
         gamesList.remove(gameId);
+        this.setChanged();
+        this.notifyObservers(castToList());
         //freePort.push(occupiedPort.remove(gameId));
         //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
     }
@@ -186,8 +188,9 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     }
     
     //Metodo per aggiornare numero di giocatori nella singola partita
-    public void updateNumPlayer(Integer gameId) {
-
+    public void updateNumPlayer() {
+         this.setChanged();
+         this.notifyObservers(castToList());
     }
 
     private String generateCode() {

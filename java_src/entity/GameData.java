@@ -9,6 +9,7 @@ import java.util.Map;
 public class GameData implements Serializable{
     private Integer id;
     private String name;
+    private String creator;
     private List<SessionData> sessions;
     private int numPlayers;
     private Map<String, Integer> playerPoints;
@@ -27,13 +28,14 @@ public class GameData implements Serializable{
         this.id = id;
     }
     
-    public GameData(String name, int numPlayers) {
+    public GameData(String name, int numPlayers,String creator) {
         this();
         if(numPlayers < MIN_PLAYERS || numPlayers > MAX_PLAYERS){
             throw new IllegalArgumentException("numPlayers must be in range 2 - 6. Passed value: " + numPlayers);
         }
         this.name = name;
         this.numPlayers = numPlayers;
+        this.creator=creator;
     }
 
     public Integer getId() {
@@ -46,6 +48,11 @@ public class GameData implements Serializable{
 
     public String getName() {
         return name;
+    }
+    
+    public String getCreator()
+    {
+        return creator;
     }
 
     public void setName(String name) {

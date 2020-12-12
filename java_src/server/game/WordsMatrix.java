@@ -3,6 +3,7 @@
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Stack;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /* for testing
  * 
@@ -70,9 +71,8 @@ public class WordsMatrix {
 //public method
 	public String[] getWordsMatrix() {
             String[] gridTmp=new String[DIM*DIM];
-            int count=1;
+            int count=0;
 		for(int i = 0; i<DIM; i++) {
-			System.out.println();
 			for(int j = 0; j<DIM; j++) {
 				gridTmp[count]=matrix[i][j].read();
                                 count++;

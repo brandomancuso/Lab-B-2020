@@ -7,6 +7,7 @@ package client;
 
 import entity.GameData;
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -420,9 +421,13 @@ public class GameWin extends javax.swing.JDialog {
 
     public void fillGameGrid(String[] grid) {
         int cnt = 0;
-        for (JLabel tmp : (JLabel[]) this.jPanelGrid.getComponents()) {
-            tmp.setText(grid[cnt]);
-            cnt++;
+        for (Component tmp : this.jPanelGrid.getComponents()) {
+            if (tmp instanceof JLabel) {
+                JLabel a = (JLabel) tmp;
+                a.setText(grid[cnt]);
+                cnt++;
+            }
+
         }
     }
 
@@ -456,7 +461,6 @@ public class GameWin extends javax.swing.JDialog {
             }
         }
     }
-    
 
     /**
      * @param args the command line arguments

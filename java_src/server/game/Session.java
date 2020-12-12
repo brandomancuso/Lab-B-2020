@@ -3,6 +3,9 @@
 import entity.*;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Session {
     private SessionData sessionData;
@@ -41,8 +44,13 @@ public class Session {
     {
         observerClientSet.forEach((key,value)->{
             try {
-                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);
                     value.getClientGameStub().changeGameState(1);//change state into session
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);                
                 } catch (RemoteException ex) {
                     System.err.println(ex);
             }
@@ -78,8 +86,8 @@ public class Session {
         observerClientSet.forEach((key,value)->
         {
             try {
-                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());
                 value.getClientGameStub().changeGameState(2);//change in watching Result State
+                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());               
              } catch (RemoteException ex) {
                 System.err.println(ex);
             }

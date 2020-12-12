@@ -17,11 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.swing.JOptionPane.showMessageDialog;
 import utils.Pair;
 import server.ServerServiceImpl;
 
 //Coustructor called after a master wants to create a Game
-public class Game implements ServerGameStub {
+public class Game extends Thread implements ServerGameStub {
 
     private GameData gameData;
     private Timer timer;
@@ -62,23 +63,33 @@ public class Game implements ServerGameStub {
             System.err.print(ex);
         }
     }
-
-    private void startSession() {
-        List<String> winnerNickname = new ArrayList<>();
-        int i = 1;//in order to count the number of sessions
-        while (boolNextRound) {
-            Session currentSession = new Session(dictionary, persistentSignal, observerClientSet, gameData, i);
-            if (isLobbyState) {
-                observerClientSet.forEach((key, value) -> {
+    
+    public void run()
+    {
+        List<String> winnerNickname=new ArrayList<>();
+        int i=1;//in order to count the number of sessions
+        while (boolNextRound)
+        {
+            Session currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i);
+            if(isLobbyState)
+            {
+                gameData.addSession(currentSession.getSessionData());
+                timer.setTime(30);
+                
+                observerClientSet.forEach((key,value)->{
                     try {
                         value.getClientGameStub().changeGameState(0);//change state in waiting inside the lobby
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     } catch (RemoteException ex) {
                         System.err.println(ex);
                     }
-                });
-                gameData.addSession(currentSession.getSessionData());
-                timer.setTime(30);
-                isLobbyState = false;
+                    });
+                
+                isLobbyState=false;
             }
             //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
             currentSession.startBeforeGame(timerThread = new Thread(timer));
@@ -115,33 +126,40 @@ public class Game implements ServerGameStub {
         if (gameData.getPlayersList().size() - 1 == 0) {
             gameData.removePlayer(nicknamePlayer);
             observerClientSet.remove(nicknamePlayer);
-            updateInfoLobby();
-        } else {
+            try {
+                 UnicastRemoteObject.unexportObject(this, false);
+             } catch (NoSuchObjectException ex) {
+                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+             }
+            serverServiceImpl.disconnectGame(gameData.getId());
+         }
+        else
+        {
             gameData.removePlayer(nicknamePlayer);
             observerClientSet.remove(nicknamePlayer);
             updateInfoLobby();
+            serverServiceImpl.updateNumPlayer();
         }
     }
-
-    private void updateInfoLobby() {
-        observerClientSet.forEach((key, value) -> {
-
+    
+    private void updateInfoLobby()
+    {
+        observerClientSet.forEach((key,value)->{       
             try {
                 value.getClientGameStub().updateLobby(gameData.getPlayersList());//change state in waiting inside the lobby
             } catch (RemoteException ex) {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         });
     }
 
     //public methods for the game creation
     public Pair<GameData, Boolean> AddPartecipant(String nicknamePlayer, ClientGameStub clientGameStub) {
-        if (gameData.getPlayersList().size() + 1 > gameData.getNumPlayers()) {
+        if (gameData.getPlayersList().size() + 1 == gameData.getNumPlayers()) {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer, new ObserverClient(nicknamePlayer, clientGameStub, this, timer));
             updateInfoLobby();
-            startSession();
+            this.start();//start the game
             return new Pair<>(gameData, Boolean.FALSE);
         } else {
             gameData.addPlayer(nicknamePlayer);
@@ -167,7 +185,7 @@ public class Game implements ServerGameStub {
         });
 
         try {
-            UnicastRemoteObject.unexportObject(this, true);
+            UnicastRemoteObject.unexportObject(this, false);
             serverServiceImpl.disconnectGame(gameData.getId());
         } catch (NoSuchObjectException ex) {
             System.err.println(ex);
@@ -200,18 +218,9 @@ public class Game implements ServerGameStub {
     public synchronized void leaveGame(String nickname) throws RemoteException {
         if (isLobbyState) {
             RemovePartecipant(nickname);
-            serverServiceImpl.updateNumPlayer(gameData.getId());
-            observerClientSet.forEach((key, value) -> {
-                try {
-                    value.getClientGameStub().changeGameState(4);//change into abandoned state
-                    value.getClientGameStub().notifyInfoGame(Arrays.asList(nickname));
-                } catch (RemoteException ex) {
-                    Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
-        } else {
-            exit(nickname);
         }
+        else
+           exit(nickname);
     }
     
 }

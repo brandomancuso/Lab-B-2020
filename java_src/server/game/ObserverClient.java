@@ -6,6 +6,7 @@ import client.ClientGameStub;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class ObserverClient implements Observer  {
     private final ClientGameStub client;
