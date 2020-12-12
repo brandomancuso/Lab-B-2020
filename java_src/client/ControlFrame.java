@@ -1055,7 +1055,7 @@ public class ControlFrame extends javax.swing.JFrame {
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {
-                rowData[0] = tmp.getId() + " " + tmp.getName() + " " + "Creatore";
+                rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
             }
