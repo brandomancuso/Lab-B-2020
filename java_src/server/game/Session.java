@@ -41,8 +41,8 @@ public class Session {
     {
         observerClientSet.forEach((key,value)->{
             try {
-                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);
                     value.getClientGameStub().changeGameState(1);//change state into session
+                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);                
                 } catch (RemoteException ex) {
                     System.err.println(ex);
             }
@@ -78,8 +78,8 @@ public class Session {
         observerClientSet.forEach((key,value)->
         {
             try {
-                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());
                 value.getClientGameStub().changeGameState(2);//change in watching Result State
+                value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());               
              } catch (RemoteException ex) {
                 System.err.println(ex);
             }

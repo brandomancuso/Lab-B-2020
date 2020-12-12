@@ -72,6 +72,9 @@ public class Game implements ServerGameStub{
             Session currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i);
             if(isLobbyState)
             {
+                gameData.addSession(currentSession.getSessionData());
+                timer.setTime(30);
+                
                 observerClientSet.forEach((key,value)->{
                     try {
                         value.getClientGameStub().changeGameState(0);//change state in waiting inside the lobby
@@ -79,8 +82,7 @@ public class Game implements ServerGameStub{
                         System.err.println(ex);
                     }
                     });
-                gameData.addSession(currentSession.getSessionData());
-                timer.setTime(30);
+                
                 isLobbyState=false;
             }
             //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
@@ -122,28 +124,31 @@ public class Game implements ServerGameStub{
          {
             gameData.removePlayer(nicknamePlayer);
             observerClientSet.remove(nicknamePlayer);
-            updateInfoLobby();
+            try {
+                 UnicastRemoteObject.unexportObject(this, false);
+             } catch (NoSuchObjectException ex) {
+                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+             }
+            serverServiceImpl.disconnectGame(gameData.getId());
          }
         else
         {
             gameData.removePlayer(nicknamePlayer);
             observerClientSet.remove(nicknamePlayer);
             updateInfoLobby();
+            serverServiceImpl.updateNumPlayer(gameData.getId());
         }
     }
     
     private void updateInfoLobby()
     {
-        observerClientSet.forEach((key,value)->{
-                  
+        observerClientSet.forEach((key,value)->{       
             try {
                 value.getClientGameStub().updateLobby(gameData.getPlayersList());//change state in waiting inside the lobby
             } catch (RemoteException ex) {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
-                 
-                    
-                    });
+        });
     }
     
     
@@ -185,7 +190,7 @@ public class Game implements ServerGameStub{
         });
               
         try {
-            UnicastRemoteObject.unexportObject(this, true);
+            UnicastRemoteObject.unexportObject(this, false);
             serverServiceImpl.disconnectGame(gameData.getId());
         } catch (NoSuchObjectException ex) {
             System.err.println(ex);
@@ -215,15 +220,6 @@ public class Game implements ServerGameStub{
         if(isLobbyState)
         {
             RemovePartecipant(nickname);
-            serverServiceImpl.updateNumPlayer(gameData.getId());
-            observerClientSet.forEach((key,value)->{
-            try {
-                 value.getClientGameStub().changeGameState(4);//change into abandoned state
-                 value.getClientGameStub().notifyInfoGame(Arrays.asList(nickname));
-            }   catch (RemoteException ex) {
-                    Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
         }
         else
             exit(nickname);   
