@@ -408,6 +408,10 @@ public class GameWin extends javax.swing.JDialog {
     private void updateSessionNum() {
         this.jLabelGameSession.setText("Sessione Corrente: #" + String.valueOf(sessionNum));
     }
+    
+    public void updateTimer(int value) {
+        this.jLabel_timerValue.setText(value + "");
+    }
 
     public List<String> getPlayerWords() {
         List<String> playerWords = new ArrayList<String>();

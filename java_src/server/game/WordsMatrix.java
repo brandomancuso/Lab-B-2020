@@ -93,11 +93,13 @@ public class WordsMatrix {
     	for(int i=0;i<DIM;i++)
     		for(int j=0;j<DIM;j++)
     		{
-    			if(matrix[i][j].equals(String.valueOf(wordFoundArray[0])))
+    			if(matrix[i][j].read().equals(String.valueOf(wordFoundArray[0])))
     				cellToVisit.add(new Coordinate(i, j,0,DIM));
     		}
     	
-    	//search for a walkable paths		
+    	//search for a walkable paths	
+        if(!cellToVisit.isEmpty())//maybe there isn't a start point
+        {
          do
     		{ 	
         	 Stack<Coordinate> cellToVisitClone;
@@ -116,6 +118,7 @@ public class WordsMatrix {
 	    				flag=true;
         	 	}
     		}while(!cellToVisit.isEmpty() && flag != true);
+        }
          
          return flag;//if the stack is empty and any walkable paths were found, it means that the word composed is wrong
      }

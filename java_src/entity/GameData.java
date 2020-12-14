@@ -68,7 +68,7 @@ public class GameData implements Serializable{
     }
     
     public void addPlayer(String nickname) {
-        playerPoints.put(nickname, null);
+        playerPoints.put(nickname, 0);
     }
     
     public void removePlayer(String nickname) {

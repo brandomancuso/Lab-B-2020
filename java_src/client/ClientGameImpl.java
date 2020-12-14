@@ -16,7 +16,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
 
     private List<String> lobbyList;
-    private List<String> playerWordList;
+    //private List<String> playerWordList;
     private int timerValue;
     private int gameState;
     private Lobby guiLobby;
@@ -28,7 +28,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         super(0);
         storePointPlayer = new HashMap<>();
         lobbyList = new ArrayList<String>();
-        playerWordList = new ArrayList<String>();
+        //playerWordList = new ArrayList<String>();
         guiGame = null;
     }
 
@@ -64,7 +64,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public List<String> getWords() throws RemoteException {
-        return playerWordList;
+        return guiGame.getPlayerWords();
 
     }
 
@@ -87,12 +87,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 } else {
                     this.guiGame.setVisible(true);
                 }
-                this.guiLobby.setVisible(false);
-                this.guiLobby.dispose();
+                //this.guiLobby.setVisible(false);
+                //this.guiLobby.dispose();
                 break;
             case 2: //result
                 this.guiGame.disableInput();
-                playerWordList = this.guiGame.getPlayerWords();
+                //playerWordList = this.guiGame.getPlayerWords();
                 this.guiGame.setVisible(false);
                 //chiudo game e apro result win
                 break;
@@ -105,9 +105,25 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     }
 
     @Override
-    public void updateTimer(int timerValue) throws RemoteException {
-        this.timerValue = timerValue;
-        this.guiLobby.updateTimer(this.timerValue);
+    public void updateTimer(int timerValue) throws RemoteException {     
+            switch (gameState) {
+            case 0: //waiting --> blocco il bottone leave e parte il timer
+                 this.timerValue = timerValue;
+                 this.guiLobby.updateTimer(this.timerValue);
+                break;
+            case 1: //session --> apro finestra di gioco
+                this.timerValue = timerValue;
+                this.guiGame.updateTimer(this.timerValue);
+                break;
+            case 2: //result
+                
+                break;
+            case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
+                break;
+            case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
+                
+                break;
+            }
     }
 
     @Override
