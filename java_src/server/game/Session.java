@@ -45,16 +45,19 @@ public class Session {
         observerClientSet.forEach((key,value)->{
             try {
                     value.getClientGameStub().changeGameState(1);//change state into session
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
-                }
                     value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);                
                 } catch (RemoteException ex) {
                     System.err.println(ex);
             }
         });
+        
+        //to wait all client changing its state
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         timerThread.start();
         try {
             persistentSignal.waitTimer();
@@ -109,20 +112,21 @@ public class Session {
     {
        int pointPlayer=0;
        WordData wordTmp=new WordData();
+       //TO-DO:if the wordFoundList is null set a empty result
        for (String wordFound : wordFoundList)
        {
             if(!wordsMatrix.isAllowed(wordFound))
              {
                  wordTmp.setPoints(calculateScore(wordFound));
                  wordTmp.setCorrect(false);
-                 pointPlayer=0;
+                 pointPlayer+=0;
              }
               else
                 if (!dictionary.exists(wordFound))
                     {
                          wordTmp.setPoints(calculateScore(wordFound));
                          wordTmp.setCorrect(false);
-                         pointPlayer=0;
+                         pointPlayer+=0;
                     }
                  else
                      if(isDuplicated(wordFound))
@@ -130,14 +134,16 @@ public class Session {
                              wordTmp.setPoints(calculateScore(wordFound));
                              wordTmp.setCorrect(true);
                              wordTmp.setDuplicate(true);
+                             pointPlayer+=0;
                          }
                       else
                          {
-                             pointPlayer=calculateScore(wordFound);//to know how many point the player has
+                             wordTmp.setRealPoints(calculateScore(wordFound));
+                             pointPlayer+=calculateScore(wordFound);//to know how many point the player has
                              wordTmp.setPoints(calculateScore(wordFound));  
                              wordTmp.setCorrect(true);
                          }
-
+             wordTmp.setWord(wordFound);
              sessionData.addWord(nickname, wordTmp);   
        }
        return pointPlayer;//I save the real pointPlayer not the false one for the DataBase

@@ -17,6 +17,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import server.game.ServerGameStub;
 
 /**
@@ -64,7 +65,11 @@ public class Lobby extends javax.swing.JDialog {
         guiGame.setClientGameStub(clientGame);
         guiGame.setServerGameStub(gameStub);
         this.clientGame.setGuiGame(guiGame);
-        guiGame.setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+             public void run() {
+                    guiGame.setVisible(true);
+                               }
+        });
 
         //this.setVisible(false);
         //this.dispose();

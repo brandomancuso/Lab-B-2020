@@ -53,5 +53,14 @@ public class WordData implements Serializable{
         this.defRequested = defRequested;
     }
     
+    public int getRealPoints ()
+    {
+        return realPoints;
+    }
+    
+    public void setRealPoints (int realPoint)
+    {
+         this.realPoints=realPoint;
+    }
     
 }

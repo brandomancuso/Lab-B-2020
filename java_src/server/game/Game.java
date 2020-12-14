@@ -74,16 +74,11 @@ public class Game extends Thread implements ServerGameStub {
             if(isLobbyState)
             {
                 gameData.addSession(currentSession.getSessionData());
-                timer.setTime(30);
+                timer.setTime(1);
                 
                 observerClientSet.forEach((key,value)->{
                     try {
                         value.getClientGameStub().changeGameState(0);//change state in waiting inside the lobby
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                     } catch (RemoteException ex) {
                         System.err.println(ex);
                     }
@@ -93,7 +88,7 @@ public class Game extends Thread implements ServerGameStub {
             }
             //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
             currentSession.startBeforeGame(timerThread = new Thread(timer));
-            timer.setTime(180);
+            timer.setTime(50);
             currentSession.startRealGame(timerThread = new Thread(timer));
             timer.setTime(180);
             currentSession.startAfterGame(timerThread = new Thread(timer));
