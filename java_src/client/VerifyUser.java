@@ -5,9 +5,13 @@
  */
 package client;
 
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static javax.swing.JOptionPane.showMessageDialog;
+import server.ServerServiceStub;
 
 /**
  *
@@ -15,9 +19,17 @@ import static javax.swing.JOptionPane.showMessageDialog;
  */
 public class VerifyUser extends javax.swing.JDialog {
 
+    ServerServiceStub serviceStub;
+
     /**
      * Creates new form VerifyUser
      */
+    public VerifyUser(java.awt.Frame parent, boolean modal, ServerServiceStub serviceStub) {
+        super(parent, modal);
+        initComponents();
+        this.serviceStub = serviceStub;
+    }
+
     public VerifyUser(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -38,10 +50,8 @@ public class VerifyUser extends javax.swing.JDialog {
         jSeparator8 = new javax.swing.JSeparator();
         btn_verify = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        text_email = new javax.swing.JTextField();
+        text_nickname = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
-        jSeparator4 = new javax.swing.JSeparator();
-        text_password = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -82,29 +92,18 @@ public class VerifyUser extends javax.swing.JDialog {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Immetti il codice che abbiamo inviato");
 
-        text_email.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        text_email.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_email.setText("email");
-        text_email.setToolTipText("");
-        text_email.setBorder(null);
-        text_email.addMouseListener(new java.awt.event.MouseAdapter() {
+        text_nickname.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        text_nickname.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        text_nickname.setText("nickname");
+        text_nickname.setToolTipText("");
+        text_nickname.setBorder(null);
+        text_nickname.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                text_emailMouseClicked(evt);
+                text_nicknameMouseClicked(evt);
             }
         });
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
-
-        jSeparator4.setBackground(new java.awt.Color(0, 0, 0));
-
-        text_password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_password.setText("password");
-        text_password.setBorder(null);
-        text_password.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                text_passwordMouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -114,24 +113,18 @@ public class VerifyUser extends javax.swing.JDialog {
                 .addComponent(label_verifica, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(text_password, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(text_verificationCode, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(57, 57, 57)
-                                    .addComponent(btn_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel1)
-                            .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(text_email, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(text_verificationCode, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(57, 57, 57)
+                            .addComponent(btn_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(text_nickname, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -141,20 +134,16 @@ public class VerifyUser extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
-                .addComponent(text_email, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(text_nickname, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(text_password, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(text_verificationCode, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -171,34 +160,37 @@ public class VerifyUser extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void text_nicknameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_nicknameMouseClicked
+        // TODO add your handling code here:
+        this.text_nickname.setText("");
+    }//GEN-LAST:event_text_nicknameMouseClicked
+
+    private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
+        // TODO add your handling code here:
+        boolean res = false;
+        //CHECK not empty
+        if (GuiUtility.isEmpty(this.text_nickname) || GuiUtility.isEmpty(this.text_verificationCode)) {
+            showMessageDialog(null, "Compilare tutti i campi");
+            return;
+        }
+        try {
+            res = this.serviceStub.verifyUser(this.text_nickname.getText(), this.text_verificationCode.getText());
+        } catch (RemoteException ex) {
+            Logger.getLogger(VerifyUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(!res){
+            showMessageDialog(null, "Codice di verifica errato...");
+        }else{
+            this.setVisible(false);
+            this.dispose();
+        }
+
+    }//GEN-LAST:event_btn_verifyActionPerformed
+
     private void text_verificationCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_verificationCodeMouseClicked
         // TODO add your handling code here:
         this.text_verificationCode.setText("");
     }//GEN-LAST:event_text_verificationCodeMouseClicked
-
-    private void text_emailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_emailMouseClicked
-        // TODO add your handling code here:
-        this.text_email.setText("");
-    }//GEN-LAST:event_text_emailMouseClicked
-
-    private void text_passwordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_passwordMouseClicked
-        // TODO add your handling code here:
-        this.text_password.setText("");
-    }//GEN-LAST:event_text_passwordMouseClicked
-
-    private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
-        // TODO add your handling code here:
-        //CHECK not empty
-        if (GuiUtility.isEmpty(this.text_email) || GuiUtility.isEmpty(this.text_password) || GuiUtility.isEmpty(this.text_verificationCode)) {
-            showMessageDialog(null, "Compilare tutti i campi");
-            return;
-        }
-        //CHECK email
-        if (GuiUtility.isEmailCorrect(this.text_email.getText()) == false) {
-            showMessageDialog(null, "Formato Email errato");
-            return;
-        }
-    }//GEN-LAST:event_btn_verifyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -247,11 +239,9 @@ public class VerifyUser extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JLabel label_verifica;
-    private javax.swing.JTextField text_email;
-    private javax.swing.JPasswordField text_password;
+    private javax.swing.JTextField text_nickname;
     private javax.swing.JTextField text_verificationCode;
     // End of variables declaration//GEN-END:variables
 }
