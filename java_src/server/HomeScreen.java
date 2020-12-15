@@ -24,6 +24,7 @@ public class HomeScreen extends JFrame implements ActionListener{
     private static JTextArea serverOutput;
     private JButton startButton;
     private static ServerServiceImpl server;
+    private Registry registry;
     
     public HomeScreen(){
         try{
@@ -39,7 +40,7 @@ public class HomeScreen extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == startButton){
             try{
-                Registry registry = LocateRegistry.createRegistry(1099);
+                registry = LocateRegistry.createRegistry(1099);
                 ServerServiceStub serverStub = (ServerServiceStub) UnicastRemoteObject.exportObject(server, 2001);
                 registry.rebind("Il Paroliere", serverStub);
                 serverOutput.append("Server started...\n");
@@ -51,17 +52,20 @@ public class HomeScreen extends JFrame implements ActionListener{
         }
         if(event.getSource() == exitButton){
             try{
-                Registry registry = LocateRegistry.getRegistry(1099);
-                registry.unbind("Il Paroliere");
-                UnicastRemoteObject.unexportObject(server, false);
-                startButton.setEnabled(true);
-                this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSED));
+                if(registry != null){
+                    registry = LocateRegistry.getRegistry(1099);
+                    registry.unbind("Il Paroliere");
+                    UnicastRemoteObject.unexportObject(server, false);
+                }
             }
             catch(Exception e){
                 serverOutput.append("Errore! "+ e.getCause() + "\n");
             }
             finally{
-                
+                this.dispose();
+                startButton.setEnabled(true);
+                serverOutput.setText("");
+                ServerMain.showLogin();
             }
         }
     }

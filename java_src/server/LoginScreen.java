@@ -51,6 +51,9 @@ public class LoginScreen extends JFrame implements ActionListener{
                 if(administrator.getFirst() != null){
                     this.setVisible(false);
                     ServerMain.showHome();
+                    this.setVisible(false);
+                    usernameTxt.setText("");
+                    passwordTxt.setText("");
                 }
                 else{
                     JOptionPane.showMessageDialog(null, "Credenziali Errate!","Login Amministratore", JOptionPane.ERROR_MESSAGE);
