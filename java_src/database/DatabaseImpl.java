@@ -4,11 +4,14 @@ import entity.GameData;
 import entity.SessionData;
 import entity.StatsData;
 import entity.UserData;
+import entity.WordData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.Pair;
@@ -415,11 +418,96 @@ public class DatabaseImpl implements Database{
     }
 
     private void addPartecipate(Integer id, String player, int points) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "INSERT INTO partecipate (game_key, user_key, total_points) VALUES (?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            stmt.setString(2, player);
+            stmt.setInt(3, points);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
     }
 
     private void addSession(Integer id, SessionData s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "INSERT INTO manche (id, grid, game_key) VALUES (?, ?, ?)";
+        StringBuilder grid = new StringBuilder();
+        for(int i = 0; i<s.getGrid().length; i++){
+            grid.append(s.getGrid()[i]).append(i < s.getGrid().length-1 ? ",":"");
+        }
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, SESSION_ID++);
+            stmt.setString(2, grid.toString());
+            stmt.setInt(3, id);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+        
+        addFoundWords(SESSION_ID-1, s.getFoundWords());
+        addRequests(SESSION_ID-1, s.getRequestedWords());
+        addPlays(SESSION_ID-1, s.getPlayers());
+    }
+    
+    private void addFoundWords(int session_id, Map<String, List<WordData>> foundWords) {
+        Set<String> players = foundWords.keySet();
+        for(String player : players){
+            List<WordData> wordsList = foundWords.get(player);
+            for(WordData word : wordsList){
+                WordData stored = getWordFromDb(word.getWord());
+                if(stored == null) {
+                    stored = addWordToDb(word);
+                }
+                addFindRecord(session_id, player, stored);
+            }
+        }
+    }
+
+    private void addRequests(int session_id, Map<String, List<WordData>> requestedWords) {
+        Set<String> players = requestedWords.keySet();
+        for(String player : players){
+            List<WordData> wordsList = requestedWords.get(player);
+            for(WordData word : wordsList){
+                WordData stored = getWordFromDb(word.getWord());
+                if(stored == null) {
+                    throw new IllegalArgumentException("This word was never found in any session!");
+                }
+                addRequestRecord(session_id, player, stored);
+            }
+        }
+    }
+    
+    private void addPlays(int session_id, Set<String> players) {
+        for(String player : players){
+            List<WordData> words = getFoundWords(session_id, player);
+            int points = 0;
+            for(WordData word : words){
+                if(word.isCorrect() && !word.isDuplicate()) {
+                    points += word.getPoints();
+                }
+            }
+            addPlayRecord(session_id, player, points);
+        }
     }
     // </editor-fold>
 

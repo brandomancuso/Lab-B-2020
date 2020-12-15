@@ -8,8 +8,6 @@ public class WordData implements Serializable{
     private int realPoints;
     private boolean correct;
     private boolean duplicate;
-    private boolean defRequested;
-    // private String definition; ?
     
     private static final long serialVersionUID = 1L;
 
@@ -43,15 +41,6 @@ public class WordData implements Serializable{
 
     public void setDuplicate(boolean duplicate) {
         this.duplicate = duplicate;
-    }
-
-    public boolean isDefRequested() {
-        return defRequested;
-    }
-
-    public void setDefRequested(boolean defRequested) {
-        this.defRequested = defRequested;
-    }
-    
+    }    
     
 }
