@@ -134,7 +134,7 @@ public class WordsMatrix {
     			for(int i=0;i<2;i++)
     	    		for(int j=1;j<2;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter))
+    	    			if (matrix[x+i][y+j].read().equals(letter))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -147,7 +147,7 @@ public class WordsMatrix {
     			for(int i=0;i<2;i++)
     	    		for(int j=-1;j<2;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter) && (x!=x+i || y!=y+j))
+    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -160,7 +160,7 @@ public class WordsMatrix {
     			for(int i=0;i<2;i++)
     	    		for(int j=-1;j<1;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter) && (x!=x+i || y!=y+j))
+    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -173,7 +173,7 @@ public class WordsMatrix {
     			for(int i=-1;i<2;i++)
     	    		for(int j=0;j<2;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter) && (x!=x+i || y!=y+j))
+    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -186,7 +186,7 @@ public class WordsMatrix {
     			for(int i=-1;i<2;i++)
     	    		for(int j=-1;j<2;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter) && (x!=x+i || y!=y+j))
+    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -199,7 +199,7 @@ public class WordsMatrix {
     			for(int i=-1;i<2;i++)
     	    		for(int j=-1;j<1;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter) && (x!=x+i || y!=y+j))
+    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -212,7 +212,7 @@ public class WordsMatrix {
     			for(int i=-1;i<1;i++)
     	    		for(int j=0;j<2;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter))
+    	    			if (matrix[x+i][y+j].read().equals(letter))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -225,7 +225,7 @@ public class WordsMatrix {
     			for(int i=-1;i<1;i++)
     	    		for(int j=-1;j<2;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter) && (x!=x+i || y!=y+j))
+    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))
@@ -238,7 +238,7 @@ public class WordsMatrix {
     			for(int i=-1;i<1;i++)
     	    		for(int j=-1;j<1;j++)
     	    		{
-    	    			if (matrix[x+i][y+j].equals(letter))
+    	    			if (matrix[x+i][y+j].read().equals(letter))
     	    			{
     	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
     	    				if (!cellVisited.contains(coordinateTmp))

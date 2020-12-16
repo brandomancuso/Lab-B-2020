@@ -115,7 +115,9 @@ public class Session {
        //TO-DO:if the wordFoundList is null set a empty result
        for (String wordFound : wordFoundList)
        {
-            if(!wordsMatrix.isAllowed(wordFound))
+            wordFound=wordFound.trim();//to avoid space
+            wordFound=wordFound.toLowerCase();//to avoid problem with the dictionary
+            if(!wordsMatrix.isAllowed(wordFound.toUpperCase()))//To be comparable with UpperCase inside the matrix
              {
                  wordTmp.setPoints(calculateScore(wordFound));
                  wordTmp.setCorrect(false);
@@ -151,10 +153,9 @@ public class Session {
     
     private boolean isDuplicated (String wordFound)
     {
-        Map<String, List<WordData>> wordFoundMap= new HashMap<>(sessionData.getFoundWords());//i take from the return the hashmap of words found
-        List<WordData> wordFoundList=new LinkedList<>((List)wordFoundMap.values());//i take all the list of word of every player
-        
-        return wordFoundList.stream().anyMatch(word -> (word.getWord().equals(wordFound)));//it's a functional operation of a foreach comparing wordFound with the all word in the session
+        //List<WordData> wordFoundList=new LinkedList<>(sessionData.getFoundWords().values().stream().);//i will take all the word   
+        //return wordFoundList.stream().anyMatch(word -> (word.getWord().equals(wordFound)));//it's a functional operation of a foreach comparing wordFound with the all word in the session
+        return true;
     }
     
     private int calculateScore (String word)
