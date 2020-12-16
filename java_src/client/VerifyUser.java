@@ -5,9 +5,13 @@
  */
 package client;
 
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static javax.swing.JOptionPane.showMessageDialog;
+import server.ServerServiceStub;
 
 /**
  *
@@ -15,9 +19,17 @@ import static javax.swing.JOptionPane.showMessageDialog;
  */
 public class VerifyUser extends javax.swing.JDialog {
 
+    ServerServiceStub serviceStub;
+
     /**
      * Creates new form VerifyUser
      */
+    public VerifyUser(java.awt.Frame parent, boolean modal, ServerServiceStub serviceStub) {
+        super(parent, modal);
+        initComponents();
+        this.serviceStub = serviceStub;
+    }
+
     public VerifyUser(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -101,18 +113,18 @@ public class VerifyUser extends javax.swing.JDialog {
                 .addComponent(label_verifica, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(text_verificationCode, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(text_nickname, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(84, 84, 84)
-                        .addComponent(btn_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(text_verificationCode, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(57, 57, 57)
+                            .addComponent(btn_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(text_nickname, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -131,7 +143,7 @@ public class VerifyUser extends javax.swing.JDialog {
                 .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_verify, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -148,24 +160,38 @@ public class VerifyUser extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void text_nicknameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_nicknameMouseClicked
+        // TODO add your handling code here:
+        this.text_nickname.setText("");
+    }//GEN-LAST:event_text_nicknameMouseClicked
+
+    private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
+        // TODO add your handling code here:
+        boolean res = false;
+        //CHECK not empty
+        if (GuiUtility.isEmpty(this.text_nickname) || GuiUtility.isEmpty(this.text_verificationCode)) {
+            showMessageDialog(null, "Compilare tutti i campi");
+            return;
+        }
+        try {
+            res = this.serviceStub.verifyUser(this.text_verificationCode.getText(), this.text_nickname.getText());
+        } catch (RemoteException ex) {
+            Logger.getLogger(VerifyUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(!res){
+            showMessageDialog(null, "Codice di verifica errato...");
+        }else{
+            this.setVisible(false);
+            this.dispose();
+        }
+
+    }//GEN-LAST:event_btn_verifyActionPerformed
+
     private void text_verificationCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_verificationCodeMouseClicked
         // TODO add your handling code here:
         this.text_verificationCode.setText("");
         this.btn_verify.setEnabled(true);
     }//GEN-LAST:event_text_verificationCodeMouseClicked
-
-    private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
-        // TODO add your handling code here:
-        //CHECK not empty
-        if(GuiUtility.isEmpty(this.text_verificationCode))
-            showMessageDialog(null, "Inserisci il codice di verifica!");
-        
-    }//GEN-LAST:event_btn_verifyActionPerformed
-
-    private void text_nicknameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_nicknameMouseClicked
-        // TODO add your handling code here:
-        this.text_nickname.setText("");
-    }//GEN-LAST:event_text_nicknameMouseClicked
 
     /**
      * @param args the command line arguments

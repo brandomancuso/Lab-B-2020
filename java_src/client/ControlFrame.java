@@ -793,7 +793,7 @@ public class ControlFrame extends javax.swing.JFrame {
                         showMessageDialog(null, "Password errata!");
                         break;
                     case 2:
-                        VerifyUser verify = new VerifyUser(this, true);
+                        VerifyUser verify = new VerifyUser(this, true, serviceStub);
                         verify.setVisible(true);
                         break;
                 }
@@ -907,7 +907,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void label_verifyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_verifyMouseClicked
         // TODO add your handling code here:
-        VerifyUser verify = new VerifyUser(this, true);
+        VerifyUser verify = new VerifyUser(this, true, this.serviceStub);
         verify.setVisible(true);
     }//GEN-LAST:event_label_verifyMouseClicked
 

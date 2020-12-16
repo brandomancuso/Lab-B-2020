@@ -46,6 +46,7 @@ public class DbConnectScreen extends JFrame implements ActionListener{
             
             if(controlResult == null){
                 if(ServerMain.connectDatabase(user, password, host)){
+                    this.setVisible(false);
                     this.dispose();
                 }
                 else{

@@ -111,6 +111,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     
     @Override
     public boolean verifyUser(String verificationCode, String nickname){
+        String nick = nickname;
         UserData dbResult = dbReference.getUser(nickname);
         boolean result = false;
         

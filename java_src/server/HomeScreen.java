@@ -29,6 +29,7 @@ public class HomeScreen extends JFrame implements ActionListener{
     public HomeScreen(){
         try{
             server = new ServerServiceImpl();
+            registry = LocateRegistry.createRegistry(1099);
             initGUI();
         }
         catch(Exception e){
@@ -40,7 +41,6 @@ public class HomeScreen extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == startButton){
             try{
-                registry = LocateRegistry.createRegistry(1099);
                 ServerServiceStub serverStub = (ServerServiceStub) UnicastRemoteObject.exportObject(server, 2001);
                 registry.rebind("Il Paroliere", serverStub);
                 serverOutput.append("Server started...\n");
