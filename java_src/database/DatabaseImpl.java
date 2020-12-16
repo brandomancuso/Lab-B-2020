@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -269,6 +270,7 @@ public class DatabaseImpl implements Database{
         GameData gameData = null;
         Connection conn = null;
         try {
+            conn = connManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, gameId);
             ResultSet rs = stmt.executeQuery();
@@ -509,6 +511,161 @@ public class DatabaseImpl implements Database{
             addPlayRecord(session_id, player, points);
         }
     }
+    
+    private WordData getWordFromDb(String word) {
+        String sql = "SELECT w.id, w.points FROM word w WHERE w.word = ?";
+        WordData ret = null;
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, word);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                ret = new WordData();
+                ret.setWord(word);
+                ret.setId(rs.getInt(1));
+                ret.setPoints(rs.getInt(2));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return ret;
+    }
+    
+    private WordData addWordToDb(WordData word) {
+        String sql = "INSERT INTO word (id, word, points) VALUES (?, ?, ?)";
+        word.setId(WORD_ID++);
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, word.getId());
+            stmt.setString(2, word.getWord());
+            stmt.setInt(3, word.getPoints());
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            word = null;
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+        return word;
+    }
+    
+    private void addFindRecord(int session_id, String player, WordData word) {
+        String sql = "INSERT INTO word (user_key, word_key, manche_key, duplicate, correct) VALUES (?, ?, ?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, word.getId());
+            stmt.setInt(3, session_id);
+            stmt.setBoolean(4, word.isDuplicate());
+            stmt.setBoolean(5, word.isCorrect());
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+    }
+    
+    private void addRequestRecord(int session_id, String player, WordData word) {
+        String sql = "INSERT INTO def_req (user_key, word_key, manche_key) VALUES (?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, word.getId());
+            stmt.setInt(3, session_id);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+    }
+    
+    private List<WordData> getFoundWords(int session_id, String player) {
+        String sql = "SELECT id, word, points, duplicate, correct FROM word INNER JOIN find "
+                + "WHERE user_key = ? AND manche_key = ?";
+        List<WordData> foundWords = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, session_id);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                WordData word = new WordData();
+                word.setId(rs.getInt("id"));
+                word.setWord(rs.getString("word"));
+                word.setPoints(rs.getInt("points"));
+                word.setDuplicate(rs.getBoolean("duplicate"));
+                word.setCorrect(rs.getBoolean("correct"));
+                foundWords.add(word);   
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if(conn != null) try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return foundWords;
+    }
+    
+    private void addPlayRecord(int session_id, String player, int points) {
+        String sql = "INSERT INTO play (user_key, manche_key, points) VALUES (?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, session_id);
+            stmt.setInt(3, points);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+    }
     // </editor-fold>
-
 }

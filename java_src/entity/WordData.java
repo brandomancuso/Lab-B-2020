@@ -3,6 +3,7 @@ package entity;
 import java.io.Serializable;
 
 public class WordData implements Serializable{
+    private Integer id;
     private String word;
     private int points;
     private int realPoints;
@@ -41,6 +42,14 @@ public class WordData implements Serializable{
 
     public void setDuplicate(boolean duplicate) {
         this.duplicate = duplicate;
-    }    
+    }   
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
     
 }
