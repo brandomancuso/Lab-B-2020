@@ -9,14 +9,11 @@ import entity.UserData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Properties;
 import java.util.Random;
-import java.util.Stack;
 import server.game.Game;
 import server.game.ServerGameStub;
 import utils.Pair;
@@ -25,16 +22,12 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList; //Per aggiornare client singoli
     private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
-    //private Stack<Integer> freePort;
-    //private Map<Integer, Integer> occupiedPort;
     private Database dbReference;
 
     public ServerServiceImpl() throws RemoteException {
         clientsList = new HashMap<>();
         usersList = new HashMap<>();
         gamesList = new HashMap<>();
-        //freePort = new Stack();
-        //occupiedPort = new HashMap<>();
         dbReference = DatabaseImpl.getDatabase();
     }
 
@@ -53,7 +46,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         clientsList.put(nickname, client);
         List<GameData> list = (List<GameData>)castToList();
         client.update(list);
-        System.out.print("Incredibile");
         WrappedObserver wo = new WrappedObserver(this, client);
     }
 
@@ -95,14 +87,22 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         Pair<Integer, UserData> loginResult;
         Pair<UserData, Integer> dbResult = dbReference.getUser(email, password);
         if (dbResult.getFirst() != null) {
-            if(dbResult.getFirst().getActive()){
-                loginResult = new Pair<>(null, dbResult.getFirst());
-                usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+            if(!dbResult.getFirst().isAdmin()){
+                if(dbResult.getFirst().getActive()){
+                    loginResult = new Pair<>(null, dbResult.getFirst());
+                    usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+                }
+                else{
+                    //Utente non verificato
+                    loginResult = new Pair<>(2, null);
+                }
             }
             else{
-                loginResult = new Pair<>(2, null);
+                //Utente amministratore
+                loginResult = new Pair<>(3, null);
             }
         } else {
+            //Credenziali errate
             int controlCode = dbResult.getLast();
             loginResult = new Pair<>(controlCode, null);
         }
@@ -111,6 +111,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     
     @Override
     public boolean verifyUser(String verificationCode, String nickname){
+        String nick = nickname;
         UserData dbResult = dbReference.getUser(nickname);
         boolean result = false;
         
@@ -170,17 +171,22 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         this.setChanged();
         this.notifyObservers(castToList());
         return gameStub;
-        //ServerGameStub gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, freePort.peek());
-        //occupiedPort.put(gameData.getId(),freePort.pop());
-        //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
     }
 
-    public void disconnectGame(Integer gameId) {
-        gamesList.remove(gameId);
+    public synchronized void disconnectGame(Integer gameId) {
+        Game endedGame = gamesList.remove(gameId);
+        
+        if(endedGame.getGameData().getSessions().isEmpty()){
+            //La partita si è interrotta in nella lobby
+            dbReference.removeGame(gameId);
+        }
+        else{
+            //La partita si è giocata
+            dbReference.updateGame(endedGame.getGameData());
+        }
+        
         this.setChanged();
         this.notifyObservers(castToList());
-        //freePort.push(occupiedPort.remove(gameId));
-        //TODO Notifica tutti gli utenti per l'aggiornamento delle partite
     }
 
     public void removeObserver(ClientServiceStub client){
@@ -188,7 +194,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     }
     
     //Metodo per aggiornare numero di giocatori nella singola partita
-    public void updateNumPlayer() {
+    public synchronized void updateNumPlayer() {
          this.setChanged();
          this.notifyObservers(castToList());
     }

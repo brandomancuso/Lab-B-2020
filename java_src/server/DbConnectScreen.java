@@ -47,6 +47,7 @@ public class DbConnectScreen extends JFrame implements ActionListener{
             if(controlResult == null){
                 if(ServerMain.connectDatabase(user, password, host)){
                     this.setVisible(false);
+                    this.dispose();
                 }
                 else{
                     JOptionPane.showMessageDialog(null, "Errore di connessione con il Database","Database Connection", JOptionPane.ERROR_MESSAGE);

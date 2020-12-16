@@ -174,7 +174,7 @@ public class VerifyUser extends javax.swing.JDialog {
             return;
         }
         try {
-            res = this.serviceStub.verifyUser(this.text_nickname.getText(), this.text_verificationCode.getText());
+            res = this.serviceStub.verifyUser(this.text_verificationCode.getText(), this.text_nickname.getText());
         } catch (RemoteException ex) {
             Logger.getLogger(VerifyUser.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -190,6 +190,7 @@ public class VerifyUser extends javax.swing.JDialog {
     private void text_verificationCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_verificationCodeMouseClicked
         // TODO add your handling code here:
         this.text_verificationCode.setText("");
+        this.btn_verify.setEnabled(true);
     }//GEN-LAST:event_text_verificationCodeMouseClicked
 
     /**
