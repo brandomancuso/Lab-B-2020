@@ -146,7 +146,7 @@ public class Session {
                              wordTmp.setCorrect(true);
                          }
              wordTmp.setWord(wordFound);
-             sessionData.addWord(nickname, wordTmp);   
+             sessionData.addFoundWord(nickname, wordTmp);   
        }
        return pointPlayer;//I save the real pointPlayer not the false one for the DataBase
     }   
