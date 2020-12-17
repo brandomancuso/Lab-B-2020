@@ -336,7 +336,13 @@ public class DatabaseImpl implements Database{
     
     @Override
     public StatsData getStats() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        StatsData stats = new StatsData();
+        stats.setBestPlayerGameScore(queryForBestPlayerGameScore());
+        stats.setBestPlayerSessionScore(queryForPlayerSessionScore());
+        stats.setPlayerWithMoreSessions(queryForPlayerWithMoreSessions());
+        stats.setBestAverageSessionScore(queryForBestAverageSessionScore());
+        stats.setBestAverageGameScore(queryForBestAverageGameScore());
+        return stats;
     }
     // </editor-fold>
     
@@ -668,4 +674,158 @@ public class DatabaseImpl implements Database{
         } 
     }
     // </editor-fold>
+
+    private Pair<String, Integer> queryForBestPlayerGameScore() {
+        Integer points = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, total_points FROM partecipate WHERE total_points IN (SELECT MAX(total_points) FROM partecipate)";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                points = rs.getInt("total_points");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), points);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForPlayerSessionScore() {
+        Integer points = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, points FROM play WHERE points IN (SELECT MAX(points) FROM play)";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                points = rs.getInt("points");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), points);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForPlayerWithMoreSessions() {
+        Integer count = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, COUNT(*) AS num_sessions FROM play WHERE num_sessions IN "
+                + "(SELECT MAX(COUNT(*)) FROM play GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                count = rs.getInt("num_sessions");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), count);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForBestAverageSessionScore() {
+        Integer score = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, AVG(points) AS avg_score FROM play WHERE avg_score IN "
+                + "(SELECT MAX(AVG(points)) FROM play GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                score = rs.getInt("avg_score");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), score);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForBestAverageGameScore() {
+        Integer score = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, AVG(total_points) AS avg_score FROM partecipate WHERE avg_score IN "
+                + "(SELECT MAX(AVG(total_points)) FROM partecipate GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                score = rs.getInt("avg_score");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), score);
+        return result;
+    }
+    
 }
