@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Session {
@@ -153,9 +154,8 @@ public class Session {
     
     private boolean isDuplicated (String wordFound)
     {
-        //List<WordData> wordFoundList=new LinkedList<>(sessionData.getFoundWords().values().stream().);//i will take all the word   
-        //return wordFoundList.stream().anyMatch(word -> (word.getWord().equals(wordFound)));//it's a functional operation of a foreach comparing wordFound with the all word in the session
-        return true;
+        List<WordData> wordFoundList=sessionData.getFoundWords().values().parallelStream().flatMap(Collection::stream).collect(Collectors.toList());//i will take all the word (This allows us to flatten the nested Stream structure and eventually collect all elements to a particular collection:)  
+        return wordFoundList.parallelStream().anyMatch(word -> (word.getWord().equals(wordFound)));//it's a functional operation of a foreach comparing wordFound with the all word in the session
     }
     
     private int calculateScore (String word)
