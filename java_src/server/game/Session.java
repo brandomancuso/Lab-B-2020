@@ -16,8 +16,9 @@ public class Session {
     private Map<String,ObserverClient> observerClientSet;
     private GameData gameData;
     private int numSession;
+    private Game game;
    
-    public Session (Dictionary dictionary,PersistentSignal persistentSignal,Map<String,ObserverClient> observerClientSet,GameData gameData,int numSession)
+    public Session (Dictionary dictionary,PersistentSignal persistentSignal,Map<String,ObserverClient> observerClientSet,GameData gameData,int numSession,Game game)
     {
         this.sessionData=new SessionData();//every Session istantiated i've to create a SessionData Object
         this.wordsMatrix=new WordsMatrix();
@@ -27,6 +28,7 @@ public class Session {
         this.observerClientSet=(HashMap)observerClientSet;
         this.gameData=gameData;
         this.numSession=numSession;
+        this.game=game;
     }
  
 //methods called by Game Class 
@@ -49,21 +51,15 @@ public class Session {
                     value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);                
                 } catch (RemoteException ex) {
                     System.err.println(ex);
+                    observerClientSet.remove(key);
+                    game.removeObserverClient(key);
+                    game.forcedExit(value.getNickname());//when a client isn't reacheable any more
+                    System.exit(0);//the game has to be stopped because there isn't the all player
             }
         });
-        
-        //to wait all client changing its state
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
         timerThread.start();
         try {
             persistentSignal.waitTimer();
-            if (Thread.interrupted())
-                System.exit(0);//when the method exit is call then the game is interupted
         } catch (InterruptedException ex) {
             System.err.println(ex);
         }
@@ -80,12 +76,16 @@ public class Session {
                 //check the words requested
                 int pointPlayer=checkWord(value.getNickname(), value.getWordsFound());
                 //Set the point for the player
-                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer); 
+                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);//instead i could have used just the realPoints to know the playerPoint
             } catch (RemoteException ex) {
                 System.err.println(ex);
+                observerClientSet.remove(key);
+                game.removeObserverClient(key);
+                game.setBoolNextRound(false);//even if a client is disconnected, i permit to see the result of the game
             }
         });
         
+        /*
         //send result to client
         observerClientSet.forEach((key,value)->
         {
@@ -94,6 +94,9 @@ public class Session {
                 value.getClientGameStub().updateSessionResults(sessionData.getFoundWords(),gameData.getPlayerPoints());               
              } catch (RemoteException ex) {
                 System.err.println(ex);
+                observerClientSet.remove(key);
+                game.removeObserverClient(key);
+                game.setBoolNextRound(false);//even if a client is disconnected, i permit to see the result of the game
             }
         });
         
@@ -101,12 +104,13 @@ public class Session {
         timerThread.start();
         try {
             persistentSignal.waitTimer();
-            if (Thread.interrupted())
-                System.exit(0);//when the method exit is call then the game is interupted
         } catch (InterruptedException ex) {
             System.err.println(ex);
+            System.exit(0);//when the method forcedExit is call then the game is interupted
         }
+        */
     }
+    
   
 //utility methods    
     private int checkWord(String nickname,List<String> wordFoundList)
@@ -121,6 +125,7 @@ public class Session {
             if(!wordsMatrix.isAllowed(wordFound.toUpperCase()))//To be comparable with UpperCase inside the matrix
              {
                  wordTmp.setPoints(calculateScore(wordFound));
+                 wordTmp.setRealPoints(0);
                  wordTmp.setCorrect(false);
                  pointPlayer+=0;
              }
@@ -128,6 +133,7 @@ public class Session {
                 if (!dictionary.exists(wordFound))
                     {
                          wordTmp.setPoints(calculateScore(wordFound));
+                         wordTmp.setRealPoints(0);
                          wordTmp.setCorrect(false);
                          pointPlayer+=0;
                     }
@@ -135,6 +141,7 @@ public class Session {
                      if(isDuplicated(wordFound))
                          {
                              wordTmp.setPoints(calculateScore(wordFound));
+                             wordTmp.setRealPoints(0);
                              wordTmp.setCorrect(true);
                              wordTmp.setDuplicate(true);
                              pointPlayer+=0;
@@ -154,8 +161,15 @@ public class Session {
     
     private boolean isDuplicated (String wordFound)
     {
-        List<WordData> wordFoundList=sessionData.getFoundWords().values().parallelStream().flatMap(Collection::stream).collect(Collectors.toList());//i will take all the word (This allows us to flatten the nested Stream structure and eventually collect all elements to a particular collection:)  
-        return wordFoundList.parallelStream().anyMatch(word -> (word.getWord().equals(wordFound)));//it's a functional operation of a foreach comparing wordFound with the all word in the session
+        List<WordData> wordFoundList=sessionData.getFoundWords().values().parallelStream().flatMap(Collection::stream).collect(Collectors.toList());//i will take all the word (This allows us to flatten the nested Stream structure and eventually collect all elements to a particular collection) 
+        List<WordData> wordFoundMatched=wordFoundList.parallelStream().filter(word -> (word.getWord().equals(wordFound))).collect(Collectors.toList());//i filter in order to find the equal element
+        if(wordFoundMatched.isEmpty())
+            return false;
+        else
+        {
+            wordFoundMatched.parallelStream().forEach(word -> word.setRealPoints(0));
+            return true;
+        }
     }
     
     private int calculateScore (String word)

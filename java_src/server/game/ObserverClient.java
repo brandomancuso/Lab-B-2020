@@ -11,8 +11,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class ObserverClient implements Observer  {
     private final ClientGameStub client;
     private List<String> wordsFound;
-    private final Game game;//to have access to exit method
-    private final String nickname;//i need to display the nickname of the person who exit the game
+    private final Game game;//to have access to forcedExit method
+    private final String nickname;//i need to display the nickname of the person who forcedExit the game
     
     public ObserverClient (String nickname,ClientGameStub client,Game game,Timer timer)
     {
@@ -30,7 +30,6 @@ public class ObserverClient implements Observer  {
         } catch (RemoteException ex) {
             System.err.println("Client isn't reachable");
             o.deleteObserver(this);
-            game.exit(nickname+" non è raggiungibile");
         }
     }
 

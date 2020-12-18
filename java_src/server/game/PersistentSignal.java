@@ -3,11 +3,13 @@
 
 public class PersistentSignal {
     private boolean timeout,interruptFlag;
+    private Game game;
     
-    public PersistentSignal ()
+    public PersistentSignal (Game game)
     {
         timeout=false;
         interruptFlag=false;
+        this.game=game;
     }
     
     public synchronized void waitTimer() throws InterruptedException
@@ -17,8 +19,6 @@ public class PersistentSignal {
             wait();
         }
         
-        if(interruptFlag)
-            Thread.currentThread().interrupt();//it's the only way to capture the game thread and request to interrupt itself
         timeout = false;
 
     }
@@ -31,9 +31,7 @@ public class PersistentSignal {
     
     public synchronized void interruptGame ()
     {
-        timeout=true;
-        interruptFlag=true;
-        notify();
+        game.interrupt();
     }
     
 
