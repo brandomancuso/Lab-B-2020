@@ -852,7 +852,6 @@ public class ControlFrame extends javax.swing.JFrame {
 
         //fillUserProfileData(loggedUser);
         card.show(jPanel_main, "profile");
-        showMessageDialog(null, loggedUser.getEmail());
         fillUserProfileData(loggedUser);
     }//GEN-LAST:event_btn_profileActionPerformed
 

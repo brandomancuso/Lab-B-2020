@@ -22,7 +22,9 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     private Lobby guiLobby;
     private GameWin guiGame;
     private ControlFrame guiMain;
+    private ResultWin guiResult;
     private Map<String, Integer> storePointPlayer;
+    private Map<String, List<WordData>> wordCheckedFound;
 
     public ClientGameImpl() throws RemoteException {
         super(0);
@@ -30,6 +32,8 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         lobbyList = new ArrayList<String>();
         //playerWordList = new ArrayList<String>();
         guiGame = null;
+        guiResult = null;
+
     }
 
     //SETTER
@@ -43,6 +47,10 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     public void setGuiMain(ControlFrame parGuiMain) {
         guiMain = parGuiMain;
+    }
+
+    public void setGuiResult(ResultWin parGuiResult) {
+        guiResult = parGuiResult;
     }
 
     //GETTER
@@ -62,6 +70,10 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         return storePointPlayer;
     }
 
+    public synchronized Map<String, List<WordData>> getWordCheckedFound() {
+        return wordCheckedFound;
+    }
+
     @Override
     public List<String> getWords() throws RemoteException {
         return guiGame.getPlayerWords();
@@ -71,6 +83,14 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     @Override
     public void updateSessionResults(Map<String, List<WordData>> wordCheckedFound, Map<String, Integer> pointPlayer) throws RemoteException {
         this.storePointPlayer = pointPlayer;
+        this.wordCheckedFound = wordCheckedFound;
+        if (this.guiResult != null) {
+            this.guiResult.fillResultTable();
+            this.guiResult.fillScoreTable();
+        }
+        if (this.guiGame != null) {
+            this.guiGame.fillScoreTable();
+        }
     }
 
     @Override
@@ -81,12 +101,16 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiLobby.disableLeaveBtn();
                 break;
             case 1: //session --> apro finestra di gioco
+                if(this.guiResult != null){
+                    this.guiResult.setVisible(false);
+                }
                 if (this.guiGame == null) {
                     //creo guiGame nuovo
                     this.guiLobby.openGameWindow();
                 } else {
                     this.guiGame.setVisible(true);
                 }
+                this.guiGame.fillScoreTable();
                 //this.guiLobby.setVisible(false);
                 //this.guiLobby.dispose();
                 break;
@@ -94,36 +118,37 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiGame.disableInput();
                 //playerWordList = this.guiGame.getPlayerWords();
                 this.guiGame.setVisible(false);
+                this.guiGame.openResultWindow();
+
                 //chiudo game e apro result win
                 break;
             case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
-                
+
                 break;
         }
     }
 
     @Override
-    public void updateTimer(int timerValue) throws RemoteException {     
-            switch (gameState) {
+    public void updateTimer(int timerValue) throws RemoteException {
+        this.timerValue = timerValue;
+        switch (gameState) {
             case 0: //waiting --> blocco il bottone leave e parte il timer
-                 this.timerValue = timerValue;
-                 this.guiLobby.updateTimer(this.timerValue);
+                this.guiLobby.updateTimer(this.timerValue);
                 break;
             case 1: //session --> apro finestra di gioco
-                this.timerValue = timerValue;
                 this.guiGame.updateTimer(this.timerValue);
                 break;
             case 2: //result
-                
+                this.guiResult.updateTimer(this.timerValue);
                 break;
             case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
-                
+
                 break;
-            }
+        }
     }
 
     @Override

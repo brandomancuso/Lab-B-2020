@@ -16,6 +16,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import server.game.ServerGameStub;
@@ -44,7 +45,8 @@ public class GameWin extends javax.swing.JDialog {
         scoreTableModel = GuiUtility.createCustomTableModel(2);
         initComponents();
         initScoreTable();
-        this.jLabelGameName.setText("Partita: " + gameName);
+        this.gameName = gameName;
+        this.jLabelGameName.setText("Partita: " + this.gameName);
     }
 
     /**
@@ -365,6 +367,18 @@ public class GameWin extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void openResultWindow() {
+        ResultWin guiResult = new ResultWin(this, true, this.gameName);
+        guiResult.setClientGameStub(clientGame);
+        guiResult.setServerGameStub(gameStub);
+        this.clientGame.setGuiResult(guiResult);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                guiResult.setVisible(true);
+            }
+        });
+    }
+
     private void initScoreTable() {
         //TABLE settings
         DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
@@ -408,7 +422,7 @@ public class GameWin extends javax.swing.JDialog {
     private void updateSessionNum() {
         this.jLabelGameSession.setText("Sessione Corrente: #" + String.valueOf(sessionNum));
     }
-    
+
     public void updateTimer(int value) {
         this.jLabel_timerValue.setText(value + "");
     }
