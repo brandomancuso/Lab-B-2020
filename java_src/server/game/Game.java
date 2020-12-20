@@ -36,6 +36,7 @@ public class Game extends Thread implements ServerGameStub {
     private Database dbReference;
     private Session currentSession;
     private List<String> winnerNickname;
+    private final int WINNING_POINT = 1;
 
     public Game(GameData gameData, String hostNickname, ClientGameStub clientGameStub, ServerServiceImpl serverServiceImpl, Database dbReDatabase) {
         this.gameData = gameData;
@@ -86,20 +87,20 @@ public class Game extends Thread implements ServerGameStub {
                         forcedExit(value.getNickname());//when a client isn't reacheable any more
                     }
                     });
-                
+                //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
+                currentSession.startBeforeGame(timerThread = new Thread(timer));
                 isLobbyState=false;
             }
-            //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
-            currentSession.startBeforeGame(timerThread = new Thread(timer));
-            timer.setTime(180);
+            
+            timer.setTime(70);
             currentSession.startRealGame(timerThread = new Thread(timer));
-            timer.setTime(2);
+            timer.setTime(5);
             currentSession.startAfterGame(timerThread = new Thread(timer));
             //to save the results of the all sessions and set the winners
             //check if another session has to be started
             for (String nickname : gameData.getPlayersList()) {
                 //create a list of winners
-                if (gameData.getPoints(nickname) >= 50) {
+                if (gameData.getPoints(nickname) >= WINNING_POINT) {
                     winnerNickname.add(nickname);
                     boolNextRound = false;
                 }
@@ -109,7 +110,7 @@ public class Game extends Thread implements ServerGameStub {
         
         
         //transit the client to the winner state and send the winners with notifyInfoGame()
-        observerClientSet.forEach((key, value) -> {
+        /**observerClientSet.forEach((key, value) -> {
             try {
                 value.getClientGameStub().changeGameState(3);
                 value.getClientGameStub().notifyInfoGame(winnerNickname);
@@ -118,7 +119,7 @@ public class Game extends Thread implements ServerGameStub {
                 observerClientSet.remove(key);
                 forcedExit(value.getNickname());//when a client isn't reacheable any more
             }
-        });
+        });*/
         
         
         //save the game

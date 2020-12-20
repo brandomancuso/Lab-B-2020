@@ -348,7 +348,7 @@ public class RegisterUser extends javax.swing.JDialog {
     }//GEN-LAST:event_text_verificationCodeMouseClicked
 
     private void btn_registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registerActionPerformed
-        boolean registered = true;
+        boolean registered = false;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_email) || GuiUtility.isEmpty(this.text_name) || GuiUtility.isEmpty(this.text_surname) || GuiUtility.isEmpty(this.text_username) || GuiUtility.isEmpty(this.text_password) || GuiUtility.isEmpty(this.text_repeatPassword)) {
             showMessageDialog(null, "Compilare tutti i campi");
@@ -383,7 +383,7 @@ public class RegisterUser extends javax.swing.JDialog {
         newUser.setPassword(CryptMD5.crypt(String.valueOf(this.text_password.getPassword())));
         try {
             //CALL Register Method --> da sistemare
-            stub.register(newUser);
+            registered = stub.register(newUser);
         } catch (RemoteException ex) {
             Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
         }

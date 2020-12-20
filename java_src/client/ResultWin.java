@@ -342,7 +342,7 @@ public class ResultWin extends javax.swing.JDialog {
                     for (WordData listEntry : mapEntry.getValue()) {
                         rowData[0] = mapEntry.getKey() + " ";
                         rowData[1] = listEntry.getWord() + " ";
-                        rowData[2] = listEntry.getPoints() + " ";
+                        rowData[2] = listEntry.getRealPoints() + " ";
                         resultTableModel.addRow(rowData);
                     }
                 }

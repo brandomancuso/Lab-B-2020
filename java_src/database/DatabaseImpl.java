@@ -137,7 +137,7 @@ public class DatabaseImpl implements Database{
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("L'utente esiste già");
             user = null;
         } finally {
             try {

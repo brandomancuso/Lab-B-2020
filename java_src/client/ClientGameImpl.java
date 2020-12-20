@@ -104,12 +104,13 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 if(this.guiResult != null){
                     this.guiResult.setVisible(false);
                 }
-                if (this.guiGame == null) {
+                this.guiLobby.openGameWindow();
+                /**if (this.guiGame == null) {
                     //creo guiGame nuovo
                     this.guiLobby.openGameWindow();
                 } else {
                     this.guiGame.setVisible(true);
-                }
+                }*/
                 this.guiGame.fillScoreTable();
                 //this.guiLobby.setVisible(false);
                 //this.guiLobby.dispose();

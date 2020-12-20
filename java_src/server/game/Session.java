@@ -116,10 +116,11 @@ public class Session {
     private int checkWord(String nickname,List<String> wordFoundList)
     {
        int pointPlayer=0;
-       WordData wordTmp=new WordData();
+       WordData wordTmp;
        //TO-DO:if the wordFoundList is null set a empty result
        for (String wordFound : wordFoundList)
        {
+            wordTmp = new WordData();
             wordFound=wordFound.trim();//to avoid space
             wordFound=wordFound.toLowerCase();//to avoid problem with the dictionary
             if(!wordsMatrix.isAllowed(wordFound.toUpperCase()))//To be comparable with UpperCase inside the matrix

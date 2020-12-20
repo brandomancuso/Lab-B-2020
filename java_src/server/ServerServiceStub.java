@@ -12,7 +12,7 @@ import utils.Pair;
 public interface ServerServiceStub extends Remote{
     Pair<Integer, UserData> login(String email, String password) throws RemoteException;
     UserData updateUserData(UserData user, String oldUsername) throws RemoteException;
-    String register(UserData newUser) throws RemoteException;
+    boolean register(UserData newUser) throws RemoteException;
     boolean recoverPassword(String email) throws RemoteException;
     void addObserver(String nickname, ClientServiceStub client) throws RemoteException;
     void logout(String nickname) throws RemoteException;

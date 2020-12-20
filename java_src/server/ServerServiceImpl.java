@@ -63,19 +63,19 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     }
 
     @Override
-    public String register(UserData newUser) throws RemoteException {
-        String registerResult;
+    public boolean register(UserData newUser) throws RemoteException {
+        boolean registerResult;
         newUser.setActive(false);
         newUser.setActivationCode(generateCode());
         UserData updatedNewUser = dbReference.addUser(newUser);
 
         if (updatedNewUser != null) {
-            registerResult = "Registrazione completata!";
+            registerResult = true;
             new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), newUser.getNickname(), 1)).start();
             HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
         } else {
-            registerResult = "Errore durante la registrazione!";
-            HomeScreen.stampEvent(updatedNewUser.getNickname() + ": errore durante la registrazione!");
+            registerResult = false;
+            HomeScreen.stampEvent("Errore durante la registrazione!");
         }
         
         return registerResult;
@@ -178,10 +178,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if(endedGame.getGameData().getSessions().isEmpty()){
             //La partita si è interrotta in nella lobby
             dbReference.removeGame(gameId);
-        }
-        else{
-            //La partita si è giocata
-            dbReference.updateGame(endedGame.getGameData());
         }
         
         this.setChanged();
