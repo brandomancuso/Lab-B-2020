@@ -623,7 +623,7 @@ public class DatabaseImpl implements Database{
     }
     
     private List<WordData> getFoundWords(int session_id, String player) {
-        String sql = "SELECT id, word, points, duplicate, correct FROM word INNER JOIN find "
+        String sql = "SELECT id, word, points, duplicate, correct FROM word INNER JOIN find ON id = word_key "
                 + "WHERE user_key = ? AND manche_key = ?";
         List<WordData> foundWords = new ArrayList<>();
         Connection conn = null;
