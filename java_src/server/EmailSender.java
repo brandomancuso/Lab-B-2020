@@ -10,6 +10,7 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Timer;
 
 public class EmailSender implements Runnable{
     private final String HOST = "ilparoliere2020@outlook.it"; //Email da cui inviare la mail
@@ -19,15 +20,17 @@ public class EmailSender implements Runnable{
     private final String VERIFICATION_BODY = "Inserisci il tuo codice nell'applicazione per attivare il tuo profilo."
             + "\nQuesto è il tuo codice di verifica: ";
     private final String RESET_PSW_BODY = "Hai richiesto il reset della password!\nQuesta è la tua nuova password: ";
-    private final int VALIDATION_TIME = 600000; //Tempo per verificare l'account
+    private final long VALIDATION_TIME = 600000; //Tempo per verificare l'account
     
     private String destinatario;
     private String messageContent;
+    private String nick;
     private int mailType; //1 = codice di verifica  2 = reset password
     
-    public EmailSender(String dest, String content, int mailType){
+    public EmailSender(String dest, String content, String nickname, int mailType){
         this.destinatario = dest;
         this.messageContent = content;
+        this.nick = nickname;
         this.mailType = mailType;
     }
     
@@ -40,11 +43,13 @@ public class EmailSender implements Runnable{
                     emailBody = this.VERIFICATION_BODY + this.messageContent;
                     sendEmail(HOST, PASSWORD, destinatario, this.VERIFICATION_OBJECT, emailBody);
                     //TODO Aggiunta Timer di 10 minuti
+                    Timer t = new Timer();
+                    AccountDeleter ad = new AccountDeleter(nick);
+                    t.schedule(ad, VALIDATION_TIME);
                     break;
                 case 2:
                     emailBody = this.RESET_PSW_BODY + this.messageContent;
                     sendEmail(HOST, PASSWORD, destinatario, this.RESET_PSW_OBJECT, emailBody);
-                    //TODO Aggiunta Timer di 10 minuti
                     break;
             }
         } catch (MessagingException ex) {
