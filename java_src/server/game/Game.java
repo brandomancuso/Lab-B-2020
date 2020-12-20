@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static javax.swing.JOptionPane.showMessageDialog;
 import utils.Pair;
 import server.ServerServiceImpl;
 
@@ -35,13 +34,16 @@ public class Game extends Thread implements ServerGameStub {
     private Boolean isLobbyState;//to know which method call according to whether or not the game is in lobby frame
     private Boolean boolNextRound;
     private Database dbReference;
+    private Session currentSession;
+    private List<String> winnerNickname;
 
     public Game(GameData gameData, String hostNickname, ClientGameStub clientGameStub, ServerServiceImpl serverServiceImpl, Database dbReDatabase) {
         this.gameData = gameData;
         this.dbReference = dbReDatabase;
         observerClientSet = new HashMap<>();
-        persistentSignal = new PersistentSignal();
+        persistentSignal = new PersistentSignal(this);
         timer = new Timer(persistentSignal);
+        winnerNickname=new ArrayList<>();
         boolNextRound = true;//i assume that there might be a little succesful at the end of the first round
         isLobbyState = true;//at creation the game is in lobby state
         playerReadyNextRound = 0;
@@ -66,21 +68,22 @@ public class Game extends Thread implements ServerGameStub {
     
     public void run()
     {
-        List<String> winnerNickname=new ArrayList<>();
         int i=1;//in order to count the number of sessions
-        while (boolNextRound)
+        do
         {
-            Session currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i);
+            currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i,this);
             if(isLobbyState)
             {
                 gameData.addSession(currentSession.getSessionData());
-                timer.setTime(1);
+                timer.setTime(5);
                 
                 observerClientSet.forEach((key,value)->{
                     try {
                         value.getClientGameStub().changeGameState(0);//change state in waiting inside the lobby
                     } catch (RemoteException ex) {
                         System.err.println(ex);
+                        observerClientSet.remove(key);
+                        forcedExit(value.getNickname());//when a client isn't reacheable any more
                     }
                     });
                 
@@ -88,10 +91,11 @@ public class Game extends Thread implements ServerGameStub {
             }
             //i'm obliged to create a new thread every time beacause there isn't another way to restart the thread but to create a new one from scratch
             currentSession.startBeforeGame(timerThread = new Thread(timer));
-            timer.setTime(50);
-            currentSession.startRealGame(timerThread = new Thread(timer));
             timer.setTime(180);
+            currentSession.startRealGame(timerThread = new Thread(timer));
+            timer.setTime(2);
             currentSession.startAfterGame(timerThread = new Thread(timer));
+            //to save the results of the all sessions and set the winners
             //check if another session has to be started
             for (String nickname : gameData.getPlayersList()) {
                 //create a list of winners
@@ -100,21 +104,34 @@ public class Game extends Thread implements ServerGameStub {
                     boolNextRound = false;
                 }
             }
-
-            i++;
-        }
+            i++;//the counter for the session
+        }while (boolNextRound);
+        
+        
         //transit the client to the winner state and send the winners with notifyInfoGame()
         observerClientSet.forEach((key, value) -> {
             try {
-                value.getClientGameStub().notifyInfoGame(winnerNickname);
                 value.getClientGameStub().changeGameState(3);
+                value.getClientGameStub().notifyInfoGame(winnerNickname);
             } catch (RemoteException ex) {
                 System.err.println(ex);
+                observerClientSet.remove(key);
+                forcedExit(value.getNickname());//when a client isn't reacheable any more
             }
         });
-
-        //to save the results of the all sessions
-        dbReference.updateGame(gameData);
+        
+        
+        //save the game
+        saveGame();         
+        
+        //disconnect the game because of the win state
+        try {
+            serverServiceImpl.disconnectGame(gameData.getId());
+            UnicastRemoteObject.unexportObject(this, true);
+        } catch (NoSuchObjectException ex) {
+            System.err.println(ex);
+        }
+        
     }
 
     private void RemovePartecipant(String nicknamePlayer) {
@@ -143,12 +160,13 @@ public class Game extends Thread implements ServerGameStub {
             try {
                 value.getClientGameStub().updateLobby(gameData.getPlayersList());//change state in waiting inside the lobby
             } catch (RemoteException ex) {
+                observerClientSet.remove(key);
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
 
-    //public methods for the game creation
+    //public methods for the game 
     public Pair<GameData, Boolean> AddPartecipant(String nicknamePlayer, ClientGameStub clientGameStub) {
         if (gameData.getPlayersList().size() + 1 == gameData.getNumPlayers()) {
             gameData.addPlayer(nicknamePlayer);
@@ -164,10 +182,10 @@ public class Game extends Thread implements ServerGameStub {
         }
     }
 
-    public void exit(String nickname) {
-        observerClientSet.clear();//in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window)
+    //in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window) or someone abbandoned
+    public void forcedExit(String nickname) {
         timerThread.interrupt();//interrupt the timer beacause of game ending
-        persistentSignal.interruptGame();//interrupt the game itself
+        persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
         boolNextRound = false;
 
         observerClientSet.forEach((key, value) -> {
@@ -180,25 +198,42 @@ public class Game extends Thread implements ServerGameStub {
         });
 
         try {
-            UnicastRemoteObject.unexportObject(this, false);
             serverServiceImpl.disconnectGame(gameData.getId());
+            UnicastRemoteObject.unexportObject(this, true);
         } catch (NoSuchObjectException ex) {
             System.err.println(ex);
         }
+    }
+    
+    public void saveGame ()
+    {
+        dbReference.updateGame(gameData);
     }
     
     public GameData getGameData(){
         return this.gameData;
     }
     
+    public void setBoolNextRound (Boolean boolNextRound)
+    {
+        this.boolNextRound=boolNextRound;
+    }
+    
+    public void removeObserverClient (String nickname)
+    {
+        observerClientSet.remove(nickname);
+    }
+    
+    
     //remote methods for client purpose via RMI
     @Override
-    public synchronized Term requestWordDef(WordData word) throws RemoteException {
+    public synchronized Term requestWordDef(String nickname,WordData word) throws RemoteException {
         try {
             return dictionary.getTerm(word.getWord());
         } catch (InvalidKey ex) {
             System.err.println(ex);
         }
+        currentSession.getSessionData().addRequestedWord(nickname, word);//add the information in the database
         return new Term(word.getWord());
     }
 
@@ -211,11 +246,15 @@ public class Game extends Thread implements ServerGameStub {
 
     @Override
     public synchronized void leaveGame(String nickname) throws RemoteException {
-        if (isLobbyState) {
+        //if the game is in lobby then killing the game but not advice player because there isn't anyone
+        if (isLobbyState)
             RemovePartecipant(nickname);
-        }
         else
-           exit(nickname);
+        {
+           //i have to save the game here because the standard execution of the game will be interupted
+           saveGame();
+           forcedExit(nickname);
+        }
     }
     
 }
