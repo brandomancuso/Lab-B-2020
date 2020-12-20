@@ -4,11 +4,15 @@ import entity.GameData;
 import entity.SessionData;
 import entity.StatsData;
 import entity.UserData;
+import entity.WordData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.Pair;
@@ -266,6 +270,7 @@ public class DatabaseImpl implements Database{
         GameData gameData = null;
         Connection conn = null;
         try {
+            conn = connManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, gameId);
             ResultSet rs = stmt.executeQuery();
@@ -331,7 +336,13 @@ public class DatabaseImpl implements Database{
     
     @Override
     public StatsData getStats() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        StatsData stats = new StatsData();
+        stats.setBestPlayerGameScore(queryForBestPlayerGameScore());
+        stats.setBestPlayerSessionScore(queryForPlayerSessionScore());
+        stats.setPlayerWithMoreSessions(queryForPlayerWithMoreSessions());
+        stats.setBestAverageSessionScore(queryForBestAverageSessionScore());
+        stats.setBestAverageGameScore(queryForBestAverageGameScore());
+        return stats;
     }
     // </editor-fold>
     
@@ -415,12 +426,406 @@ public class DatabaseImpl implements Database{
     }
 
     private void addPartecipate(Integer id, String player, int points) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "INSERT INTO partecipate (game_key, user_key, total_points) VALUES (?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            stmt.setString(2, player);
+            stmt.setInt(3, points);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
     }
 
     private void addSession(Integer id, SessionData s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "INSERT INTO manche (id, grid, game_key) VALUES (?, ?, ?)";
+        StringBuilder grid = new StringBuilder();
+        for(int i = 0; i<s.getGrid().length; i++){
+            grid.append(s.getGrid()[i]).append(i < s.getGrid().length-1 ? ",":"");
+        }
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, SESSION_ID++);
+            stmt.setString(2, grid.toString());
+            stmt.setInt(3, id);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+        
+        addFoundWords(SESSION_ID-1, s.getFoundWords());
+        addRequests(SESSION_ID-1, s.getRequestedWords());
+        addPlays(SESSION_ID-1, s.getPlayers());
+    }
+    
+    private void addFoundWords(int session_id, Map<String, List<WordData>> foundWords) {
+        Set<String> players = foundWords.keySet();
+        for(String player : players){
+            List<WordData> wordsList = foundWords.get(player);
+            for(WordData word : wordsList){
+                WordData stored = getWordFromDb(word.getWord());
+                if(stored == null) {
+                    stored = addWordToDb(word);
+                }
+                addFindRecord(session_id, player, stored);
+            }
+        }
+    }
+
+    private void addRequests(int session_id, Map<String, List<WordData>> requestedWords) {
+        Set<String> players = requestedWords.keySet();
+        for(String player : players){
+            List<WordData> wordsList = requestedWords.get(player);
+            for(WordData word : wordsList){
+                WordData stored = getWordFromDb(word.getWord());
+                if(stored == null) {
+                    throw new IllegalArgumentException("This word was never found in any session!");
+                }
+                addRequestRecord(session_id, player, stored);
+            }
+        }
+    }
+    
+    private void addPlays(int session_id, Set<String> players) {
+        for(String player : players){
+            List<WordData> words = getFoundWords(session_id, player);
+            int points = 0;
+            for(WordData word : words){
+                if(word.isCorrect() && !word.isDuplicate()) {
+                    points += word.getPoints();
+                }
+            }
+            addPlayRecord(session_id, player, points);
+        }
+    }
+    
+    private WordData getWordFromDb(String word) {
+        String sql = "SELECT w.id, w.points FROM word w WHERE w.word = ?";
+        WordData ret = null;
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, word);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                ret = new WordData();
+                ret.setWord(word);
+                ret.setId(rs.getInt(1));
+                ret.setPoints(rs.getInt(2));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return ret;
+    }
+    
+    private WordData addWordToDb(WordData word) {
+        String sql = "INSERT INTO word (id, word, points) VALUES (?, ?, ?)";
+        word.setId(WORD_ID++);
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, word.getId());
+            stmt.setString(2, word.getWord());
+            stmt.setInt(3, word.getPoints());
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            word = null;
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+        return word;
+    }
+    
+    private void addFindRecord(int session_id, String player, WordData word) {
+        String sql = "INSERT INTO word (user_key, word_key, manche_key, duplicate, correct) VALUES (?, ?, ?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, word.getId());
+            stmt.setInt(3, session_id);
+            stmt.setBoolean(4, word.isDuplicate());
+            stmt.setBoolean(5, word.isCorrect());
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+    }
+    
+    private void addRequestRecord(int session_id, String player, WordData word) {
+        String sql = "INSERT INTO def_req (user_key, word_key, manche_key) VALUES (?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, word.getId());
+            stmt.setInt(3, session_id);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+    }
+    
+    private List<WordData> getFoundWords(int session_id, String player) {
+        String sql = "SELECT id, word, points, duplicate, correct FROM word INNER JOIN find "
+                + "WHERE user_key = ? AND manche_key = ?";
+        List<WordData> foundWords = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, session_id);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                WordData word = new WordData();
+                word.setId(rs.getInt("id"));
+                word.setWord(rs.getString("word"));
+                word.setPoints(rs.getInt("points"));
+                word.setDuplicate(rs.getBoolean("duplicate"));
+                word.setCorrect(rs.getBoolean("correct"));
+                foundWords.add(word);   
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if(conn != null) try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return foundWords;
+    }
+    
+    private void addPlayRecord(int session_id, String player, int points) {
+        String sql = "INSERT INTO play (user_key, manche_key, points) VALUES (?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = connManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, player);
+            stmt.setInt(2, session_id);
+            stmt.setInt(3, points);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
     }
     // </editor-fold>
 
+    private Pair<String, Integer> queryForBestPlayerGameScore() {
+        Integer points = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, total_points FROM partecipate WHERE total_points IN (SELECT MAX(total_points) FROM partecipate)";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                points = rs.getInt("total_points");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), points);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForPlayerSessionScore() {
+        Integer points = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, points FROM play WHERE points IN (SELECT MAX(points) FROM play)";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                points = rs.getInt("points");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), points);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForPlayerWithMoreSessions() {
+        Integer count = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, COUNT(*) AS num_sessions FROM play WHERE num_sessions IN "
+                + "(SELECT MAX(COUNT(*)) FROM play GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                count = rs.getInt("num_sessions");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), count);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForBestAverageSessionScore() {
+        Integer score = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, AVG(points) AS avg_score FROM play WHERE avg_score IN "
+                + "(SELECT MAX(AVG(points)) FROM play GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                score = rs.getInt("avg_score");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), score);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForBestAverageGameScore() {
+        Integer score = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, AVG(total_points) AS avg_score FROM partecipate WHERE avg_score IN "
+                + "(SELECT MAX(AVG(total_points)) FROM partecipate GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                score = rs.getInt("avg_score");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), score);
+        return result;
+    }
+    
 }
