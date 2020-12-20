@@ -36,7 +36,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         //mi serve il nickname dell'utente per avere il riferimento per aggiornare il database
         //invio la mail
         String tempPsw = generatePassword();
-        new Thread(new EmailSender(email, tempPsw, 2)).start();
+        new Thread(new EmailSender(email, tempPsw, email, 2)).start();
         //TODO modifica password dell'utente nel database
         return true;
     }
@@ -46,7 +46,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         clientsList.put(nickname, client);
         List<GameData> list = (List<GameData>)castToList();
         client.update(list);
-        WrappedObserver wo = new WrappedObserver(this, client);
+        WrappedObserver wo = new WrappedObserver(this, client, nickname);
     }
 
     @Override
@@ -71,15 +71,14 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
 
         if (updatedNewUser != null) {
             registerResult = "Registrazione completata!";
-            //TODO Invio mail all'utente tramite thread per diminuire il ritardo
-            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), 1)).start();
+            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), newUser.getNickname(), 1)).start();
             HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
-            return registerResult;
         } else {
             registerResult = "Errore durante la registrazione!";
             HomeScreen.stampEvent(updatedNewUser.getNickname() + ": errore durante la registrazione!");
-            return registerResult;
         }
+        
+        return registerResult;
     }
 
     @Override
@@ -189,8 +188,16 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         this.notifyObservers(castToList());
     }
 
-    public void removeObserver(ClientServiceStub client){
-        clientsList.remove(client);
+    public void removeObserver(String nickname){
+        clientsList.remove(nickname);
+    }
+    
+    public void closeServer(){
+        this.clientsList.clear();
+        this.usersList.clear();
+        
+        //TODO Annullare partite in corso e salvare dati sul db
+        this.gamesList.clear();
     }
     
     //Metodo per aggiornare numero di giocatori nella singola partita

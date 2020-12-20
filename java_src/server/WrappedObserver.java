@@ -3,17 +3,18 @@ package server;
 import client.ClientServiceStub;
 import entity.GameData;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class WrappedObserver implements Observer{
     ClientServiceStub client;
+    String nickname;
     
-    public WrappedObserver(ServerServiceImpl server, ClientServiceStub client){
+    public WrappedObserver(ServerServiceImpl server, ClientServiceStub client, String nick){
         server.addObserver(this);
         this.client = client;
+        this.nickname = nick;
     }
     
     @Override
@@ -23,7 +24,7 @@ public class WrappedObserver implements Observer{
         }
         catch(RemoteException e){
             o.deleteObserver(this);
-            ((ServerServiceImpl)o).removeObserver(client);
+            ((ServerServiceImpl)o).removeObserver(nickname);
         }
     }   
 }
