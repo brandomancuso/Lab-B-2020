@@ -107,7 +107,7 @@ public class Game extends Thread implements ServerGameStub {
             i++;//the counter for the session
         }while (boolNextRound);
         
-        /*
+        
         //transit the client to the winner state and send the winners with notifyInfoGame()
         observerClientSet.forEach((key, value) -> {
             try {
@@ -119,7 +119,7 @@ public class Game extends Thread implements ServerGameStub {
                 forcedExit(value.getNickname());//when a client isn't reacheable any more
             }
         });
-        */
+        
         
         //save the game
         saveGame();         

@@ -85,7 +85,7 @@ public class Session {
             }
         });
         
-        /*
+        
         //send result to client
         observerClientSet.forEach((key,value)->
         {
@@ -108,7 +108,7 @@ public class Session {
             System.err.println(ex);
             System.exit(0);//when the method forcedExit is call then the game is interupted
         }
-        */
+        
     }
     
   
