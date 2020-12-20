@@ -342,6 +342,10 @@ public class DatabaseImpl implements Database{
         stats.setPlayerWithMoreSessions(queryForPlayerWithMoreSessions());
         stats.setBestAverageSessionScore(queryForBestAverageSessionScore());
         stats.setBestAverageGameScore(queryForBestAverageGameScore());
+        stats.setPlayerWithMoreDuplicates(queryForPlayerWithMoreDuplicates());
+        stats.setPlayerWithMoreErrors(queryForPlayerWithMoreErrors());
+        stats.setOccurrencyWordsLeaderboard(queryForOccurrencyWordsLeaderboard());
+        stats.setWordsBestScore(queryForWordsBestScore());
         return stats;
     }
     // </editor-fold>
@@ -421,7 +425,7 @@ public class DatabaseImpl implements Database{
     // </editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="private-methods">
-    private List<SessionData> getSessions(Integer gameId) {
+    private List<SessionData> getSessions(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -573,7 +577,7 @@ public class DatabaseImpl implements Database{
     }
     
     private void addFindRecord(int session_id, String player, WordData word) {
-        String sql = "INSERT INTO word (user_key, word_key, manche_key, duplicate, correct) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO find (user_key, word_key, manche_key, duplicate, correct) VALUES (?, ?, ?, ?, ?)";
         Connection conn = null;
         try {
             conn = connManager.getConnection();
@@ -827,5 +831,119 @@ public class DatabaseImpl implements Database{
         Pair<String, Integer> result = new Pair<>(player.toString(), score);
         return result;
     }
-    
+
+    private Pair<String, Integer> queryForPlayerWithMoreDuplicates() {
+        Integer num_duplicates = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, COUNT(*) AS num_duplicates FROM find WHERE duplicate = 'true' AND num_duplicates IN "
+                + "(SELECT MAX(COUNT(*)) FROM find WHERE duplicate = 'true' GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                num_duplicates = rs.getInt("num_duplicates");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), num_duplicates);
+        return result;
+    }
+
+    private Pair<String, Integer> queryForPlayerWithMoreErrors() {
+        Integer num_errors = 0;
+        StringBuilder player = new StringBuilder();
+        String sql = "SELECT user_key, COUNT(*) AS num_errors FROM find WHERE duplicate = 'true' AND num_errors IN "
+                + "(SELECT MAX(COUNT(*)) FROM find WHERE duplicate = 'true' GROUP BY user_key) GROUP BY user_key";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            boolean more = false;
+            while(rs.next()){
+                num_errors = rs.getInt("num_errors");
+                player.append(more ? "," : "").append(rs.getString("user_key"));
+                more = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Pair<String, Integer> result = new Pair<>(player.toString(), num_errors);
+        return result;
+    }
+
+    private List<Pair<String, Integer>> queryForOccurrencyWordsLeaderboard() {
+        List<Pair<String, Integer>> leaderboard = new ArrayList<>();
+        String sql = "SELECT word, COUNT(*) AS num_occ FROM find INNER JOIN word ON word_key = id "
+                + "GROUP BY word ORDER BY num_occ ASC";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                leaderboard.add(new Pair<>(rs.getString("word"), rs.getInt("num_occ")));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return leaderboard;
+    }
+
+    private List<Pair<String, String>> queryForWordsBestScore() {
+        List<Pair<String, String>> leaderboard = new ArrayList<>();
+        String sql = "SELECT word, points FROM word INNER JOIN find ON id = word_key "
+                + "WHERE points IN (SELECT MAX(points) FROM word) AND duplicate = 'false' AND correct = 'true'";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                leaderboard.add(new Pair<>(rs.getString("word"), "" + rs.getInt("points")));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return leaderboard;
+    }
+
 }
