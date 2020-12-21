@@ -2,7 +2,6 @@ package server;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -29,7 +28,7 @@ public class HomeScreen extends JFrame implements ActionListener{
     
     public HomeScreen(){
         try{
-            server = new ServerServiceImpl();
+            server = new ServerServiceImpl(this);
             registry = LocateRegistry.createRegistry(1099);
             serverStub = (ServerServiceStub) UnicastRemoteObject.exportObject(server, 2001);
             initGUI();
@@ -166,7 +165,7 @@ public class HomeScreen extends JFrame implements ActionListener{
         setLocationRelativeTo(null);
     }
     
-    protected static void stampEvent(String event){
+    public void stampEvent(String event){
         serverOutput.append(event+"\n");
     }
 }

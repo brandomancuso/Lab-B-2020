@@ -5,6 +5,7 @@ import client.ClientServiceStub;
 import database.Database;
 import database.DatabaseImpl;
 import entity.GameData;
+import entity.StatsData;
 import entity.UserData;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -23,14 +24,22 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     private Map<String, UserData> usersList;
     private Map<Integer, Game> gamesList;
     private Database dbReference;
+    private HomeScreen GUI;
+    private boolean statsChanged;
+    private StatsData stats;
 
-    public ServerServiceImpl() throws RemoteException {
+    public ServerServiceImpl(HomeScreen homeGUI) throws RemoteException {
         clientsList = new HashMap<>();
         usersList = new HashMap<>();
         gamesList = new HashMap<>();
         dbReference = DatabaseImpl.getDatabase();
+        GUI = homeGUI;
+        statsChanged = false;
+        
+        //TODO Recupero di tutte le statistiche
     }
-
+    
+    // <editor-fold defaultstate="collapsed" desc="interface methods">
     @Override
     public boolean recoverPassword(String email) throws RemoteException {
         //mi serve il nickname dell'utente per avere il riferimento per aggiornare il database
@@ -38,14 +47,17 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         String tempPsw = generatePassword();
         new Thread(new EmailSender(email, tempPsw, email, 2)).start();
         //TODO modifica password dell'utente nel database
+        
+        GUI.stampEvent(email + " ha richisto il recupero psw");
         return true;
     }
 
     @Override
     public void addObserver(String nickname, ClientServiceStub client) throws RemoteException {
         clientsList.put(nickname, client);
-        List<GameData> list = (List<GameData>)castToList();
+        List<GameData> list = castMapToList();
         client.update(list);
+        //client.update(stats);
         WrappedObserver wo = new WrappedObserver(this, client, nickname);
     }
 
@@ -53,12 +65,16 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     public void logout(String nickname) throws RemoteException {
         clientsList.remove(nickname);
         usersList.remove(nickname);
+        
+        GUI.stampEvent(nickname + " si è disconnesso");
     }
 
     @Override
     public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
         UserData updatedUser = dbReference.updateUser(user, oldNickname);
         usersList.replace(oldNickname, updatedUser);
+        
+        GUI.stampEvent(oldNickname + "(" + user.getNickname() + ")" + " ha modificato l'account");
         return updatedUser;
     }
 
@@ -72,10 +88,9 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if (updatedNewUser != null) {
             registerResult = true;
             new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), newUser.getNickname(), 1)).start();
-            HomeScreen.stampEvent(updatedNewUser.getNickname() + " registrato!");
+            GUI.stampEvent(updatedNewUser.getNickname() + " registrato");
         } else {
             registerResult = false;
-            HomeScreen.stampEvent("Errore durante la registrazione!");
         }
         
         return registerResult;
@@ -90,6 +105,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
                 if(dbResult.getFirst().getActive()){
                     loginResult = new Pair<>(null, dbResult.getFirst());
                     usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+                    GUI.stampEvent(dbResult.getFirst().getNickname() + " ha effettuato il login");
                 }
                 else{
                     //Utente non verificato
@@ -119,6 +135,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
                 result = true;
                 dbResult.setActive(true);
                 dbReference.updateUser(dbResult, dbResult.getNickname());
+                GUI.stampEvent(nickname + " si è verificato");
             }
             else{
                 result = false;
@@ -139,7 +156,8 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             result = game.AddPartecipant(nickname, client);
             if (result.getLast()) {
                 this.setChanged();
-                this.notifyObservers(castToList());
+                this.notifyObservers(castMapToList());
+                GUI.stampEvent(nickname + " si è unito alla partita " + game.getGameData().getName());
                 return game;
             } else {
                 return null;
@@ -168,20 +186,27 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             }
         }
         this.setChanged();
-        this.notifyObservers(castToList());
+        this.notifyObservers(statsChanged);
+        GUI.stampEvent("Partita " + gameTitle + " creata da " + nickname);
         return gameStub;
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="public methods">
     public synchronized void disconnectGame(Integer gameId) {
         Game endedGame = gamesList.remove(gameId);
         
         if(endedGame.getGameData().getSessions().isEmpty()){
-            //La partita si è interrotta in nella lobby
+            //La partita si è interrotta nella lobby
             dbReference.removeGame(gameId);
         }
-        
+        else{
+          statsChanged = true;  
+        }
         this.setChanged();
-        this.notifyObservers(castToList());
+        this.notifyObservers(statsChanged);
+        
+        GUI.stampEvent(endedGame.getGameData().getName() + " è terminata");
     }
 
     public void removeObserver(String nickname){
@@ -199,9 +224,20 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     //Metodo per aggiornare numero di giocatori nella singola partita
     public synchronized void updateNumPlayer() {
          this.setChanged();
-         this.notifyObservers(castToList());
+         this.notifyObservers(statsChanged);
     }
-
+    
+    public synchronized StatsData getStats(){
+        return this.stats;
+    }
+    
+    public synchronized List<GameData> getGamesList(){
+        return castMapToList();
+    }
+    
+    // </editor-fold>
+    
+    //  <editor-fold defaultstate="collapsed" desc="private methods">
     private String generateCode() {
         String code = new String();
         Random rand = new Random();
@@ -226,7 +262,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return newPswd;
     }
     
-    private List<GameData> castToList(){
+    private List<GameData> castMapToList(){
        ArrayList<Game> tempList  = new ArrayList<Game>( gamesList.values() );
        ArrayList<GameData> returnedList = new ArrayList();
        for(Game g : tempList){
@@ -235,4 +271,5 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
        
        return returnedList;
     }
+    // </editor-fold>
 }

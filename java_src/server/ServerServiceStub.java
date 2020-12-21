@@ -3,7 +3,6 @@ package server;
 import client.ClientGameStub;
 import client.ClientServiceStub;
 import entity.UserData;
-import entity.UserData;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import server.game.ServerGameStub;
