@@ -37,6 +37,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         statsChanged = false;
         
         //TODO Recupero di tutte le statistiche
+        stats = dbReference.getStats();
     }
     
     // <editor-fold defaultstate="collapsed" desc="interface methods">
@@ -126,7 +127,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     
     @Override
     public boolean verifyUser(String verificationCode, String nickname){
-        String nick = nickname;
         UserData dbResult = dbReference.getUser(nickname);
         boolean result = false;
         
@@ -217,8 +217,22 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         this.clientsList.clear();
         this.usersList.clear();
         
-        //TODO Annullare partite in corso e salvare dati sul db
+        //TODO Annullare partite in corso
         this.gamesList.clear();
+        
+        /**
+         *  for (Map.Entry<Integer, Game> game : gamesList.entrySet()) {
+         *      game.serverClosing();
+         *  }
+         *  
+         *  for (Map.Entry<String, ClientServiceStub> client : clientsList.entrySet()) {
+         *      client.serverClosing();
+         *  }
+         * 
+         *  this.clientsList.clear();
+         *  this.usersList.clear();
+         *  this.gamesList.clear();
+         */
     }
     
     //Metodo per aggiornare numero di giocatori nella singola partita
@@ -227,11 +241,11 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
          this.notifyObservers(statsChanged);
     }
     
-    public synchronized StatsData getStats(){
+    public StatsData getStats(){
         return this.stats;
     }
     
-    public synchronized List<GameData> getGamesList(){
+    public List<GameData> getGamesList(){
         return castMapToList();
     }
     
