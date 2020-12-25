@@ -742,8 +742,8 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForPlayerWithMoreSessions() {
         Integer count = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, COUNT(*) AS num_sessions FROM play WHERE num_sessions IN "
-                + "(SELECT MAX(COUNT(*)) FROM play GROUP BY user_key) GROUP BY user_key";
+        String sql = "SELECT player, num_manches FROM manche_play_stats WHERE num_manches IN "
+                + "(SELECT MAX(num_manches) FROM manche_play_stats)";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -751,8 +751,8 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                count = rs.getInt("num_sessions");
-                player.append(more ? "," : "").append(rs.getString("user_key"));
+                count = rs.getInt("num_manches");
+                player.append(more ? "," : "").append(rs.getString("player"));
                 more = true;
             }
             rs.close();
@@ -773,8 +773,8 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForBestAverageSessionScore() {
         Integer score = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, AVG(points) AS avg_score FROM play WHERE avg_score IN "
-                + "(SELECT MAX(AVG(points)) FROM play GROUP BY user_key) GROUP BY user_key";
+        String sql = "SELECT player, avg_points FROM manche_play_stats WHERE avg_points IN "
+                + "(SELECT MAX(avg_points) FROM manche_play_stats)";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -782,8 +782,8 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                score = rs.getInt("avg_score");
-                player.append(more ? "," : "").append(rs.getString("user_key"));
+                score = rs.getInt("avg_points");
+                player.append(more ? "," : "").append(rs.getString("player"));
                 more = true;
             }
             rs.close();
@@ -804,8 +804,8 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForBestAverageGameScore() {
         Integer score = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, AVG(total_points) AS avg_score FROM partecipate WHERE avg_score IN "
-                + "(SELECT MAX(AVG(total_points)) FROM partecipate GROUP BY user_key) GROUP BY user_key";
+        String sql = "SELECT player, avg_points FROM game_play_stats WHERE avg_points IN "
+                + "(SELECT MAX(avg_points) FROM game_play_stats )";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -813,8 +813,8 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                score = rs.getInt("avg_score");
-                player.append(more ? "," : "").append(rs.getString("user_key"));
+                score = rs.getInt("avg_points");
+                player.append(more ? "," : "").append(rs.getString("player"));
                 more = true;
             }
             rs.close();
@@ -835,8 +835,8 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForPlayerWithMoreDuplicates() {
         Integer num_duplicates = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, COUNT(*) AS num_duplicates FROM find WHERE duplicate = 'true' AND num_duplicates IN "
-                + "(SELECT MAX(COUNT(*)) FROM find WHERE duplicate = 'true' GROUP BY user_key) GROUP BY user_key";
+        String sql = "SELECT user_key, MAX(dp_count) AS num_duplicates FROM (SELECT user_key, COUNT(*) AS dp_count FROM find "
+                + "WHERE duplicate = 'true' GROUP BY user_key)";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -866,8 +866,8 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForPlayerWithMoreErrors() {
         Integer num_errors = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, COUNT(*) AS num_errors FROM find WHERE duplicate = 'true' AND num_errors IN "
-                + "(SELECT MAX(COUNT(*)) FROM find WHERE duplicate = 'true' GROUP BY user_key) GROUP BY user_key";
+        String sql = "SELECT user_key, MAX(err_count) AS num_errors FROM (SELECT user_key, COUNT(*) AS err_count FROM find "
+                + "WHERE correct = 'false' GROUP BY user_key)";
         Connection c = null;
         try {
             c = connManager.getConnection();
