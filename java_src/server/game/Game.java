@@ -96,7 +96,7 @@ public class Game extends Thread implements ServerGameStub {
             
             timer.setTime(70);
             currentSession.startRealGame(timerThread = new Thread(timer));
-            timer.setTime(5);
+            timer.setTime(500);
             currentSession.startAfterGame(timerThread = new Thread(timer));
             //to save the results of the all sessions and set the winners
             //check if another session has to be started          
@@ -191,7 +191,7 @@ public class Game extends Thread implements ServerGameStub {
         }
         
         //i remove all the players with less than the maximun player score inside this list, founding the real winners
-        winners= winners.parallelStream().filter(winner-> winner.getLast().equals(winners.get(1).getLast())).collect(Collectors.toList());
+        winners= winners.parallelStream().filter(winner-> winner.getLast().equals(winners.get(0).getLast())).collect(Collectors.toList());
     }
 
     //public methods for the game 
@@ -255,14 +255,18 @@ public class Game extends Thread implements ServerGameStub {
     
     //remote methods for client purpose via RMI
     @Override
-    public synchronized Term requestWordDef(String nickname,WordData word) throws RemoteException {
+    public synchronized Term requestWordDef(String nickname,String word) throws RemoteException {
         try {
-            return dictionary.getTerm(word.getWord());
+            word=word.trim();//to avoid space
+            word=word.toLowerCase();//to avoid problem with the dictionary
+            return dictionary.getTerm(word);
         } catch (InvalidKey ex) {
             System.err.println(ex);
         }
-        currentSession.getSessionData().addRequestedWord(nickname, word);//add the information in the database
-        return new Term(word.getWord());
+        WordData wordData=new WordData();
+        wordData.setWord(word);
+        currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
+        return new Term(word);
     }
 
     @Override

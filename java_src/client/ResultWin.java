@@ -353,7 +353,19 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_result_verifyWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_verifyWordActionPerformed
 
-     
+        Term def;
+
+        int rowIndex = this.jTable_result.getSelectedRow();
+        if (rowIndex == -1) {
+            showMessageDialog(null, "Selezionare una riga!");
+            return;
+        }
+        try {
+            def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
+            showMessageDialog(null, def.toString());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_result_verifyWordActionPerformed
 
     private void jTable_resultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_resultMouseClicked

@@ -36,7 +36,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         GUI = homeGUI;
         statsChanged = false;
         
-        stats = dbReference.getStats();
+        //stats = dbReference.getStats();
     }
     
     // <editor-fold defaultstate="collapsed" desc="interface methods">
