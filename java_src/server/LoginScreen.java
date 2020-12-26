@@ -28,10 +28,8 @@ public class LoginScreen extends JFrame implements ActionListener{
     private JButton loginButton;
     private JPasswordField passwordTxt;
     private JButton resetButton;
-    private ServerUtilityGui utility;
     
     public LoginScreen(){
-        utility = new ServerUtilityGui();
         
         initGUI();
     }
@@ -42,7 +40,7 @@ public class LoginScreen extends JFrame implements ActionListener{
             String username = usernameTxt.getText();
             String password = String.valueOf(passwordTxt.getPassword());
             
-            String controlResult = utility.controlLoginResult(username, password);
+            String controlResult = ServerUtilityGui.controlLoginResult(username, password);
             
             if(controlResult == null){
                 //TODO Aggiungere controlli accesso con DB

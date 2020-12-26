@@ -28,11 +28,9 @@ public class DbConnectScreen extends JFrame implements ActionListener{
     private JSeparator jSeparator1;
     private JButton loginDbButton;
     private JButton resetButton;
-    private ServerUtilityGui utility;
     
     public DbConnectScreen(){
         initGUI();
-        utility = new ServerUtilityGui();
     }
     
     @Override
@@ -42,7 +40,7 @@ public class DbConnectScreen extends JFrame implements ActionListener{
             String user = dbUsername.getText();
             String password = String.valueOf(dbPassword.getPassword());
             
-            String controlResult = utility.controlDbResult(host, user, password);
+            String controlResult = ServerUtilityGui.controlDbResult(host, user, password);
             
             if(controlResult == null){
                 if(ServerMain.connectDatabase(user, password, host)){

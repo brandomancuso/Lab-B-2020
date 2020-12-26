@@ -32,10 +32,8 @@ public class RegisterScreen extends JFrame implements ActionListener{
     private JPasswordField rPasswordTxt;
     private JButton registerButton;
     private JButton resetButton;
-    private ServerUtilityGui utility;
     
     public RegisterScreen(){
-        utility = new ServerUtilityGui();
         
         initGUI();
     }
@@ -48,7 +46,7 @@ public class RegisterScreen extends JFrame implements ActionListener{
             String rPassword = String.valueOf(rPasswordTxt.getPassword());
             String email = emailTxt.getText();
             
-            String controlResult = utility.controlRegisterResult(nickname, password, rPassword, email);
+            String controlResult = ServerUtilityGui.controlRegisterResult(nickname, password, rPassword, email);
             if(controlResult == null){
                 addAdminInDatabase(nickname,password, email);
                 

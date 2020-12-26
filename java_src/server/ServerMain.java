@@ -28,12 +28,12 @@ public class ServerMain {
 
         loginScreen = new LoginScreen();
         registerScreen = new RegisterScreen();
-        homeScreen = new HomeScreen();
         
         if(dbReference != null){
             if(!dbReference.checkDatabaseExistence()){
                 dbReference.createDatabase();
             }
+            homeScreen = new HomeScreen();
             if(dbReference.checkAdminExistence()){
                 loginScreen.setVisible(true);
                 return true;
