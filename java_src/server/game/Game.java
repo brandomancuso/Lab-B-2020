@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import utils.Pair;
 import server.ServerServiceImpl;
 
@@ -35,7 +36,7 @@ public class Game extends Thread implements ServerGameStub {
     private Boolean boolNextRound;
     private Database dbReference;
     private Session currentSession;
-    private List<String> winnerNickname;
+    private List<Pair<String,Integer>> winners;
     private final int WINNING_POINT = 1;
 
     public Game(GameData gameData, String hostNickname, ClientGameStub clientGameStub, ServerServiceImpl serverServiceImpl, Database dbReDatabase) {
@@ -44,7 +45,7 @@ public class Game extends Thread implements ServerGameStub {
         observerClientSet = new HashMap<>();
         persistentSignal = new PersistentSignal(this);
         timer = new Timer(persistentSignal);
-        winnerNickname=new ArrayList<>();
+        winners=new ArrayList<>();
         boolNextRound = true;//i assume that there might be a little succesful at the end of the first round
         isLobbyState = true;//at creation the game is in lobby state
         playerReadyNextRound = 0;
@@ -69,9 +70,10 @@ public class Game extends Thread implements ServerGameStub {
     
     public void run()
     {
-        int i=1;//in order to count the number of sessions
+        int i=0;//in order to count the number of sessions
         do
         {
+            i++;//the counter for the session
             currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i,this);
             if(isLobbyState)
             {
@@ -97,15 +99,8 @@ public class Game extends Thread implements ServerGameStub {
             timer.setTime(5);
             currentSession.startAfterGame(timerThread = new Thread(timer));
             //to save the results of the all sessions and set the winners
-            //check if another session has to be started
-            for (String nickname : gameData.getPlayersList()) {
-                //create a list of winners
-                if (gameData.getPoints(nickname) >= WINNING_POINT) {
-                    winnerNickname.add(nickname);
-                    boolNextRound = false;
-                }
-            }
-            i++;//the counter for the session
+            //check if another session has to be started          
+            findWinner();
         }while (boolNextRound);
         
         
@@ -165,6 +160,38 @@ public class Game extends Thread implements ServerGameStub {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+    }
+    
+    private void findWinner ()
+    {
+        //search for the winners
+         for (String nickname : gameData.getPlayersList()) {
+                //create a list of winners
+                if (gameData.getPoints(nickname) >= WINNING_POINT) {
+                    winners.add(new Pair (nickname,gameData.getPoints(nickname)));
+                    boolNextRound = false;
+                }
+         }
+         
+        //i order the result by BubbleSort
+        for (int i = 0; i < winners.size(); i++) {
+            boolean exchange = false;
+            for (int j = winners.size() - 1; j > i; j--) {
+                if (winners.get(j).getLast().compareTo(winners.get(j-1).getLast()) > 0)
+                {
+                    Pair<String,Integer> tmpWinners=winners.get(j);
+                    winners.set(j,winners.get(j - 1));
+                    winners.set(j - 1,tmpWinners);
+                    exchange = true;
+                }
+            }
+            if (!exchange) {
+                break;
+            }
+        }
+        
+        //i remove all the players with less than the maximun player score inside this list, founding the real winners
+        winners= winners.parallelStream().filter(winner-> winner.getLast().equals(winners.get(1).getLast())).collect(Collectors.toList());
     }
 
     //public methods for the game 
