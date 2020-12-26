@@ -36,7 +36,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         GUI = homeGUI;
         statsChanged = false;
         
-        //TODO Recupero di tutte le statistiche
         stats = dbReference.getStats();
     }
     
@@ -248,7 +247,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     public List<GameData> getGamesList(){
         return castMapToList();
     }
-    
     // </editor-fold>
     
     //  <editor-fold defaultstate="collapsed" desc="private methods">
