@@ -48,3 +48,9 @@ CREATE TABLE play (
         points INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY (user_key, manche_key)
 );
+
+CREATE VIEW manche_play_stats (player, num_manches, avg_points) AS 
+    SELECT user_key, count(*), AVG(points) FROM play GROUP BY user_key;
+
+CREATE VIEW game_play_stats (player, avg_points) AS 
+    SELECT user_key, AVG(total_points) FROM partecipate GROUP BY user_key;
