@@ -17,7 +17,7 @@ public class WordsMatrix {
         //Letter Schema
         private final String[][] diceFaces=
         { 
-            {"B","A","O","O","Q","M"},
+            {"B","A","O","O","Qu","M"},
             {"U","T","E","S","L","P"},
             {"I","G","E","N","V","T"},
             {"O","U","L","I","E","R"},
@@ -57,17 +57,18 @@ public class WordsMatrix {
 				int select = gen.nextInt(upperBound+1);
 				matrix[i][j] = dices[select];
 				dices[select].roll();
-				swap(select, upperBound--);//to exchage the last dice with the one selected in order to shaking
+				//swap(select, upperBound--);//to exchage the last dice with the one selected in order to shaking
 			}
 		}
 	}
-        
+ /*       
         private void swap(int select, int bound) {
 		Dice tmp = dices[bound];
 		dices[bound] = dices[select];
 		dices[select] = tmp;
 	}
-	
+*/
+        
 //public method
 	public String[] getWordsMatrix() {
             String[] gridTmp=new String[DIM*DIM];
