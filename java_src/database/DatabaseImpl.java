@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1059,8 +1061,54 @@ public class DatabaseImpl implements Database{
         return minSessionsPerGame;
     }
     
-    private List<Pair<String, Integer>> queryForLettersAverageOccurency() {
-        
+    private List<Pair<String, Double>> queryForLettersAverageOccurency() {
+        List<Pair<String, Double>> results = new ArrayList<>();
+        Map<String, Double> occ = new HashMap<>();
+        String sql = "SELECT grid FROM manche ";
+        String[] letters;
+        int num_sessions = 0;
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                num_sessions++;
+                letters = rs.getString(1).split(";");
+                for(String s : letters){
+                    Double i = occ.get(s);
+                    if(i != null) {
+                        i = i+1;
+                    } else {
+                        occ.put(s, 1d);
+                    }
+                }
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        if(num_sessions == 0) return null;
+        for(String s : occ.keySet()){
+            results.add(new Pair<>(s, occ.get(s) / num_sessions));
+        }
+        results.sort(new Comparator<Pair<String, Double>>() {
+            @Override
+            public int compare(Pair<String, Double> l1, Pair<String, Double> l2) {
+                int comp = 0;
+                if(l1.getLast() > l2.getLast()) comp = 1;
+                else if(l1.getLast() < l2.getLast()) comp = -1;
+                return comp;
+            }
+        });
+        return results;
     }
     
     private List<Pair<String, Integer>> queryForOccurrencyWordsDefLeaderboard() {
