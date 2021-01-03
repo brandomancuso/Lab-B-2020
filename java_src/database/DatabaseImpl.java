@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -346,6 +348,11 @@ public class DatabaseImpl implements Database{
         stats.setPlayerWithMoreErrors(queryForPlayerWithMoreErrors());
         stats.setOccurrencyWordsLeaderboard(queryForOccurrencyWordsLeaderboard());
         stats.setWordsBestScore(queryForWordsBestScore());
+        stats.setAverageSessionsPerGame(queryForAverageSessionsPerGame());
+        stats.setMaxSessionsPerGame(queryForMaxSessionsPerGame());
+        stats.setMinSessionsPerGame(queryForMinSessionsPerGame());
+        stats.setLettersAverageOccurency(queryForLettersAverageOccurency());
+        stats.setOccurrencyWordsDefLeaderboard(queryForOccurrencyWordsDefLeaderboard());
         return stats;
     }
     // </editor-fold>
@@ -354,7 +361,6 @@ public class DatabaseImpl implements Database{
     @Override
     public Database configure(DatabaseConfig config) {
         connManager.configure(config);
-        updateIds();
         return this;
     }
     
@@ -409,7 +415,9 @@ public class DatabaseImpl implements Database{
 
     @Override
     public boolean checkDatabaseExistence() {
-        return connManager.checkDatabaseExistence();
+        boolean exists = connManager.checkDatabaseExistence();
+        if(exists) updateIds();
+        return exists;
     }
 
     @Override
@@ -945,5 +953,189 @@ public class DatabaseImpl implements Database{
         }
         return leaderboard;
     }
+    
+    private Pair<Integer, Integer>[] queryForAverageSessionsPerGame() {
+        Pair<Integer, Integer>[] avgSessionsPerGame = new Pair[5];
+        String sql = "SELECT num_players, AVG(num_sessions) AS avg_sessions FROM "
+                + "(SELECT game.id AS game, COUNT(DISTINCT user_key) AS num_players, COUNT(*) AS num_sessions"
+                + "FROM game INNER JOIN manche ON game.id = manche.game_key "
+                + "          INNER JOIN play ON manche.id = play.manche_key "
+                + "GROUP BY game.id) "
+                + "WHERE num_players = ?";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            for(int i = 0; i<5; i++) {
+                PreparedStatement stmt = c.prepareStatement(sql);
+                stmt.setInt(1, i +2);
+                ResultSet rs = stmt.executeQuery();
+                if(rs.next()) {
+                    avgSessionsPerGame[i] = new Pair<>(rs.getInt("num_players"), rs.getInt("avg_sessions"));
+                } else {
+                    avgSessionsPerGame[i] = null;
+                }
+                rs.close();
+                stmt.close();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return avgSessionsPerGame;
+    }
+    
+    private Pair<Integer, Integer>[] queryForMaxSessionsPerGame() {
+        Pair<Integer, Integer>[] maxSessionsPerGame = new Pair[5];
+        String sql = "SELECT num_players, MAX(num_sessions) AS max_sessions FROM "
+                + "(SELECT game.id AS game, COUNT(DISTINCT user_key) AS num_players, COUNT(*) AS num_sessions"
+                + "FROM game INNER JOIN manche ON game.id = manche.game_key "
+                + "          INNER JOIN play ON manche.id = play.manche_key "
+                + "GROUP BY game.id) "
+                + "WHERE num_players = ? "
+                + "GROUP BY num_players";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            for(int i = 0; i<5; i++) {
+                PreparedStatement stmt = c.prepareStatement(sql);
+                stmt.setInt(1, i +2);
+                ResultSet rs = stmt.executeQuery();
+                if(rs.next()) {
+                    maxSessionsPerGame[i] = new Pair<>(rs.getInt("num_players"), rs.getInt("max_sessions"));
+                } else {
+                    maxSessionsPerGame[i] = null;
+                }
+                rs.close();
+                stmt.close();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return maxSessionsPerGame;
+    }
+    
+    private Pair<Integer, Integer>[] queryForMinSessionsPerGame() {
+        Pair<Integer, Integer>[] minSessionsPerGame = new Pair[5];
+        String sql = "SELECT num_players, MIN(num_sessions) AS min_sessions FROM "
+                + "(SELECT game.id AS game, COUNT(DISTINCT user_key) AS num_players, COUNT(*) AS num_sessions"
+                + "FROM game INNER JOIN manche ON game.id = manche.game_key "
+                + "          INNER JOIN play ON manche.id = play.manche_key "
+                + "GROUP BY game.id) "
+                + "WHERE num_players = ? "
+                + "GROUP BY num_players";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            for(int i = 0; i<5; i++) {
+                PreparedStatement stmt = c.prepareStatement(sql);
+                stmt.setInt(1, i +2);
+                ResultSet rs = stmt.executeQuery();
+                if(rs.next()) {
+                    minSessionsPerGame[i] = new Pair<>(rs.getInt("num_players"), rs.getInt("min_sessions"));
+                } else {
+                    minSessionsPerGame[i] = null;
+                }
+                rs.close();
+                stmt.close();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return minSessionsPerGame;
+    }
+    
+    private List<Pair<String, Double>> queryForLettersAverageOccurency() {
+        List<Pair<String, Double>> results = new ArrayList<>();
+        Map<String, Double> occ = new HashMap<>();
+        String sql = "SELECT grid FROM manche ";
+        String[] letters;
+        int num_sessions = 0;
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                num_sessions++;
+                letters = rs.getString(1).split(";");
+                for(String s : letters){
+                    Double i = occ.get(s);
+                    if(i != null) {
+                        i = i+1;
+                    } else {
+                        occ.put(s, 1d);
+                    }
+                }
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        if(num_sessions == 0) return null;
+        for(String s : occ.keySet()){
+            results.add(new Pair<>(s, occ.get(s) / num_sessions));
+        }
+        results.sort(new Comparator<Pair<String, Double>>() {
+            @Override
+            public int compare(Pair<String, Double> l1, Pair<String, Double> l2) {
+                int comp = 0;
+                if(l1.getLast() > l2.getLast()) comp = 1;
+                else if(l1.getLast() < l2.getLast()) comp = -1;
+                return comp;
+            }
+        });
+        return results;
+    }
+    
+    private List<Pair<String, Integer>> queryForOccurrencyWordsDefLeaderboard() {
+        List<Pair<String, Integer>> leaderboard = new ArrayList<>();
+        String sql = "SELECT word, COUNT(*) AS num_occ FROM def_req INNER JOIN word ON word_key = id "
+                + "GROUP BY word ORDER BY num_occ ASC";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                leaderboard.add(new Pair<>(rs.getString("word"), rs.getInt("num_occ")));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return leaderboard;
+    }
+    
 
 }

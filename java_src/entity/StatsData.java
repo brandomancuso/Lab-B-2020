@@ -17,7 +17,7 @@ public class StatsData implements Serializable{
     private Pair<Integer, Integer>[] averageSessionsPerGame;
     private Pair<Integer, Integer>[] maxSessionsPerGame;
     private Pair<Integer, Integer>[] minSessionsPerGame;
-    private List<Pair<String, Integer>> lettersAverageOccurency;
+    private List<Pair<String, Double>> lettersAverageOccurency;
     private List<Pair<String, Integer>> occurrencyWordsDefLeaderboard;
     
     private static final long serialVersionUID = 1L;
@@ -118,11 +118,11 @@ public class StatsData implements Serializable{
         this.minSessionsPerGame = minSessionsPerGame;
     }
 
-    public List<Pair<String, Integer>> getLettersAverageOccurency() {
+    public List<Pair<String, Double>> getLettersAverageOccurency() {
         return lettersAverageOccurency;
     }
 
-    public void setLettersAverageOccurency(List<Pair<String, Integer>> lettersAverageOccurency) {
+    public void setLettersAverageOccurency(List<Pair<String, Double>> lettersAverageOccurency) {
         this.lettersAverageOccurency = lettersAverageOccurency;
     }
 
