@@ -74,15 +74,20 @@ public class Session {
                 //request the words
                 value.setWordsFound((ArrayList<String>)value.getClientGameStub().getWords());
                 //check the words requested
-                int pointPlayer=checkWord(value.getNickname(), value.getWordsFound());
-                //Set the point for the player
-                gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);//instead i could have used just the realPoints to know the playerPoint
+                checkWord(value.getNickname(), value.getWordsFound());
             } catch (RemoteException ex) {
                 System.err.println(ex);
                 observerClientSet.remove(key);
                 game.removeObserverClient(key);
                 game.setBoolNextRound(false);//even if a client is disconnected, i permit to see the result of the game
             }
+        });
+        
+        //set points of the players
+        observerClientSet.forEach((key,value)->
+        {
+            int pointPlayer=countPoint(key);
+            gameData.setPoints(value.getNickname(),gameData.getPoints(value.getNickname())+pointPlayer);//instead i could have used just the realPoints to know the playerPoint
         });
         
         
@@ -113,9 +118,8 @@ public class Session {
     
   
 //utility methods    
-    private int checkWord(String nickname,List<String> wordFoundList)
+    private void checkWord(String nickname,List<String> wordFoundList)
     {
-       int pointPlayer=0;
        WordData wordTmp;
        //TO-DO:if the wordFoundList is null set a empty result
        for (String wordFound : wordFoundList)
@@ -128,7 +132,6 @@ public class Session {
                  wordTmp.setPoints(calculateScore(wordFound));
                  wordTmp.setRealPoints(0);
                  wordTmp.setCorrect(false);
-                 pointPlayer+=0;
              }
               else
                 if (!dictionary.exists(wordFound))
@@ -136,7 +139,6 @@ public class Session {
                          wordTmp.setPoints(calculateScore(wordFound));
                          wordTmp.setRealPoints(0);
                          wordTmp.setCorrect(false);
-                         pointPlayer+=0;
                     }
                  else
                      if(isDuplicated(wordFound))
@@ -145,19 +147,16 @@ public class Session {
                              wordTmp.setRealPoints(0);
                              wordTmp.setCorrect(true);
                              wordTmp.setDuplicate(true);
-                             pointPlayer+=0;
                          }
                       else
                          {
                              wordTmp.setRealPoints(calculateScore(wordFound));
-                             pointPlayer+=calculateScore(wordFound);//to know how many point the player has
                              wordTmp.setPoints(calculateScore(wordFound));  
                              wordTmp.setCorrect(true);
                          }
              wordTmp.setWord(wordFound);
              sessionData.addFoundWord(nickname, wordTmp);   
        }
-       return pointPlayer;//I save the real pointPlayer not the false one for the DataBase
     }   
     
     private boolean isDuplicated (String wordFound)
@@ -198,6 +197,21 @@ public class Session {
         }
     }
     
+    private int countPoint (String nickname)
+    {
+        List<WordData> foundWordPlayer=sessionData.getFoundWords().get(nickname);
+        int  pointPlayer=0;
+        if (foundWordPlayer != null)
+        {
+            for(WordData word : foundWordPlayer)
+            {
+                pointPlayer+=word.getRealPoints();
+            }
+         }
+        return pointPlayer;
+    }
+    
+   //public method
     public String[] getWordMatrix()
     {
         return wordsMatrix.getWordsMatrix();

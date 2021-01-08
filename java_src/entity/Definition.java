@@ -1,8 +1,9 @@
- package server.game;
+ package entity;
 
 
 import java.util.HashSet;
 import java.util.Set;
+import server.game.ItemType;
 
 public class Definition {
 	private ItemType type;

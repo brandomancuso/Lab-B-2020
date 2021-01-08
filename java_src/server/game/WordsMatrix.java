@@ -57,17 +57,17 @@ public class WordsMatrix {
 				int select = gen.nextInt(upperBound+1);
 				matrix[i][j] = dices[select];
 				dices[select].roll();
-				//swap(select, upperBound--);//to exchage the last dice with the one selected in order to shaking
+				swap(select, upperBound--);//to exchage the last dice with the one selected in order to shaking
 			}
 		}
 	}
- /*       
+        
         private void swap(int select, int bound) {
 		Dice tmp = dices[bound];
 		dices[bound] = dices[select];
 		dices[select] = tmp;
 	}
-*/
+
         
 //public method
 	public String[] getWordsMatrix() {
