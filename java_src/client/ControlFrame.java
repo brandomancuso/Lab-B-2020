@@ -51,13 +51,17 @@ public class ControlFrame extends javax.swing.JFrame {
     boolean logged = false;
     DefaultTableModel gameTableModel;
 
-    public ControlFrame() {
+    public ControlFrame(String[] IpServer) {
         gameTableModel = GuiUtility.createCustomTableModel(2);
         initComponents();
         initCustom();
         loggedUser = new UserData();
+        Registry registry;
         try {
-            Registry registry = LocateRegistry.getRegistry(1099);
+            if(IpServer.length!=0)
+                registry = LocateRegistry.getRegistry(IpServer[0],1099);
+            else
+                registry = LocateRegistry.getRegistry(1099);
             serviceStub = (ServerServiceStub) registry.lookup("Il Paroliere");
         } catch (NotBoundException | RemoteException e) {
             showMessageDialog(null, "Si è verificato un errore nella connessione... " + e.getLocalizedMessage());
@@ -1095,7 +1099,7 @@ public class ControlFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ControlFrame().setVisible(true);
+                new ControlFrame(args).setVisible(true);
             }
         });
     }
