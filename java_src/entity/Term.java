@@ -3,7 +3,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import server.game.Definition;
 
 public class Term implements Serializable{
     

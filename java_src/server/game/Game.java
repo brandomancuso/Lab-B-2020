@@ -96,16 +96,22 @@ public class Game extends Thread implements ServerGameStub {
             
             timer.setTime(70);
             currentSession.startRealGame(timerThread = new Thread(timer));
-            timer.setTime(500);
+            timer.setTime(100);
             currentSession.startAfterGame(timerThread = new Thread(timer));
             //to save the results of the all sessions and set the winners
             //check if another session has to be started          
             findWinner();
         }while (boolNextRound);
         
+        //i need only a list of string for the winner
+        List<String> winnerNickname=new ArrayList<>(); 
+        for(Pair<String,Integer> winner : winners)
+        {
+            winnerNickname.add(winner.getFirst());//TO:do check better these instructions
+        }      
         
         //transit the client to the winner state and send the winners with notifyInfoGame()
-        /**observerClientSet.forEach((key, value) -> {
+        observerClientSet.forEach((key, value) -> {
             try {
                 value.getClientGameStub().changeGameState(3);
                 value.getClientGameStub().notifyInfoGame(winnerNickname);
@@ -114,7 +120,7 @@ public class Game extends Thread implements ServerGameStub {
                 observerClientSet.remove(key);
                 forcedExit(value.getNickname());//when a client isn't reacheable any more
             }
-        });*/
+        });
         
         
         //save the game

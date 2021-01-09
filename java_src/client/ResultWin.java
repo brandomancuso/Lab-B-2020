@@ -95,6 +95,11 @@ public class ResultWin extends javax.swing.JDialog {
         btn_game_leave_result.setForeground(new java.awt.Color(255, 255, 255));
         btn_game_leave_result.setText("ABBANDONA");
         btn_game_leave_result.setBorder(null);
+        btn_game_leave_result.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_game_leave_resultActionPerformed(evt);
+            }
+        });
 
         jTableScore_result.setModel(scoreTableModel);
         jScrollPane2.setViewportView(jTableScore_result);
@@ -193,6 +198,11 @@ public class ResultWin extends javax.swing.JDialog {
         btn_result_pass.setForeground(new java.awt.Color(255, 255, 255));
         btn_result_pass.setText("Passa Turno");
         btn_result_pass.setBorder(null);
+        btn_result_pass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_result_passActionPerformed(evt);
+            }
+        });
 
         jTable_result.setModel(resultTableModel);
         jTable_result.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -361,6 +371,7 @@ public class ResultWin extends javax.swing.JDialog {
             return;
         }
         try {
+            //il problema è che gamestub è nullo al momento della chiamata magari non richiami setGameStub?
             def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
             showMessageDialog(null, def.toString());
         } catch (RemoteException ex) {
@@ -372,6 +383,14 @@ public class ResultWin extends javax.swing.JDialog {
         // TODO add your handling code here:
 
     }//GEN-LAST:event_jTable_resultMouseClicked
+
+    private void btn_result_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_passActionPerformed
+        //gameStub.ready();
+    }//GEN-LAST:event_btn_result_passActionPerformed
+
+    private void btn_game_leave_resultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_leave_resultActionPerformed
+        //gameStub.leaveGame();
+    }//GEN-LAST:event_btn_game_leave_resultActionPerformed
 
     /**
      * @param args the command line arguments
