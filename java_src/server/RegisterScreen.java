@@ -15,6 +15,11 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import utils.CryptMD5;
 
+/**
+ * Classe dell'interfaccia grafica relativa alla registrazione dell'utente amministratore 
+ * @author Fedeli Andrea
+ * @see @see javax.swing.JFrame
+ */
 public class RegisterScreen extends JFrame implements ActionListener{
     private JTextField emailTxt;
     private JLabel jLabel1;
@@ -33,11 +38,19 @@ public class RegisterScreen extends JFrame implements ActionListener{
     private JButton registerButton;
     private JButton resetButton;
     
+    /**
+     * Costruttore della classe
+     */
     public RegisterScreen(){
         
         initGUI();
     }
     
+    /**
+     * Permette la gestione dei vari eventi all'interno dell'interfaccia grafica
+     * @param event La tipologia di evento
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == registerButton){
@@ -66,7 +79,10 @@ public class RegisterScreen extends JFrame implements ActionListener{
             emailTxt.setText("");
         }
     }
-
+    
+    /**
+     * Inizializzazione dell'interfaccia grafica 
+     */
     private void initGUI() {
         jPanel1 = new JPanel();
         jLabel2 = new JLabel();

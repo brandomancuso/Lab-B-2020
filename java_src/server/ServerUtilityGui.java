@@ -3,8 +3,20 @@ package server;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Classe che effettua i controlli necessari alle varie interfacce grafiche
+ * @author Fedeli Andrea
+ */
 public class ServerUtilityGui {
     
+    /**
+     * Effettua i controlli necessari all'interfaccia per la connessione al database
+     * @param host Host del database
+     * @param username Username del database
+     * @param password Password del database
+     * @return Il risultato dei controlli
+     * @see DbConnectScreen
+     */
     public static String controlDbResult(String host, String username, String password){
         String controlResult;
         if(host.equals("jdbc:postgresql:///")){
@@ -30,6 +42,15 @@ public class ServerUtilityGui {
         return controlResult;
     }
     
+    /**
+     * Effettua i controlli necessari all'interfaccia per la registrazione di un utente amministratore
+     * @param username Lo username dell'amministratore
+     * @param password La password dell'amministratore
+     * @param rPassword La ripetizione dell'amministratore
+     * @param email La mail dell'amministratore
+     * @return Il risultato dei controlli
+     * @see RegisterScreen
+     */
     public static String controlRegisterResult(String username, String password, String rPassword, String email){
         Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
         Matcher matcher;
@@ -76,6 +97,13 @@ public class ServerUtilityGui {
         return controlResult;
     }
     
+    /**
+     * Effettua i controlli necessari all'interfaccia per il login dell'amministratore
+     * @param username Username dell'amministratore
+     * @param password Password dell'amministratore
+     * @return Il risultato dei controlli
+     * @see LoginScreen
+     */
     public static String controlLoginResult(String username, String password){
         String controlResult;
         if(username.isEmpty()){

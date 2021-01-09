@@ -11,6 +11,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Timer;
 
+/**
+ * Implementazione dell'interfaccia {@link java.lang.Runnable} utilizzata per inviare mail da parte del server tramite <code>Thread</code>
+ * @author Fedeli Andrea
+ * @see java.lang.Runnable
+ */
 public class EmailSender implements Runnable{
     private final String HOST = "ilparoliere2020@outlook.it"; //Email da cui inviare la mail
     private final String PASSWORD = "InfoInsubria2020"; //Password della mail da cui inviare la mail
@@ -26,6 +31,13 @@ public class EmailSender implements Runnable{
     private String nick;
     private int mailType; //1 = codice di verifica  2 = reset password
     
+    /**
+     * Costruttore della classe
+     * @param dest Email dell'utente a cui spedire la mail
+     * @param content Contenuto della mail
+     * @param nickname Nickname dell'utente a cui spedire la mail
+     * @param mailType Tipologia della mail da spedire. <p> 1 - mail di verifica. 2 - mail per reset password.
+     */
     public EmailSender(String dest, String content, String nickname, int mailType){
         this.destinatario = dest;
         this.messageContent = content;
@@ -33,6 +45,10 @@ public class EmailSender implements Runnable{
         this.mailType = mailType;
     }
     
+    /**
+     * Operazione da svolgere per spedire la mail
+     * @see java.lang.Runnable#run() 
+     */
     @Override
     public void run(){
         try {

@@ -19,6 +19,12 @@ import server.game.Game;
 import server.game.ServerGameStub;
 import utils.Pair;
 
+/**
+ * La classe ServerServiceImpl rappresenta il server dell'applicazione e gestisce tutte le sue funzionalità, per questo implementa l'interfaccia.
+ * remota ServerServiceStub
+ * @author Fedeli Andrea
+ * @see ServerServiceStub
+ */
 public class ServerServiceImpl extends Observable implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList; //Per aggiornare client singoli
     private Map<String, UserData> usersList;
@@ -28,6 +34,11 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     private boolean statsChanged;
     private StatsData stats;
 
+    /**
+     * Costruttore della classe.
+     * @param homeGUI L'interfaccia grafica del Server
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     */
     public ServerServiceImpl(HomeScreen homeGUI) throws RemoteException {
         clientsList = new HashMap<>();
         usersList = new HashMap<>();
@@ -36,10 +47,17 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         GUI = homeGUI;
         statsChanged = false;
         
-        //stats = dbReference.getStats();
+        stats = dbReference.getStats();
     }
     
     // <editor-fold defaultstate="collapsed" desc="interface methods">
+    /**
+     * Ripristina la password di un utente.
+     * @param email L'email dell'utente di cui ripristinare la password
+     * @return <code>true</code> se il reset è avvenuto
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     * @see ServerServiceStub#recoverPassword(java.lang.String) 
+     */
     @Override
     public boolean recoverPassword(String email) throws RemoteException {
         //mi serve il nickname dell'utente per avere il riferimento per aggiornare il database
@@ -52,6 +70,13 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return true;
     }
 
+    /**
+     * Aggiunge un ClientServiceStub alla mappa di Observer del Server.
+     * @param nickname Il nickname dell'utente
+     * @param client L'oggetto remoto del client
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     * @see ServerServiceStub#addObserver(java.lang.String, client.ClientServiceStub) 
+     */
     @Override
     public void addObserver(String nickname, ClientServiceStub client) throws RemoteException {
         clientsList.put(nickname, client);
@@ -60,7 +85,13 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         //client.update(stats);
         WrappedObserver wo = new WrappedObserver(this, client, nickname);
     }
-
+    
+    /**
+     * Effettua il logout di un utente.
+     * @param nickname Il nickname dell'utente
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     * @see ServerServiceStub#logout(java.lang.String) 
+     */
     @Override
     public void logout(String nickname) throws RemoteException {
         clientsList.remove(nickname);
@@ -69,6 +100,14 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         GUI.stampEvent(nickname + " si è disconnesso");
     }
 
+    /**
+     * Aggiorna le informazioni relative ad un utente.
+     * @param user L'utente da modificare
+     * @param oldNickname Il vecchio nickname dell'utente
+     * @return L'utente aggiornato
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     * @see entity.UserData
+     */
     @Override
     public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
         UserData updatedUser = dbReference.updateUser(user, oldNickname);
@@ -78,6 +117,12 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return updatedUser;
     }
 
+    /**
+     * Registra un utente nell'applicazione.
+     * @param newUser L'utente da registrare
+     * @return <code>true</code> se la registrazione è avvenuta
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     */
     @Override
     public boolean register(UserData newUser) throws RemoteException {
         boolean registerResult;
@@ -96,6 +141,19 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return registerResult;
     }
 
+    /**
+     * Effettua il login all'applicazione.
+     * @param email La mail dell'utente
+     * @param password La password dell'utente
+     * @return Restituisce un oggetto {@link utils.Pair}.
+     * <p>
+     * Il primo elemento è un {@link Integer} e rappresenta il codice di errore.
+     * Il secondo è un {@link entity.UserData} e rappresenta l'utente corrispondente alle credenziali inserite.
+     * <p>
+     * {@link Integer} è <code>null</code> se il login è andato a buon fine. {@link entity.UserData} è <code>null</code> se il login è fallito.
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     * @see utils.Pair
+     */
     @Override
     public Pair<Integer, UserData> login(String email, String password) throws RemoteException {
         Pair<Integer, UserData> loginResult;
@@ -124,8 +182,15 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return loginResult;
     }
     
+    /**
+     * Verifica il profilo di un utente
+     * @param verificationCode Il codice di verifica dell'utente.
+     * @param nickname Il nickname dell'utente
+     * @return <code>true</code> se la verifica è avvenuta
+     * @throws java.rmi.RemoteException Se si verificano problemi nella connessione RMI
+     */
     @Override
-    public boolean verifyUser(String verificationCode, String nickname){
+    public boolean verifyUser(String verificationCode, String nickname) throws RemoteException{
         UserData dbResult = dbReference.getUser(nickname);
         boolean result = false;
         
@@ -147,6 +212,16 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return result;
     }
     
+    /**
+     * Permette ad un utente di partecipare ad una partita.
+     * @param nickname Nickname dell'utente.
+     * @param gameId Identificatore numerico della partita.
+     * @param client Oggetto remoto del client.
+     * @return Oggetto remoto della partita.
+     * @throws RemoteException Se si verificano problemi nella connessione RMI.
+     * @see server.game.ServerGameStub
+     * @see server.game.Game
+     */
     @Override
     public ServerGameStub partecipate(String nickname, int gameId, ClientGameStub client) throws RemoteException {
         Pair<GameData, Boolean> result;
@@ -165,6 +240,17 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         return null;
     }
     
+    /**
+     * Permette ad un utente di creare una partita.
+     * @param nickname Nickname dell'utente.
+     * @param gameTitle Nome della partita.
+     * @param numPlayers Numero dei giocatori della partita.
+     * @param client Utente che ha creato della partita.
+     * @return Oggetto remoto della partita.
+     * @throws RemoteException Se si verificano problemi nella connessione RMI
+     * @see server.game.ServerGameStub
+     * @see server.game.Game
+     */
     @Override
     public ServerGameStub createGame(String nickname, String gameTitle, int numPlayers, ClientGameStub client) throws RemoteException {
         Boolean flag = true;
@@ -191,7 +277,12 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="public methods">
+    // <editor-fold defaultstate="collapsed" desc="public/protected methods">
+    /**
+     * Elimina una partita alla sua terminazione.
+     * @param gameId L'identificativo della partita.
+     * @see server.game.Game
+     */
     public synchronized void disconnectGame(Integer gameId) {
         Game endedGame = gamesList.remove(gameId);
         
@@ -207,11 +298,18 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         
         GUI.stampEvent(endedGame.getGameData().getName() + " è terminata");
     }
-
+    
+    /**
+     * Rimuove un oggetto client remoto dalla mappa di observer.
+     * @param nickname Il nickname dell'utente corrispondente all'oggetto remoto.
+     */
     public void removeObserver(String nickname){
         clientsList.remove(nickname);
     }
     
+    /**
+     * Chiude il server.
+     */
     public void closeServer(){
         this.clientsList.clear();
         this.usersList.clear();
@@ -234,17 +332,28 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
          */
     }
     
+    /**
+     * Aggiorna la lista di partite dei client.
+     */
     //Metodo per aggiornare numero di giocatori nella singola partita
     public synchronized void updateNumPlayer() {
          this.setChanged();
          this.notifyObservers(statsChanged);
     }
     
-    public StatsData getStats(){
+    /**
+     * Restituisce le statistiche relative piattaforma.
+     * @return Le statistiche della piattaforma.
+     */
+    protected StatsData getStats(){
         return this.stats;
     }
     
-    public List<GameData> getGamesList(){
+    /**
+     * Restituisce la lista di partite
+     * @return La lista di partite
+     */
+    protected List<GameData> getGamesList(){
         return castMapToList();
     }
     // </editor-fold>

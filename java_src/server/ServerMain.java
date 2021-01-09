@@ -4,12 +4,20 @@ import database.Database;
 import database.DatabaseConfig;
 import database.DatabaseImpl;
 
+/**
+ * Classe relativa all'avvio dell'applicazione lato server
+ * @author Fedeli Andrea
+ */
 public class ServerMain {
     private static DbConnectScreen dbConnect;
     private static LoginScreen loginScreen;
     private static RegisterScreen registerScreen;
     private static HomeScreen homeScreen;
     
+    /**
+     * Inizializza le interfacce grafica dell'applicazione e il collegamento al database
+     * @param args Gli argomenti passati all'applicazione come input dell'utente
+     */
     public static void main(String[] args){
         System.setProperty("java.security.policy","file:./resources/policy.policy");
         if(System.getSecurityManager() == null){
@@ -20,6 +28,13 @@ public class ServerMain {
         dbConnect.setVisible(true);
     }
     
+    /**
+     * Permette la connessione del database e la visulizzazione della corretta interfaccia grafica
+     * @param dbUser Utente del database
+     * @param dbPassword Password del database
+     * @param dbHost Host del database
+     * @return <code>true</code> se la connessione al database è avvenuta
+     */
     //Accedo al database e controllo la presenza di un amministratore
     public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost){
         Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
@@ -48,11 +63,17 @@ public class ServerMain {
         }
     }
     
+    /**
+     * Permette la visualizzazione dell'interfaccia grafica per il login dell'amministratore
+     */
     //Mostra la finestra di Login
     public static void showLogin(){
         loginScreen.setVisible(true);
     }
     
+    /**
+     * Permette la visualizzazione dell'interfaccia grafica relativa alla gestione del server da parte dell'amministratore
+     */
     public static void showHome(){
         homeScreen.setVisible(true);
     }

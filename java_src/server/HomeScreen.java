@@ -13,6 +13,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
+/**
+ * Classe dell'interfaccia grafica relativa alla gestione del server da parte dell'amministratore
+ * @author Fedeli Andrea
+ * @see javax.swing.JFrame
+ */
 public class HomeScreen extends JFrame implements ActionListener{
     private JButton exitButton;
     private JLabel jLabel2;
@@ -26,6 +31,9 @@ public class HomeScreen extends JFrame implements ActionListener{
     private Registry registry;
     private ServerServiceStub serverStub;
     
+    /**
+     * Costruttore della classe
+     */
     public HomeScreen(){
         try{
             server = new ServerServiceImpl(this);
@@ -38,6 +46,11 @@ public class HomeScreen extends JFrame implements ActionListener{
         }
     }
     
+    /**
+     * Permette la gestione dei vari eventi all'interno dell'interfaccia grafica
+     * @param event La tipologia di evento
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent) 
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == startButton){
@@ -70,6 +83,9 @@ public class HomeScreen extends JFrame implements ActionListener{
         }
     }
     
+    /**
+     * Inizializzazione dell'interfaccia grafica
+     */
     private void initGUI() {
         jPanel1 = new JPanel();
         jLabel2 = new JLabel();
@@ -165,6 +181,10 @@ public class HomeScreen extends JFrame implements ActionListener{
         setLocationRelativeTo(null);
     }
     
+    /**
+     * Metodo per stampare all'interno della {@link javax.swing.JTextArea} dell'interfaccia grafica
+     * @param event La stringa che descrive l'evento
+     */
     public void stampEvent(String event){
         serverOutput.append(event+"\n");
     }

@@ -11,6 +11,12 @@ import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+/**
+ * Classe dell'interfaccia grafica relativa alla connessione al database dell'applicazione
+ * @author Fedeli Andrea
+ * @see javax.swing.JFrame
+ * @see java.awt.event.ActionListener
+ */
 public class DbConnectScreen extends JFrame implements ActionListener{
     private JTextField dbHost;
     private JPasswordField dbPassword;
@@ -29,10 +35,18 @@ public class DbConnectScreen extends JFrame implements ActionListener{
     private JButton loginDbButton;
     private JButton resetButton;
     
+    /**
+     * Costruttore della classe
+     */
     public DbConnectScreen(){
         initGUI();
     }
     
+    /**
+     * Permette la gestione dei vari eventi all'interno dell'interfaccia grafica
+     * @param event La tipologia di evento
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent) 
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginDbButton){
@@ -65,6 +79,9 @@ public class DbConnectScreen extends JFrame implements ActionListener{
         }
     }
 
+    /**
+     * Inizializza l'interfaccia grafica
+     */
     private void initGUI() {
         jPanel1 = new JPanel();
         jLabel2 = new JLabel();
