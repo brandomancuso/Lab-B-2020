@@ -840,11 +840,11 @@ public class DatabaseImpl implements Database{
         return result;
     }
 
-    private Pair<String, Integer> queryForPlayerWithMoreDuplicates() {
+    private Pair<String, Integer> queryForPlayerWithMoreDuplicates() { //to check
         Integer num_duplicates = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, MAX(dp_count) AS num_duplicates FROM (SELECT user_key, COUNT(*) AS dp_count FROM find "
-                + "WHERE duplicate = 'true' GROUP BY user_key)";
+        String sql = "SELECT user_key, MAX(dp_count) AS num_duplicates FROM (SELECT find.user_key, COUNT(*) AS dp_count FROM find "
+                + "WHERE duplicate = 'true' GROUP BY user_key) AS dp GROUP BY dp.user_key";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -871,11 +871,11 @@ public class DatabaseImpl implements Database{
         return result;
     }
 
-    private Pair<String, Integer> queryForPlayerWithMoreErrors() {
+    private Pair<String, Integer> queryForPlayerWithMoreErrors() { //to check
         Integer num_errors = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, MAX(err_count) AS num_errors FROM (SELECT user_key, COUNT(*) AS err_count FROM find "
-                + "WHERE correct = 'false' GROUP BY user_key)";
+        String sql = "SELECT user_key, MAX(err_count) AS num_errors FROM (SELECT find.user_key, COUNT(*) AS err_count FROM find "
+                + "WHERE correct = 'false' GROUP BY user_key) AS err GROUP BY err.user_key";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -956,12 +956,8 @@ public class DatabaseImpl implements Database{
     
     private Pair<Integer, Integer>[] queryForAverageSessionsPerGame() {
         Pair<Integer, Integer>[] avgSessionsPerGame = new Pair[5];
-        String sql = "SELECT num_players, AVG(num_sessions) AS avg_sessions FROM "
-                + "(SELECT game.id AS game, COUNT(DISTINCT user_key) AS num_players, COUNT(*) AS num_sessions"
-                + "FROM game INNER JOIN manche ON game.id = manche.game_key "
-                + "          INNER JOIN play ON manche.id = play.manche_key "
-                + "GROUP BY game.id) "
-                + "WHERE num_players = ?";
+        String sql = "SELECT num_players, AVG(num_sessions) AS avg_sessions FROM game_stats "
+                + "WHERE num_players = ? GROUP BY num_players";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -991,13 +987,8 @@ public class DatabaseImpl implements Database{
     
     private Pair<Integer, Integer>[] queryForMaxSessionsPerGame() {
         Pair<Integer, Integer>[] maxSessionsPerGame = new Pair[5];
-        String sql = "SELECT num_players, MAX(num_sessions) AS max_sessions FROM "
-                + "(SELECT game.id AS game, COUNT(DISTINCT user_key) AS num_players, COUNT(*) AS num_sessions"
-                + "FROM game INNER JOIN manche ON game.id = manche.game_key "
-                + "          INNER JOIN play ON manche.id = play.manche_key "
-                + "GROUP BY game.id) "
-                + "WHERE num_players = ? "
-                + "GROUP BY num_players";
+        String sql = "SELECT num_players, MAX(num_sessions) AS max_sessions FROM game_stats "
+                + "WHERE num_players = ? GROUP BY num_players";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -1027,13 +1018,8 @@ public class DatabaseImpl implements Database{
     
     private Pair<Integer, Integer>[] queryForMinSessionsPerGame() {
         Pair<Integer, Integer>[] minSessionsPerGame = new Pair[5];
-        String sql = "SELECT num_players, MIN(num_sessions) AS min_sessions FROM "
-                + "(SELECT game.id AS game, COUNT(DISTINCT user_key) AS num_players, COUNT(*) AS num_sessions"
-                + "FROM game INNER JOIN manche ON game.id = manche.game_key "
-                + "          INNER JOIN play ON manche.id = play.manche_key "
-                + "GROUP BY game.id) "
-                + "WHERE num_players = ? "
-                + "GROUP BY num_players";
+        String sql = "SELECT num_players, MIN(num_sessions) AS min_sessions FROM game_stats "
+                + "WHERE num_players = ? GROUP BY num_players";
         Connection c = null;
         try {
             c = connManager.getConnection();
