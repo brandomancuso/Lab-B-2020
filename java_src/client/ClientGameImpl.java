@@ -124,9 +124,10 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 //chiudo game e apro result win
                 break;
             case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
+                this.guiGame.dispose();
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
-
+                this.guiGame.dispose();
                 break;
         }
     }
@@ -159,15 +160,32 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     }
 
     @Override
-    public void updateLobby(List<String> nickName) throws RemoteException {
-        lobbyList = nickName;
+    public void updateLobby(List<String> nickNames) throws RemoteException {
+        lobbyList = nickNames;
         this.guiLobby.fillPartecipant();
     }
 
     @Override
-    public void notifyInfoGame(List<String> nickName) throws RemoteException {
-        //metodo per notificare chi abbandona e chi vince
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void notifyInfoGame(List<String> nickNames) throws RemoteException {
+        String nickName="";
+        int length=nickNames.size();
+        
+        while(!nickNames.isEmpty())
+        {
+            nickName=nickNames.get(length-1)+ "  ";
+            nickNames.remove(length-1);
+        }
+        
+
+        if (gameState==3)
+        {
+            if (length >= 2)
+                showMessageDialog(guiMain,nickName+ " hanno vinto !");
+            else
+                showMessageDialog(guiMain,nickName+ " ha vinto !");
+        }     
+        if (gameState==4)
+             showMessageDialog(guiMain,nickName+ " ha abbandonato !");   
     }
 
 }
