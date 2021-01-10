@@ -1,5 +1,9 @@
  package server.game;
 import java.util.Observable;
+ /**
+  * 
+  * @author Christian Squadrito
+  */
 
 
 public class Timer extends Observable implements Runnable 
@@ -12,10 +16,19 @@ public class Timer extends Observable implements Runnable
         this.persistentSignal=persistentSignal;
     }
     
+    /**
+     * set the time
+     * @param time 
+     */
+    
     public void setTime (int time)
     {
         this.time=time;
     }
+    
+    /**
+     * is the run of the timer thread
+     */
     
     @Override
     public void run() {

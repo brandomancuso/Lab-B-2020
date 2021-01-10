@@ -10,9 +10,22 @@ import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+ 
+/**
+ * 
+ * @author Christian Squadrito
+ */
 
 public class Loader {
 		
+        /**
+         * This method allows to load the dictionary from a file
+         * @param file the path of the file where there is the physical dictionary
+         * @return Dictionary
+         * @throws IOException 
+         * @see IOException 
+         * @see Dictionary
+         */
 	public Dictionary loadDictionaryFromFile(File file) throws IOException  {
 	
         Dictionary dictionary=new Dictionary();
@@ -45,7 +58,11 @@ public class Loader {
         return dictionary;
     }
 	
-
+        /**
+         * allow to analyze the definition
+         * @param s
+         * @param t 
+         */
 	public void analyzeDefinition(String s, Term t) {
 		String[] result;
 		result = s.split("\\|");
@@ -58,6 +75,12 @@ public class Loader {
 		t.addDefinition(d);
 	}
 	
+        /**
+         * allow to get the type of the term
+         * @param s the word
+         * @return ItemType thy word type
+         * @see ItemType
+         */
 	public ItemType getItemType(String s) {
 		if(s.startsWith("(s.m.")) return ItemType.sostantivo_maschile;
 		else if(s.startsWith("(s.f.")) return ItemType.sostantivo_femminile;

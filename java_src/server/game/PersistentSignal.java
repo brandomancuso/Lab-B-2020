@@ -1,5 +1,9 @@
  package server.game;
 
+ /**
+  * 
+  * @author Christian Squadrito
+  */
 
 public class PersistentSignal {
     private boolean timeout,interruptFlag;
@@ -12,6 +16,11 @@ public class PersistentSignal {
         this.game=game;
     }
     
+    /**
+     * this method is a point of syncronization for the game server while it's waiting for the timer timeout
+     * @throws InterruptedException 
+     */
+    
     public synchronized void waitTimer() throws InterruptedException
     {
         while (!timeout)
@@ -23,12 +32,18 @@ public class PersistentSignal {
 
     }
     
+    /**
+     * This method allow to wake up the game server 
+     */
     public synchronized void timeOver()
     {
         timeout = true;
         notify();
     }
     
+    /**
+     * This method allow to interrupt the game server
+     */
     public synchronized void interruptGame ()
     {
         game.interrupt();

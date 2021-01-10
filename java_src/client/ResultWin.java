@@ -385,7 +385,11 @@ public class ResultWin extends javax.swing.JDialog {
     }//GEN-LAST:event_jTable_resultMouseClicked
 
     private void btn_result_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_passActionPerformed
-        //gameStub.ready();
+        try {
+            gameStub.ready();
+        } catch (RemoteException ex) {
+            Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_result_passActionPerformed
 
     private void btn_game_leave_resultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_leave_resultActionPerformed
