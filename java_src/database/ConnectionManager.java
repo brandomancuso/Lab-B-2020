@@ -47,7 +47,7 @@ public class ConnectionManager {
         return c;
     }
     
-    boolean checkAdminExistence() throws DatabaseException {
+    boolean checkAdminExistence() throws DatabaseException{
         boolean result = false;
         if(configuration == null){
             throw new NoConfigException("You need to configure the database first!");
@@ -65,13 +65,12 @@ public class ConnectionManager {
                 stmt.close();
                 c.close();
             } catch (SQLException e) {
-                throw new DatabaseException("Given credentials are not correct.");
             }
         }
         return result;
     }
      
-    boolean checkDatabaseExistence() {
+    boolean checkDatabaseExistence() throws DatabaseException {
         if(configuration == null){
             throw new NoConfigException("You need to configure the database first!");
         }
@@ -91,7 +90,7 @@ public class ConnectionManager {
             rs.close();
             connection.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Given credentials are not correct.");
         }
         return result;
     }
