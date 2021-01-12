@@ -11,7 +11,7 @@ import java.util.TimerTask;
  * @see java.util.TimerTask
  */
 public class AccountDeleter extends TimerTask{
-    private String nickname;
+    private String nickname;    //nickname dell'utente da eliminare
     
     /**
      * Costruttore della classe

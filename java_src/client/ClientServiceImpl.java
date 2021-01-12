@@ -64,11 +64,10 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
         //capire quando sono nella finestra home e chiamare il metodo per refillare la tabella partite
 
     }
-
+    
     @Override
-    public ClientGameStub getGameStub() throws RemoteException {
-        return null;
-
+    public void shutDownServer() throws RemoteException {
+        
     }
 
 }

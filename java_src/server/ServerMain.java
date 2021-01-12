@@ -9,10 +9,10 @@ import database.DatabaseImpl;
  * @author Fedeli Andrea
  */
 public class ServerMain {
-    private static DbConnectScreen dbConnect;
-    private static LoginScreen loginScreen;
-    private static RegisterScreen registerScreen;
-    private static HomeScreen homeScreen;
+    private static DbConnectScreen dbConnect;   //Interfaccia grafica connessione al db
+    private static LoginScreen loginScreen; //Interfaccia grafica login amministratore
+    private static RegisterScreen registerScreen;   //Interfaccia grafica registrazione dell'amministratore
+    private static HomeScreen homeScreen;   //Interfaccia grafica amministratore
     
     /**
      * Inizializza le interfacce grafica dell'applicazione e il collegamento al database

@@ -11,5 +11,5 @@ public interface ClientServiceStub extends Remote{
     //dopo nelle finestre uso quelle variabili --> sincronizzate
     void update(StatsData data) throws RemoteException; //aggiornamento statistiche nella finestra statistiche --> logica x visualizzare stats nella finestra
     void update(List<GameData> games) throws RemoteException;//mi passa le partite da mettere nella lista --> logica x aggiungere partita alla lista
-    ClientGameStub getGameStub() throws RemoteException;
+    void shutDownServer() throws RemoteException;
 }

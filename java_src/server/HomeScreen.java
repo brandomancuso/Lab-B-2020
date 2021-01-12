@@ -74,9 +74,9 @@ public class HomeScreen extends JFrame implements ActionListener{
                 serverOutput.append("Errore! "+ e.getCause() + "\n");
             }
             finally{
-                this.dispose();
-                ServerMain.showLogin();
                 server.closeServer();
+                ServerMain.showLogin();
+                this.dispose();
                 startButton.setEnabled(true);
                 serverOutput.setText(""); 
             }

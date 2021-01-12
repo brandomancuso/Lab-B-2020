@@ -26,13 +26,13 @@ import utils.Pair;
  * @see ServerServiceStub
  */
 public class ServerServiceImpl extends Observable implements ServerServiceStub{
-    private Map<String, ClientServiceStub> clientsList; //Per aggiornare client singoli
-    private Map<String, UserData> usersList;
-    private Map<Integer, Game> gamesList;
-    private Database dbReference;
-    private HomeScreen GUI;
-    private boolean statsChanged;
-    private StatsData stats;
+    private Map<String, ClientServiceStub> clientsList; //Client remoti - utilizzata per aggiornare i singoli client durante il login
+    private Map<String, UserData> usersList;    //Dati dei client connessi
+    private Map<Integer, Game> gamesList;   //Partite in corso
+    private Database dbReference;   //riferimento al database
+    private HomeScreen GUI; //riferimento all'interfaccia grafica
+    private boolean statsChanged;   //flag per controllare se le statistiche sono cambiate
+    private StatsData stats;    //statistiche di gioco
 
     /**
      * Costruttore della classe.
@@ -111,6 +111,10 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
         UserData updatedUser = dbReference.updateUser(user, oldNickname);
+        /*
+        if(updateUser.getPassword().equals(user.getPassword)){
+        new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", user.getNickname(), 3)).start();
+        */
         usersList.replace(oldNickname, updatedUser);
         
         GUI.stampEvent(oldNickname + "(" + user.getNickname() + ")" + " ha modificato l'account");
@@ -291,10 +295,12 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             dbReference.removeGame(gameId);
         }
         else{
-          statsChanged = true;  
+            stats = dbReference.getStats();
+            statsChanged = true;  
         }
         this.setChanged();
         this.notifyObservers(statsChanged);
+        statsChanged = false;
         
         GUI.stampEvent(endedGame.getGameData().getName() + " è terminata");
     }
@@ -310,26 +316,23 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     /**
      * Chiude il server.
      */
-    public void closeServer(){
+    public void closeServer() {
+        for (Map.Entry<Integer, Game> mapGameObj : gamesList.entrySet()) {
+            mapGameObj.getValue().forcedExit(null);
+        }
+
+        for (Map.Entry<String, ClientServiceStub> mapClientObj : clientsList.entrySet()) {
+            try{
+                mapClientObj.getValue().shutDownServer();
+            }
+            catch(RemoteException e){
+                clientsList.remove(mapClientObj.getKey());
+            }
+        }
+        
         this.clientsList.clear();
         this.usersList.clear();
-        
-        //TODO Annullare partite in corso
         this.gamesList.clear();
-        
-        /**
-         *  for (Map.Entry<Integer, Game> game : gamesList.entrySet()) {
-         *      game.serverClosing();
-         *  }
-         *  
-         *  for (Map.Entry<String, ClientServiceStub> client : clientsList.entrySet()) {
-         *      client.serverClosing();
-         *  }
-         * 
-         *  this.clientsList.clear();
-         *  this.usersList.clear();
-         *  this.gamesList.clear();
-         */
     }
     
     /**
