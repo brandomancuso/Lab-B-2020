@@ -111,7 +111,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
         UserData updatedUser = dbReference.updateUser(user, oldNickname);
-        /*
+        /* Controllo vecchia password + aggiornamento nuova con invio email
         if(updateUser.getPassword().equals(user.getPassword)){
         new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", user.getNickname(), 3)).start();
         */
