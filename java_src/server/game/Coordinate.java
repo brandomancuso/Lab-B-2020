@@ -1,13 +1,17 @@
-
- package server.game;
+package server.game;
  
 import java.util.Objects;
 
+/**
+ * 
+ * @author Christian Squadrito
+ */
+
 public final class Coordinate {
-	private final int x,y;
-	private final int indexLetter;
-	private Position position;
-	private final int dimMatrix;
+	private final int x,y;//coordination of the letter inside GridLetter
+	private final int indexLetter;//index inside the input word
+	private Position position;//region of the letter inside GridLetter
+	private final int dimMatrix;//length GridLetter
 	
 	public Coordinate (int x,int y,int indexLetter,int dimMatrix)
 	{
@@ -42,26 +46,48 @@ public final class Coordinate {
 			position=Position.LOWER_RIGHT;
 	}
 	
+        /**
+        * This method is to return the X-coordinate (index of column) of the GridLetter
+        * @return int return the index of the column
+        */
 	public int getX()
 	{
 		return x;
 	}
 	
+        /**
+        * This method is to return the Y-coordinate (index of row) of the GridLetter
+        * @return int return the index of the column
+        */
 	public int getY()
 	{
 		return y;
 	}
 	
+        /**
+        * This method is to return the index of the letter inside the input word to check.
+        * @return int return the index of the letter
+        */
 	public int getIndexLetter()
 	{
 		return indexLetter;
 	}
 	
+        /**
+        * This method is to return the region where the letter is in the GridLetter
+        * @return Position return the region
+        * @see Position
+        */
 	public Position getPosition()
 	{
 		return position;
 	}
-	
+        
+	/**
+         * Compare two object coordinate
+         * @param obj the Coordinate to compare
+         * @return boolean equal or not
+         */
 	@Override
 	public boolean equals(Object obj) { 
 		
@@ -78,12 +104,20 @@ public final class Coordinate {
 		      (this.position==objCoordinate.getPosition()));
 	}
 	
+        /**
+         * Generate the hashCode
+         * @return int the hash of the object Coordinate
+         */
 	@Override
 	 public int hashCode() 
 	 {
 		return Objects.hash(this.x,this.y,this.position);
 	 }
 	
+         /**
+          * print the value of the coordinate
+          * @return String print X and Y coordinate 
+          */
 	@Override
 	 public String toString()
 	 {

@@ -200,7 +200,15 @@ public class Game extends Thread implements ServerGameStub {
         winners= winners.parallelStream().filter(winner-> winner.getLast().equals(winners.get(0).getLast())).collect(Collectors.toList());
     }
 
-    //public methods for the game 
+//public methods for the game 
+    
+    /**
+     * Add a partecipant to the game
+     * @param nicknamePlayer nickname of the partecipant
+     * @param clientGameStub remote object in order to call its remote methods
+     * @return Pair a pair of gamedata (containg all the information of game) and boolean informs whether or not the method works
+     * @see Pair
+     */
     public Pair<GameData, Boolean> AddPartecipant(String nicknamePlayer, ClientGameStub clientGameStub) {
         if (gameData.getPlayersList().size() + 1 == gameData.getNumPlayers()) {
             gameData.addPlayer(nicknamePlayer);
@@ -216,7 +224,10 @@ public class Game extends Thread implements ServerGameStub {
         }
     }
 
-    //in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window) or someone abbandoned
+    /**
+     * in case of an anomalous client system shutdown (also if the user click on X on the upper-right corner of the window) or someone abbandoned
+     * @param nickname who abandoned
+     */
     public void forcedExit(String nickname) {
         timerThread.interrupt();//interrupt the timer beacause of game ending
         persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
@@ -239,27 +250,53 @@ public class Game extends Thread implements ServerGameStub {
         }
     }
     
+    /**
+     * to save the game and send the result to the server
+     */
     public void saveGame ()
     {
         dbReference.updateGame(gameData);
     }
     
+    /**
+     * get all the information on the Game
+     * @return GameData the object containing the information
+     * @see GameData
+     */
     public GameData getGameData(){
         return this.gameData;
     }
     
+    /**
+     * set the boolean to enable the next GameSession
+     * @param boolNextRound 
+     */
     public void setBoolNextRound (Boolean boolNextRound)
     {
         this.boolNextRound=boolNextRound;
     }
     
+    /**
+     * remove the observerClient by his nickname
+     * @param nickname 
+     */
     public void removeObserverClient (String nickname)
     {
         observerClientSet.remove(nickname);
     }
     
     
-    //remote methods for client purpose via RMI
+//remote methods for client purpose via RMI
+    
+    /**
+     * request the definition for the specific word
+     * @param nickname
+     * @param word
+     * @return Term containg all the definitions for the word
+     * @throws RemoteException 
+     * @see Term
+     * @see RemoteException
+     */
     @Override
     public synchronized Term requestWordDef(String nickname,String word) throws RemoteException {
         try {
@@ -275,13 +312,24 @@ public class Game extends Thread implements ServerGameStub {
         return new Term(word);
     }
 
+    /**
+     * client could send a ready signal to the game server in order to make the next session start
+     * @throws RemoteException 
+     * @see RemoteException
+     */
     @Override
-    public synchronized void ready(String nickname) throws RemoteException {
+    public synchronized void ready() throws RemoteException {
         if (++playerReadyNextRound == gameData.getNumPlayers()) {
             timerThread.interrupt();//interupting the time allow the server to go to the next phases
         }
     }
 
+    /**
+     * client could tell when want to leave the game
+     * @param nickname who leaves the game
+     * @throws RemoteException 
+     * @see RemoteException
+     */
     @Override
     public synchronized void leaveGame(String nickname) throws RemoteException {
         //if the game is in lobby then killing the game but not advice player because there isn't anyone
