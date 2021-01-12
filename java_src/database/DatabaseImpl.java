@@ -444,12 +444,12 @@ public class DatabaseImpl implements Database{
     
     //<editor-fold defaultstate="collapsed" desc="utility-methods"> Utility methods for first start and/or testing purpose
     @Override
-    public boolean checkAdminExistence() {
+    public boolean checkAdminExistence() throws DatabaseException{
         return connManager.checkAdminExistence();
     }
 
     @Override
-    public boolean checkDatabaseExistence() {
+    public boolean checkDatabaseExistence() throws DatabaseException{
         boolean exists = connManager.checkDatabaseExistence();
         if(exists) updateIds();
         return exists;

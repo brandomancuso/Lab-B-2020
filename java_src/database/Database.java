@@ -19,8 +19,8 @@ public interface Database {
     StatsData getStats();
     
     Database configure(DatabaseConfig config);
-    boolean checkAdminExistence();
-    boolean checkDatabaseExistence();
+    boolean checkAdminExistence() throws DatabaseException;
+    boolean checkDatabaseExistence() throws DatabaseException;
     void createDatabase();
     void deleteDatabase();
 }
