@@ -6,7 +6,11 @@ import client.ClientGameStub;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import static javax.swing.JOptionPane.showMessageDialog;
+ 
+/**
+ * 
+ * @author Christian Squadrito
+ */
 
 public class ObserverClient implements Observer  {
     private final ClientGameStub client;
@@ -23,6 +27,12 @@ public class ObserverClient implements Observer  {
         timer.addObserver(this);//the reference isn't saved because i have just to add me as observer
     }
     
+    /**
+     * The method to update the client about the changement timer's state
+     * @param o the timer observable
+     * @param arg the time of the timer
+     */
+    
     @Override
     public void update(Observable o, Object arg) {
         try {
@@ -32,22 +42,41 @@ public class ObserverClient implements Observer  {
             o.deleteObserver(this);
         }
     }
+    
+    /**
+     * get the remote object of the client player
+     * @return remote object of the client player
+     */
 
     public ClientGameStub getClientGameStub()
     {
         return client;
     }
+    
+    /**
+     * set the list of the word found
+     * @param wordsFound 
+     */
        
     public void setWordsFound(ArrayList<String> wordsFound)
     {
         this.wordsFound=wordsFound;
     }
     
+    /**
+     * get the nickname of the remote client player
+     * @return nickname of the remote client player
+     */
+    
     public String getNickname ()
     {
         return nickname;
     }
     
+    /**
+     * get the list of the word found
+     * @return list of the word found
+     */
     public List<String> getWordsFound ()
     {
         return wordsFound;

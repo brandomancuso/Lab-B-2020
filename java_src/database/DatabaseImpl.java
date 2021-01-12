@@ -119,6 +119,41 @@ public class DatabaseImpl implements Database{
         }
         return result;
     }
+    
+    @Override
+    public UserData getUserByEmail(String email) {
+        UserData ret = null;
+        String sql = "SELECT * FROM ip_user WHERE email = ?";
+        Connection c = null;
+        try {
+            c = connManager.getConnection();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                ret = new UserData();
+                ret.setNickname(rs.getString("nickname"));
+                ret.setEmail(rs.getString("email"));
+                ret.setPassword(rs.getString("password"));
+                ret.setFirstName(rs.getString("name"));
+                ret.setLastName(rs.getString("surname"));
+                ret.setAdmin(rs.getBoolean("administrator"));
+                ret.setActive(rs.getBoolean("active"));
+                ret.setActivationCode(rs.getString("activation_code"));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(c != null) c.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return ret;
+    }
 
     @Override
     public UserData addUser(UserData user) {
@@ -1122,6 +1157,4 @@ public class DatabaseImpl implements Database{
         }
         return leaderboard;
     }
-    
-
 }

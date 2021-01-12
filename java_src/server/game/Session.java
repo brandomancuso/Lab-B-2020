@@ -3,10 +3,12 @@
 import entity.*;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static javax.swing.JOptionPane.showMessageDialog;
+ 
+ /**
+  * 
+  * @author Christian Squadrito
+  */
 
 public class Session {
     private SessionData sessionData;
@@ -30,8 +32,14 @@ public class Session {
         this.numSession=numSession;
         this.game=game;
     }
- 
-//methods called by Game Class 
+
+//public methods called by Game Class 
+    
+    /**
+     * this method start the timer lobby and game server waits for it
+     * @param timerThread the timer thread
+     */
+    
     public void startBeforeGame(Thread timerThread)
     {
         timerThread.start();
@@ -42,6 +50,11 @@ public class Session {
         }
         
     }
+    
+    /**
+     * start the new game session and the timer session
+     * @param timerThread the timer thread
+     */
     
     public void startRealGame(Thread timerThread)
     {
@@ -65,6 +78,10 @@ public class Session {
         }
     }
     
+    /**
+     * check the wordfound and send the result to the game client player
+     * @param timerThread the timer thread
+     */
     public void startAfterGame(Thread timerThread)
     {
         //checkword
@@ -114,6 +131,24 @@ public class Session {
             System.exit(0);//when the method forcedExit is call then the game is interupted
         }
         
+    }
+    
+    /**
+     * get the grid of letter
+     * @return String[] the grid of letter
+     */
+    public String[] getWordMatrix()
+    {
+        return wordsMatrix.getWordsMatrix();
+    }
+    
+    /**
+     * get all the information about the current session
+     * @return SessionData containing all the session information 
+     */
+    public SessionData getSessionData()
+    {
+        return sessionData;
     }
     
   
@@ -209,16 +244,5 @@ public class Session {
             }
          }
         return pointPlayer;
-    }
-    
-   //public method
-    public String[] getWordMatrix()
-    {
-        return wordsMatrix.getWordsMatrix();
-    }
-    
-    public SessionData getSessionData()
-    {
-        return sessionData;
     }
 }

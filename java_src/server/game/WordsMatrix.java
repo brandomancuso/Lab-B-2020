@@ -3,16 +3,13 @@
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Stack;
-import static javax.swing.JOptionPane.showMessageDialog;
+ 
+ /**
+  * 
+  * @author Christian Squadrito
+  */
 
-/* for testing
- * 
-private String[][] matrix;
-public WordsMatrix (String[][] grid)
-	{
-  	matrix=grid;
-	}
-*/
+
 public class WordsMatrix {
         //Letter Schema
         private final String[][] diceFaces=
@@ -68,63 +65,7 @@ public class WordsMatrix {
 		dices[select] = tmp;
 	}
 
-        
-//public method
-	public String[] getWordsMatrix() {
-            String[] gridTmp=new String[DIM*DIM];
-            int count=0;
-		for(int i = 0; i<DIM; i++) {
-			for(int j = 0; j<DIM; j++) {
-				gridTmp[count]=matrix[i][j].read();
-                                count++;
-			}
-		}
-            return gridTmp;
-	}
-	
-    public boolean isAllowed (String wordFound)
-     {
-    	Stack<Coordinate> cellToVisit=new Stack<>();
-    	HashSet<Coordinate> cellVisited=new HashSet<>();
-    	char[] wordFoundArray=wordFound.toCharArray();
-   	 	Coordinate currentCoordinate;
-   	 	Boolean flag=false;
-    	
-    	//check the start cells in the all matrix
-    	for(int i=0;i<DIM;i++)
-    		for(int j=0;j<DIM;j++)
-    		{
-    			if(matrix[i][j].read().equals(String.valueOf(wordFoundArray[0])))
-    				cellToVisit.add(new Coordinate(i, j,0,DIM));
-    		}
-    	
-    	//search for a walkable paths	
-        if(!cellToVisit.isEmpty())//maybe there isn't a start point
-        {
-         do
-    		{ 	
-        	 Stack<Coordinate> cellToVisitClone;
-        	 for(int i=cellToVisit.peek().getIndexLetter()+1 ; i< wordFound.length() ; i++)
-        	 	{
-	    			currentCoordinate=cellToVisit.pop();
-	    			cellVisited.add(currentCoordinate);
-	    			cellToVisitClone=(Stack<Coordinate>)cellToVisit.clone();
-	    			cellToVisit=findLetter(currentCoordinate,i,String.valueOf(wordFoundArray[i]),cellToVisit,cellVisited);
-	    			if(cellToVisit.equals(cellToVisitClone))
-	    			{
-	    				flag=false;
-	    				break;//to avoid doing more useless research
-	    			}
-	    			else
-	    				flag=true;
-        	 	}
-    		}while(!cellToVisit.isEmpty() && flag != true);
-        }
-         
-         return flag;//if the stack is empty and any walkable paths were found, it means that the word composed is wrong
-     }
-    
-    private Stack<Coordinate> findLetter(Coordinate currentCoordinate,int indexLetter,String letter,Stack<Coordinate> cellToVisit,HashSet<Coordinate> cellVisited) 
+        private Stack<Coordinate> findLetter(Coordinate currentCoordinate,int indexLetter,String letter,Stack<Coordinate> cellToVisit,HashSet<Coordinate> cellVisited) 
     {
     	int x=currentCoordinate.getX(), y=currentCoordinate.getY();
 		Coordinate coordinateTmp;
@@ -251,6 +192,72 @@ public class WordsMatrix {
     	
     	return cellToVisit;
     }
+        
+//public method
+     /**
+      * get the grid of letter
+      * @return String[] grid of letter
+      */
+    public String[] getWordsMatrix() {
+        String[] gridTmp = new String[DIM * DIM];
+        int count = 0;
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < DIM; j++) {
+                gridTmp[count] = matrix[i][j].read();
+                count++;
+            }
+        }
+        return gridTmp;
+    }
+	
+    /**
+     * This method is to know the derivability from the grid
+     * @param wordFound the word to check
+     * @return boolean it can or not be derivated from the grid
+     */
+    public boolean isAllowed (String wordFound)
+     {
+    	Stack<Coordinate> cellToVisit=new Stack<>();
+    	HashSet<Coordinate> cellVisited=new HashSet<>();
+    	char[] wordFoundArray=wordFound.toCharArray();
+   	 	Coordinate currentCoordinate;
+   	 	Boolean flag=false;
+    	
+    	//check the start cells in the all matrix
+    	for(int i=0;i<DIM;i++)
+    		for(int j=0;j<DIM;j++)
+    		{
+    			if(matrix[i][j].read().equals(String.valueOf(wordFoundArray[0])))
+    				cellToVisit.add(new Coordinate(i, j,0,DIM));
+    		}
+    	
+    	//search for a walkable paths	
+        if(!cellToVisit.isEmpty())//maybe there isn't a start point
+        {
+         do
+    		{ 	
+        	 Stack<Coordinate> cellToVisitClone;
+        	 for(int i=cellToVisit.peek().getIndexLetter()+1 ; i< wordFound.length() ; i++)
+        	 	{
+	    			currentCoordinate=cellToVisit.pop();
+	    			cellVisited.add(currentCoordinate);
+	    			cellToVisitClone=(Stack<Coordinate>)cellToVisit.clone();
+	    			cellToVisit=findLetter(currentCoordinate,i,String.valueOf(wordFoundArray[i]),cellToVisit,cellVisited);
+	    			if(cellToVisit.equals(cellToVisitClone))
+	    			{
+	    				flag=false;
+	    				break;//to avoid doing more useless research
+	    			}
+	    			else
+	    				flag=true;
+        	 	}
+    		}while(!cellToVisit.isEmpty() && flag != true);
+        }
+         
+         return flag;//if the stack is empty and any walkable paths were found, it means that the word composed is wrong
+     }
+    
+    
 }
     	
 

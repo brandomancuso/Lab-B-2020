@@ -1,5 +1,9 @@
  package server.game;
 
+ /**
+  * 
+  * @author Christian Squadrito
+  */
 
 public class InvalidKey extends Exception {
 

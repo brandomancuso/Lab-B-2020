@@ -53,7 +53,7 @@
 		<echo>Generating docs...</echo>
 		<javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}" classpath = "${lib.dir}/javax.mail.jar">
 			<fileset dir="${src.dir}">
-				<include name="**"/>
+				<include name="**/*.java"/>
 			</fileset>
 		
 		</javadoc>

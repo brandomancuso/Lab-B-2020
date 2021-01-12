@@ -7,6 +7,7 @@ import utils.Pair;
 
 public interface Database {
     UserData getUser(String nickname);
+    UserData getUserByEmail(String email);
     Pair<UserData, Integer> getUser(String email, String password);
     UserData addUser(UserData user);
     UserData updateUser(UserData user, String old_nickname);
