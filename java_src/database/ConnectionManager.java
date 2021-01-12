@@ -47,7 +47,7 @@ public class ConnectionManager {
         return c;
     }
     
-    boolean checkAdminExistence() {
+    boolean checkAdminExistence() throws DatabaseException {
         boolean result = false;
         if(configuration == null){
             throw new NoConfigException("You need to configure the database first!");
