@@ -65,7 +65,7 @@ public class ConnectionManager {
                 stmt.close();
                 c.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new DatabaseException("Given credentials are not correct.");
             }
         }
         return result;
