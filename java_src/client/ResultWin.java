@@ -307,11 +307,11 @@ public class ResultWin extends javax.swing.JDialog {
         updateSessionNum();
     }
 
-    public void setClientGameStub(ClientGameImpl clientGameImpl) {
+    public synchronized void setClientGameStub(ClientGameImpl clientGameImpl) {
         this.clientGame = clientGameImpl;
     }
 
-    public void setServerGameStub(ServerGameStub serverGameStub) {
+    public synchronized void setServerGameStub(ServerGameStub serverGameStub) {
         this.gameStub = serverGameStub;
     }
 

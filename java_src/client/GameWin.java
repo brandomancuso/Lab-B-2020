@@ -371,6 +371,9 @@ public class GameWin extends javax.swing.JDialog {
         ResultWin guiResult = new ResultWin(this, true, this.gameName);
         guiResult.setClientGameStub(clientGame);
         guiResult.setServerGameStub(gameStub);
+        if (gameStub == null) {
+            showMessageDialog(null, "gameStub Nullo!!");
+        }
         this.clientGame.setGuiResult(guiResult);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
