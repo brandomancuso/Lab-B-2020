@@ -2,8 +2,10 @@ package server;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -35,17 +37,25 @@ public class HomeScreen extends JFrame implements ActionListener{
     /**
      * Costruttore della classe
      */
-    public HomeScreen(){
-        try{
+    public HomeScreen() {
+        boolean foundingPort = true;
+        try {
             server = new ServerServiceImpl(this);
             registry = LocateRegistry.createRegistry(1099);
-            serverStub = (ServerServiceStub) UnicastRemoteObject.exportObject(server, 2001);
-            initGUI();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Errore: Porta 1099 occupata!\nLiberare la porta", "Home Amministratore", JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
+
+        while (foundingPort) {
+            try {
+                foundingPort = false;
+                serverStub = (ServerServiceStub) UnicastRemoteObject.exportObject(server, 0);
+            } catch (Exception e) {
+                foundingPort = true;
+            }
+        }
+        initGUI();
     }
     
     /**
