@@ -60,7 +60,7 @@ public class Lobby extends javax.swing.JDialog {
     }
 
     public void openGameWindow() {
-        GameWin guiGame = new GameWin(this, true, this.gameName);
+        GameWin guiGame = new GameWin(this, true, this.gameName, this.loggedUser);
         guiGame.setPlayerList(playerNames); //--> lobbylist
         guiGame.setClientGameStub(clientGame);
         guiGame.setServerGameStub(gameStub);

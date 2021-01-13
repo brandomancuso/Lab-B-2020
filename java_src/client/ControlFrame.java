@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -962,7 +963,13 @@ public class ControlFrame extends javax.swing.JFrame {
             serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), gameName, this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setGameName(gameName);
-            lobby.setVisible(true);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    lobby.setVisible(true);
+                }
+            });
+
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -982,7 +989,13 @@ public class ControlFrame extends javax.swing.JFrame {
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setGameName(gameName);
-            lobby.setVisible(true);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    lobby.setVisible(true);
+                }
+            });
+
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1327,7 +1340,8 @@ public class ControlFrame extends javax.swing.JFrame {
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {
-                rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
+                //rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
+                rowData[0] = tmp.getName() + " " + tmp.getCreator();
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
             }

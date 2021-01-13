@@ -6,6 +6,7 @@
 package client;
 
 import entity.Term;
+import entity.UserData;
 import entity.WordData;
 import java.awt.Color;
 import java.awt.Component;
@@ -39,11 +40,12 @@ public class ResultWin extends javax.swing.JDialog {
     String gameName = "";
     Map<String, Integer> storePointPlayer;
     Map<String, List<WordData>> wordCheckedFound;
+    UserData loggedUser;
 
     /**
      * Creates new form ResultWin
      */
-    public ResultWin(java.awt.Dialog parent, boolean modal, String gameName) {
+    public ResultWin(java.awt.Dialog parent, boolean modal, String gameName, UserData parLoggedUser) {
         super(parent, modal);
         storePointPlayer = new HashMap<>();
         wordCheckedFound = new HashMap<>();
@@ -54,6 +56,7 @@ public class ResultWin extends javax.swing.JDialog {
         initScoreTable();
         initResultTable();
         this.gameName = gameName;
+        this.loggedUser = parLoggedUser;
         this.jLabelGameName_result.setText("Partita: " + this.gameName);
     }
 
@@ -371,9 +374,11 @@ public class ResultWin extends javax.swing.JDialog {
             return;
         }
         try {
-            //il problema è che gamestub è nullo al momento della chiamata magari non richiami setGameStub?
             def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
-            showMessageDialog(null, def.toString());
+            if(def == null)
+                showMessageDialog(null, "Definizione non trovata");
+            else
+                showMessageDialog(null, def.toString());
         } catch (RemoteException ex) {
             Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -393,7 +398,11 @@ public class ResultWin extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_result_passActionPerformed
 
     private void btn_game_leave_resultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_leave_resultActionPerformed
-        //gameStub.leaveGame();
+        try {
+            gameStub.leaveGame(this.loggedUser.getNickname());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_game_leave_resultActionPerformed
 
     /**
@@ -426,7 +435,7 @@ public class ResultWin extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ResultWin dialog = new ResultWin(new javax.swing.JDialog(), true, "");
+                ResultWin dialog = new ResultWin(new javax.swing.JDialog(), true, "", null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
