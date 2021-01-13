@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class SessionData implements Serializable{
+
     private int id;
     private Map<String, List<WordData>> foundWords;
     private Map<String, List<WordData>> requestedWords;

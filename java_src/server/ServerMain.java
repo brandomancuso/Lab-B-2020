@@ -47,36 +47,26 @@ public class ServerMain {
 
         loginScreen = new LoginScreen();
         registerScreen = new RegisterScreen();
-        
         if(dbReference != null){
             try {
                 if(!dbReference.checkDatabaseExistence()){
                     dbReference.createDatabase();
                 }
-            } catch (DatabaseException ex) {
-                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            homeScreen = new HomeScreen();
-            try {
+                homeScreen = new HomeScreen();
                 if(dbReference.checkAdminExistence()){
                     loginScreen.setVisible(true);
-                    //return true;
-                    result = true;
+                    return true;
                 }
                 else{
                     registerScreen.setVisible(true);
-                    //return true;
-                    result = true;
+                    return true;
                 }
             } catch (DatabaseException ex) {
                 Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        else{
-            //return false;
-            result = false;
-        }
-        return result;
+       
+        return false;
     }
     
     /**
