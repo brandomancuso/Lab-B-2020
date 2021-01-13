@@ -2,7 +2,10 @@ package server;
 
 import database.Database;
 import database.DatabaseConfig;
+import database.DatabaseException;
 import database.DatabaseImpl;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe relativa all'avvio dell'applicazione lato server
@@ -37,6 +40,7 @@ public class ServerMain {
      */
     //Accedo al database e controllo la presenza di un amministratore
     public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost){
+        boolean result = true;
         Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
                  .setHost(dbHost).setUser(dbUser)
                  .setPswd(dbPassword));
@@ -45,22 +49,34 @@ public class ServerMain {
         registerScreen = new RegisterScreen();
         
         if(dbReference != null){
-            if(!dbReference.checkDatabaseExistence()){
-                dbReference.createDatabase();
+            try {
+                if(!dbReference.checkDatabaseExistence()){
+                    dbReference.createDatabase();
+                }
+            } catch (DatabaseException ex) {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
             }
             homeScreen = new HomeScreen();
-            if(dbReference.checkAdminExistence()){
-                loginScreen.setVisible(true);
-                return true;
-            }
-            else{
-                registerScreen.setVisible(true);
-                return true;
+            try {
+                if(dbReference.checkAdminExistence()){
+                    loginScreen.setVisible(true);
+                    //return true;
+                    result = true;
+                }
+                else{
+                    registerScreen.setVisible(true);
+                    //return true;
+                    result = true;
+                }
+            } catch (DatabaseException ex) {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else{
-            return false;
+            //return false;
+            result = false;
         }
+        return result;
     }
     
     /**
