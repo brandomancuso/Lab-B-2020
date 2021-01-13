@@ -1033,7 +1033,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 statsFrame.setTitle("Classifica Occorrenze Parole");
                 colNames = new String[]{"Parola", "Occorrenze"};
                 val = new String[][]{};
-                if (stats.getWordsBestScore() != null) {
+                if (stats.getOccurrencyWordsLeaderboard() != null) {
                     for (int i = 0; i < stats.getOccurrencyWordsLeaderboard().size(); i++) {
                         val[i][0] = stats.getOccurrencyWordsLeaderboard().get(i).getFirst();
                         val[i][1] = stats.getOccurrencyWordsLeaderboard().get(i).getLast() + "";
@@ -1050,8 +1050,8 @@ public class ControlFrame extends javax.swing.JFrame {
                 statsFrame.setTitle("Classifica Occorrenze Richiesta Definizione Parole");
                 colNames = new String[]{"Parola", "Occorrenze"};
                 val = new String[][]{};
-                if (stats.getWordsBestScore() != null) {
-                    for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                if (stats.getOccurrencyWordsDefLeaderboard() != null) {
+                    for (int i = 0; i < stats.getOccurrencyWordsDefLeaderboard().size(); i++) {
                         val[i][0] = stats.getOccurrencyWordsDefLeaderboard().get(i).getFirst();
                         val[i][1] = stats.getOccurrencyWordsDefLeaderboard().get(i).getLast() + "";
                     }
@@ -1067,8 +1067,8 @@ public class ControlFrame extends javax.swing.JFrame {
                 statsFrame.setTitle("Classifica Occorrenze Lettere");
                 colNames = new String[]{"Lettera", "Occorrenze"};
                 val = new String[][]{};
-                if (stats.getWordsBestScore() != null) {
-                    for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                if (stats.getLettersAverageOccurency() != null) {
+                    for (int i = 0; i < stats.getLettersAverageOccurency().size(); i++) {
                         val[i][0] = stats.getLettersAverageOccurency().get(i).getFirst();
                         val[i][1] = stats.getLettersAverageOccurency().get(i).getLast() + "";
                     }
