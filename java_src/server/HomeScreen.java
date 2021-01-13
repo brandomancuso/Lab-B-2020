@@ -8,6 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -42,7 +43,8 @@ public class HomeScreen extends JFrame implements ActionListener{
             initGUI();
         }
         catch(Exception e){
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Errore: Porta 1099 occupata!\nLiberare la porta", "Home Amministratore", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
         }
     }
     
