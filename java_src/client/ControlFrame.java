@@ -6,6 +6,7 @@
 package client;
 
 import entity.GameData;
+import entity.StatsData;
 import entity.UserData;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,8 +23,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -58,10 +62,11 @@ public class ControlFrame extends javax.swing.JFrame {
         loggedUser = new UserData();
         Registry registry;
         try {
-            if(IpServer.length!=0)
-                registry = LocateRegistry.getRegistry(IpServer[0],1099);
-            else
+            if (IpServer.length != 0) {
+                registry = LocateRegistry.getRegistry(IpServer[0], 1099);
+            } else {
                 registry = LocateRegistry.getRegistry(1099);
+            }
             serviceStub = (ServerServiceStub) registry.lookup("Il Paroliere");
         } catch (NotBoundException | RemoteException e) {
             showMessageDialog(null, "Si è verificato un errore nella connessione... " + e.getLocalizedMessage());
@@ -125,6 +130,14 @@ public class ControlFrame extends javax.swing.JFrame {
         combo_stats = new javax.swing.JComboBox<>();
         btn_search_stats = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        stats_label_errors = new javax.swing.JLabel();
+        stats_label_duplicates = new javax.swing.JLabel();
+        stats_label_moreSessions = new javax.swing.JLabel();
         jPanel_profile = new javax.swing.JPanel();
         label_profile = new javax.swing.JLabel();
         text_name_profile = new javax.swing.JTextField();
@@ -526,8 +539,13 @@ public class ControlFrame extends javax.swing.JFrame {
         jPanel_stats.setBackground(new java.awt.Color(255, 255, 255));
 
         combo_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Migliori Punteggi di Parole", "Classifica Occorrenze di Parole", "Classifica Occorrenze Definizioni", "Occorrenza delle Lettere" }));
         combo_stats.setBorder(null);
+        combo_stats.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combo_statsItemStateChanged(evt);
+            }
+        });
 
         btn_search_stats.setBackground(new java.awt.Color(79, 36, 107));
         btn_search_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
@@ -542,32 +560,99 @@ public class ControlFrame extends javax.swing.JFrame {
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/combo_chart_96px.png"))); // NOI18N
 
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
+
+        jLabel4.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel4.setText("Miglior Punteggio di Gioco: 100pt - Giocatore: marco");
+
+        jLabel5.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel5.setText("Miglior Punteggio di Sessione: 50pt - Giocatore: marco");
+
+        jLabel6.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel6.setText("TODO");
+
+        jLabel7.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel7.setText("TODO");
+
+        stats_label_errors.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_errors.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_errors.setText("Giocatore che ha Commesso il Maggior Numero di Errori: mario77 - 56 Errori");
+
+        stats_label_duplicates.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_duplicates.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_duplicates.setText("Giocatore che ha Trovato il Maggior Numero di Duplicati: enea85 - 23 Duplicati");
+
+        stats_label_moreSessions.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_moreSessions.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_moreSessions.setText("Giocatore che ha Giocato il Maggior Numero di Sessioni: stefano90 - 22 Sessioni");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 978, Short.MAX_VALUE)
+            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_errors, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_duplicates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_moreSessions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_moreSessions, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_errors, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_duplicates, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(63, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel_statsLayout = new javax.swing.GroupLayout(jPanel_stats);
         jPanel_stats.setLayout(jPanel_statsLayout);
         jPanel_statsLayout.setHorizontalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_statsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
-                        .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(136, 136, 136)
-                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(159, 159, 159))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(452, 452, 452))))
+                        .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(combo_stats, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel_statsLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel3)))
+                        .addGap(125, 125, 125)
+                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73))))
         );
         jPanel_statsLayout.setVerticalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                 .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(473, 473, 473))
+                .addGap(46, 46, 46)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jPanel_main.add(jPanel_stats, "stats");
@@ -849,6 +934,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private void btn_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_statsActionPerformed
         // TODO add your handling code here:
         card.show(jPanel_main, "stats");
+        fillBasicStats(this.clientService.getStatsData());
     }//GEN-LAST:event_btn_statsActionPerformed
 
     private void btn_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_profileActionPerformed
@@ -916,6 +1002,34 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
         // TODO add your handling code here:
+        StatsData stats = this.clientService.getStatsData();
+
+        switch (this.combo_stats.getSelectedIndex()) {
+            case 0: //miglior punteggi di parole
+                JFrame statsFrame = new JFrame();
+                statsFrame.setTitle("Migliori Punteggi di Parole");
+                String[] colNames = {"Parola", "Punti"};
+                String[][] val = {};
+                for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                    val[i][0] = stats.getWordsBestScore().get(i).getFirst();
+                    val[i][1] = stats.getWordsBestScore().get(i).getLast();
+                }
+
+                JTable stats_0 = new JTable(val, colNames);
+                JScrollPane sp = new JScrollPane(stats_0);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
+                break;
+            case 1: //classifica occorrenze
+
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+
+        }
     }//GEN-LAST:event_btn_search_statsActionPerformed
 
     private void text_name_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_name_profileMouseClicked
@@ -1019,6 +1133,10 @@ public class ControlFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_combo_NplayersItemStateChanged
 
+    private void combo_statsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_statsItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_statsItemStateChanged
+
     private void fillUserProfileData(UserData user) {
         text_email_profile.setText(user.getEmail());
         text_name_profile.setText(user.getFirstName());
@@ -1026,6 +1144,16 @@ public class ControlFrame extends javax.swing.JFrame {
         text_username_profile.setText(user.getNickname());
         text_password_profile.setText(user.getPassword());
         text_repeatPassword_profile.setText(user.getPassword());
+    }
+
+    private void fillBasicStats(StatsData stats) {
+        this.stats_label_duplicates.setText("Giocatore che ha Trovato il Maggior Numero di Duplicati: " + stats.getPlayerWithMoreDuplicates().getFirst() + " - " + stats.getPlayerWithMoreDuplicates().getLast() + " Duplicati");
+        this.stats_label_errors.setText("Giocatore che ha Commesso il Maggior Numero di Errori: " + stats.getPlayerWithMoreErrors().getFirst() + " - " + stats.getPlayerWithMoreErrors().getLast() + " Errori");
+        this.stats_label_moreSessions.setText("Giocatore che ha Giocato il Maggior Numero di Sessioni: " + stats.getPlayerWithMoreSessions().getFirst() + " - " + stats.getPlayerWithMoreSessions().getLast() + " Sessioni");
+        this.stats_label_duplicates.setText("");
+        this.stats_label_duplicates.setText("");
+        this.stats_label_duplicates.setText("");
+        this.stats_label_duplicates.setText("");
     }
 
     //UTILITY
@@ -1119,6 +1247,11 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel_home;
     private javax.swing.JPanel jPanel_login;
     private javax.swing.JPanel jPanel_main;
@@ -1145,6 +1278,9 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JLabel label_pswRecover;
     private javax.swing.JLabel label_signin;
     private javax.swing.JLabel label_verify;
+    private javax.swing.JLabel stats_label_duplicates;
+    private javax.swing.JLabel stats_label_errors;
+    private javax.swing.JLabel stats_label_moreSessions;
     private javax.swing.JTextField text_email_login;
     private javax.swing.JTextField text_email_profile;
     private javax.swing.JTextField text_gameName_home;
