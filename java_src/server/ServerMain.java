@@ -2,7 +2,10 @@ package server;
 
 import database.Database;
 import database.DatabaseConfig;
+import database.DatabaseException;
 import database.DatabaseImpl;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerMain {
     private static DbConnectScreen dbConnect;
@@ -30,22 +33,25 @@ public class ServerMain {
         registerScreen = new RegisterScreen();
         
         if(dbReference != null){
-            if(!dbReference.checkDatabaseExistence()){
-                dbReference.createDatabase();
-            }
-            homeScreen = new HomeScreen();
-            if(dbReference.checkAdminExistence()){
-                loginScreen.setVisible(true);
-                return true;
-            }
-            else{
-                registerScreen.setVisible(true);
-                return true;
+            try {
+                if(!dbReference.checkDatabaseExistence()){
+                    dbReference.createDatabase();
+                }
+                homeScreen = new HomeScreen();
+                if(dbReference.checkAdminExistence()){
+                    loginScreen.setVisible(true);
+                    return true;
+                }
+                else{
+                    registerScreen.setVisible(true);
+                    return true;
+                }
+            } catch (DatabaseException ex) {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        else{
-            return false;
-        }
+       
+        return false;
     }
     
     //Mostra la finestra di Login
