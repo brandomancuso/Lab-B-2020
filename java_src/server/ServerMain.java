@@ -2,6 +2,7 @@ package server;
 
 import database.Database;
 import database.DatabaseConfig;
+import database.DatabaseException;
 import database.DatabaseImpl;
 
 /**
@@ -43,7 +44,7 @@ public class ServerMain {
 
         loginScreen = new LoginScreen();
         registerScreen = new RegisterScreen();
-        
+        try{
         if(dbReference != null){
             if(!dbReference.checkDatabaseExistence()){
                 dbReference.createDatabase();
@@ -59,6 +60,10 @@ public class ServerMain {
             }
         }
         else{
+            return false;
+        }
+        }
+        catch(DatabaseException e){
             return false;
         }
     }
