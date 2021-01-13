@@ -299,17 +299,18 @@ public class Game extends Thread implements ServerGameStub {
      */
     @Override
     public synchronized Term requestWordDef(String nickname,String word) throws RemoteException {
+        Term currentTerm=null;
         try {
             word=word.trim();//to avoid space
             word=word.toLowerCase();//to avoid problem with the dictionary
-            return dictionary.getTerm(word);
+            currentTerm =dictionary.getTerm(word);//if it generates an exception the WordData is never created and the requestDefinition isn't set
+            WordData wordData=new WordData();
+            wordData.setWord(word);
+            currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
         } catch (InvalidKey ex) {
             System.err.println(ex);
         }
-        WordData wordData=new WordData();
-        wordData.setWord(word);
-        currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
-        return new Term(word);
+        return currentTerm;
     }
 
     /**

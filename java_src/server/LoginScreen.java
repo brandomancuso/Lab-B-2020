@@ -16,6 +16,11 @@ import javax.swing.JTextField;
 import utils.CryptMD5;
 import utils.Pair;
 
+/**
+ * Classe dell'interfaccia grafica 
+ * @author Fedeli Andrea
+ * @see javax.swing.JFrame
+ */
 public class LoginScreen extends JFrame implements ActionListener{
     private JTextField usernameTxt;
     private JLabel imageLabel;
@@ -29,11 +34,19 @@ public class LoginScreen extends JFrame implements ActionListener{
     private JPasswordField passwordTxt;
     private JButton resetButton;
     
+    /**
+     * Costruttore della classe
+     */
     public LoginScreen(){
         
         initGUI();
     }
-
+    
+    /**
+     * Permette la gestione dei vari eventi all'interno dell'interfaccia grafica
+     * @param event La tipologia dell'evento
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent) 
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() == loginButton){
@@ -69,6 +82,9 @@ public class LoginScreen extends JFrame implements ActionListener{
         }
     }
 
+    /**
+     * Metodo per costruire l'interfaccia grafica
+     */
     private void initGUI() {
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();

@@ -11,21 +11,34 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Timer;
 
+/**
+ * Implementazione dell'interfaccia {@link java.lang.Runnable} utilizzata per inviare mail da parte del server tramite <code>Thread</code>
+ * @author Fedeli Andrea
+ * @see java.lang.Runnable
+ */
 public class EmailSender implements Runnable{
-    private final String HOST = "ilparoliere2020@outlook.it"; //Email da cui inviare la mail
+    private final String HOST = "ilparoliere2020@outlook.it";   //Email da cui inviare la mail
     private final String PASSWORD = "InfoInsubria2020"; //Password della mail da cui inviare la mail
-    private final String VERIFICATION_OBJECT = "Il Paroliere - Verifica il tuo account"; //Oggetto della mail
-    private final String RESET_PSW_OBJECT = "Il Paroliere - Modifica Password";
-    private final String VERIFICATION_BODY = "Inserisci il tuo codice nell'applicazione per attivare il tuo profilo."
-            + "\nQuesto è il tuo codice di verifica: ";
-    private final String RESET_PSW_BODY = "Hai richiesto il reset della password!\nQuesta è la tua nuova password: ";
+    private final String VERIFICATION_OBJECT = "Il Paroliere - Verifica il tuo account";    //Oggetto della mail di verifica
+    private final String RESET_PSW_OBJECT = "Il Paroliere - Modifica Password"; //Oggetto della mail reset password
+    private final String ACCOUNT_MOD_OBJECT = "Il Paroliere - Modifica account";    //Oggetto della mail modifica account
+    private final String VERIFICATION_BODY = "Inserisci il tuo codice nell'applicazione per attivare il tuo profilo."   
+            + "\nQuesto è il tuo codice di verifica: "; //Corpo della mail di verifica
+    private final String RESET_PSW_BODY = "Hai richiesto il reset della password!\nQuesta è la tua nuova password: ";   //Corpo della mail per il reset psw
     private final long VALIDATION_TIME = 600000; //Tempo per verificare l'account
     
-    private String destinatario;
-    private String messageContent;
-    private String nick;
-    private int mailType; //1 = codice di verifica  2 = reset password
+    private String destinatario;    //Destinatario mail
+    private String messageContent;  //Contenuto dinamico della mail
+    private String nick;    //Nickname dell'utente per la cancellazione dell'account
+    private int mailType; //1 = codice di verifica  2 = reset password  3 = modifica account
     
+    /**
+     * Costruttore della classe
+     * @param dest Email dell'utente a cui spedire la mail
+     * @param content Contenuto della mail
+     * @param nickname Nickname dell'utente a cui spedire la mail
+     * @param mailType Tipologia della mail da spedire. <p> 1 - mail di verifica. 2 - mail per reset password.
+     */
     public EmailSender(String dest, String content, String nickname, int mailType){
         this.destinatario = dest;
         this.messageContent = content;
@@ -33,6 +46,10 @@ public class EmailSender implements Runnable{
         this.mailType = mailType;
     }
     
+    /**
+     * Operazione da svolgere per spedire la mail
+     * @see java.lang.Runnable#run() 
+     */
     @Override
     public void run(){
         try {
@@ -49,6 +66,10 @@ public class EmailSender implements Runnable{
                 case 2:
                     emailBody = this.RESET_PSW_BODY + this.messageContent;
                     sendEmail(HOST, PASSWORD, destinatario, this.RESET_PSW_OBJECT, emailBody);
+                    break;
+                case 3:
+                    emailBody = this.messageContent;
+                    sendEmail(HOST, PASSWORD, destinatario, this.ACCOUNT_MOD_OBJECT, emailBody);
                     break;
             }
         } catch (MessagingException ex) {
