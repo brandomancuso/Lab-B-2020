@@ -539,7 +539,7 @@ public class ControlFrame extends javax.swing.JFrame {
         jPanel_stats.setBackground(new java.awt.Color(255, 255, 255));
 
         combo_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Migliori Punteggi di Parole", "Classifica Occorrenze di Parole", "Classifica Occorrenze Definizioni", "Occorrenza delle Lettere" }));
+        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Migliori Punteggi di Parole", "Classifica Occorrenze di Parole", "Classifica Occorrenze Definizioni", "Occorrenza delle Lettere", "Sessioni Medie di Gioco", "Sessioni Massime di Gioco", "Sessioni Minime di Gioco" }));
         combo_stats.setBorder(null);
         combo_stats.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1004,31 +1004,141 @@ public class ControlFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         StatsData stats = this.clientService.getStatsData();
 
-        switch (this.combo_stats.getSelectedIndex()) {
-            case 0: //miglior punteggi di parole
-                JFrame statsFrame = new JFrame();
-                statsFrame.setTitle("Migliori Punteggi di Parole");
-                String[] colNames = {"Parola", "Punti"};
-                String[][] val = {};
-                for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
-                    val[i][0] = stats.getWordsBestScore().get(i).getFirst();
-                    val[i][1] = stats.getWordsBestScore().get(i).getLast();
-                }
+        JFrame statsFrame;
+        String[] colNames;
+        String[][] val;
+        JTable statsTable;
+        JScrollPane sp;
 
-                JTable stats_0 = new JTable(val, colNames);
-                JScrollPane sp = new JScrollPane(stats_0);
+        switch (this.combo_stats.getSelectedIndex()) {
+            case 0:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Migliori Punteggi di Parole");
+                colNames = new String[]{"Parola", "Punti"};
+                val = new String[][]{};
+                if (stats.getWordsBestScore() != null) {
+                    for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                        val[i][0] = stats.getWordsBestScore().get(i).getFirst();
+                        val[i][1] = stats.getWordsBestScore().get(i).getLast();
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 200);
                 statsFrame.setVisible(true);
                 break;
-            case 1: //classifica occorrenze
-
+            case 1:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Classifica Occorrenze Parole");
+                colNames = new String[]{"Parola", "Occorrenze"};
+                val = new String[][]{};
+                if (stats.getWordsBestScore() != null) {
+                    for (int i = 0; i < stats.getOccurrencyWordsLeaderboard().size(); i++) {
+                        val[i][0] = stats.getOccurrencyWordsLeaderboard().get(i).getFirst();
+                        val[i][1] = stats.getOccurrencyWordsLeaderboard().get(i).getLast() + "";
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
                 break;
             case 2:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Classifica Occorrenze Richiesta Definizione Parole");
+                colNames = new String[]{"Parola", "Occorrenze"};
+                val = new String[][]{};
+                if (stats.getWordsBestScore() != null) {
+                    for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                        val[i][0] = stats.getOccurrencyWordsDefLeaderboard().get(i).getFirst();
+                        val[i][1] = stats.getOccurrencyWordsDefLeaderboard().get(i).getLast() + "";
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
                 break;
             case 3:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Classifica Occorrenze Lettere");
+                colNames = new String[]{"Lettera", "Occorrenze"};
+                val = new String[][]{};
+                if (stats.getWordsBestScore() != null) {
+                    for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                        val[i][0] = stats.getLettersAverageOccurency().get(i).getFirst();
+                        val[i][1] = stats.getLettersAverageOccurency().get(i).getLast() + "";
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
                 break;
 
+            case 4: //Average
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Sessioni Medie per Gioco");
+                colNames = new String[]{"Num. Giocatori", "Sessioni"};
+                val = new String[][]{};
+                if (stats.getAverageSessionsPerGame() != null) {
+                    for (int i = 0; i < 5; i++) {
+                        if (stats.getAverageSessionsPerGame()[i] != null) {
+                            val[i][0] = stats.getAverageSessionsPerGame()[i].getFirst() + "";
+                            val[i][1] = stats.getAverageSessionsPerGame()[i].getLast() + "";
+                        }
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
+                break;
+
+            case 5: //Max
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Sessioni Massime per Gioco");
+                colNames = new String[]{"Num. Giocatori", "Sessioni"};
+                val = new String[][]{};
+                if (stats.getMaxSessionsPerGame() != null) {
+                    for (int i = 0; i < 5; i++) {
+                        if (stats.getMaxSessionsPerGame()[i] != null) {
+                            val[i][0] = stats.getMaxSessionsPerGame()[i].getFirst() + "";
+                            val[i][1] = stats.getMaxSessionsPerGame()[i].getLast() + "";
+                        }
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
+                break;
+
+            case 6: //Min
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Sessioni Minime per Gioco");
+                colNames = new String[]{"Num. Giocatori", "Sessioni"};
+                val = new String[][]{};
+                if (stats.getMinSessionsPerGame() != null) {
+                    for (int i = 0; i < 5; i++) {
+                        if (stats.getMinSessionsPerGame()[i] != null) {
+                            val[i][0] = stats.getMinSessionsPerGame()[i].getFirst() + "";
+                            val[i][1] = stats.getMinSessionsPerGame()[i].getLast() + "";
+                        }
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 200);
+                statsFrame.setVisible(true);
+                break;
         }
     }//GEN-LAST:event_btn_search_statsActionPerformed
 
@@ -1147,9 +1257,35 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     private void fillBasicStats(StatsData stats) {
-        this.stats_label_duplicates.setText("Giocatore che ha Trovato il Maggior Numero di Duplicati: " + stats.getPlayerWithMoreDuplicates().getFirst() + " - " + stats.getPlayerWithMoreDuplicates().getLast() + " Duplicati");
-        this.stats_label_errors.setText("Giocatore che ha Commesso il Maggior Numero di Errori: " + stats.getPlayerWithMoreErrors().getFirst() + " - " + stats.getPlayerWithMoreErrors().getLast() + " Errori");
-        this.stats_label_moreSessions.setText("Giocatore che ha Giocato il Maggior Numero di Sessioni: " + stats.getPlayerWithMoreSessions().getFirst() + " - " + stats.getPlayerWithMoreSessions().getLast() + " Sessioni");
+        String frase_1 = "";
+        String frase_2 = "";
+        String frase_3 = "";
+        String frase_4 = "";
+        String frase_5 = "";
+        String frase_6 = "";
+        String frase_7 = "";
+
+        if (stats.getPlayerWithMoreDuplicates() == null) {
+            frase_1 = "Giocatore che ha Trovato il Maggior Numero di Duplicati: " + "/" + " - " + "/" + " Duplicati";
+        } else {
+            frase_1 = "Giocatore che ha Trovato il Maggior Numero di Duplicati: " + stats.getPlayerWithMoreDuplicates().getFirst() + " - " + stats.getPlayerWithMoreDuplicates().getLast() + " Duplicati";
+        }
+        this.stats_label_duplicates.setText(frase_1);
+
+        if (stats.getPlayerWithMoreErrors() == null) {
+            frase_2 = "Giocatore che ha Commesso il Maggior Numero di Errori: " + "/" + " - " + "/" + " Errori";
+        } else {
+            frase_2 = "Giocatore che ha Commesso il Maggior Numero di Errori: " + stats.getPlayerWithMoreErrors().getFirst() + " - " + stats.getPlayerWithMoreErrors().getLast() + " Errori";
+        }
+        this.stats_label_errors.setText(frase_2);
+
+        if (stats.getPlayerWithMoreSessions() == null) {
+            frase_3 = "Giocatore che ha Giocato il Maggior Numero di Sessioni: " + "/" + " - " + "/" + " Sessioni";
+        } else {
+            frase_3 = "Giocatore che ha Giocato il Maggior Numero di Sessioni: " + stats.getPlayerWithMoreSessions().getFirst() + " - " + stats.getPlayerWithMoreSessions().getLast() + " Sessioni";
+        }
+        this.stats_label_moreSessions.setText(frase_3);
+
         this.stats_label_duplicates.setText("");
         this.stats_label_duplicates.setText("");
         this.stats_label_duplicates.setText("");
