@@ -1,6 +1,7 @@
  package entity;
 
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import server.game.ItemType;
@@ -10,11 +11,12 @@ import server.game.ItemType;
  * @author Christian Squadrito
  */
 
-public class Definition {
+public class Definition implements Serializable{
 	private ItemType type;
 	private String definition;
 	private Set<String> synonymSet;
-	
+	private static final long serialVersionUID = 1L;
+        
 	public Definition(ItemType type) {
 		super();
 		this.type = type;
