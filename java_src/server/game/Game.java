@@ -70,6 +70,11 @@ public class Game extends Thread implements ServerGameStub {
     
     public void run()
     {
+        try {
+            Thread.sleep(1000);//to wait for all client they have the gamestub
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        }
         int i=0;//in order to count the number of sessions
         do
         {
@@ -215,7 +220,7 @@ public class Game extends Thread implements ServerGameStub {
             observerClientSet.put(nicknamePlayer, new ObserverClient(nicknamePlayer, clientGameStub, this, timer));
             updateInfoLobby();
             this.start();//start the game
-            return new Pair<>(gameData, Boolean.FALSE);
+            return new Pair<>(gameData, Boolean.TRUE);//it's not necessary
         } else {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer, new ObserverClient(nicknamePlayer, clientGameStub, this, timer));
@@ -303,13 +308,13 @@ public class Game extends Thread implements ServerGameStub {
         try {
             word=word.trim();//to avoid space
             word=word.toLowerCase();//to avoid problem with the dictionary
-            currentTerm =dictionary.getTerm(word);//if it generates an exception the WordData is never created and the requestDefinition isn't set
-            WordData wordData=new WordData();
-            wordData.setWord(word);
-            currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
+            currentTerm =dictionary.getTerm(word);      
         } catch (InvalidKey ex) {
             System.err.println(ex);
         }
+        WordData wordData=new WordData();
+        wordData.setWord(word);
+        currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
         return currentTerm;
     }
 

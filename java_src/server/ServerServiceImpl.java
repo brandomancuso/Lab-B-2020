@@ -29,6 +29,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     private Map<String, ClientServiceStub> clientsList; //Client remoti - utilizzata per aggiornare i singoli client durante il login
     private Map<String, UserData> usersList;    //Dati dei client connessi
     private Map<Integer, Game> gamesList;   //Partite in corso
+    private Map<Integer, ServerGameStub> gamesStubList;
     private Database dbReference;   //riferimento al database
     private HomeScreen GUI; //riferimento all'interfaccia grafica
     private boolean statsChanged;   //flag per controllare se le statistiche sono cambiate
@@ -43,6 +44,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         clientsList = new HashMap<>();
         usersList = new HashMap<>();
         gamesList = new HashMap<>();
+        gamesStubList=new HashMap<>();
         dbReference = DatabaseImpl.getDatabase();
         GUI = homeGUI;
         statsChanged = false;
@@ -229,14 +231,15 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public ServerGameStub partecipate(String nickname, int gameId, ClientGameStub client) throws RemoteException {
         Pair<GameData, Boolean> result;
+        ServerGameStub gameStub = gamesStubList.get(gameId);
         Game game = gamesList.get(gameId);
         if (game != null) {
             result = game.AddPartecipant(nickname, client);
             if (result.getLast()) {
                 this.setChanged();
-                this.notifyObservers(castMapToList());
+                this.notifyObservers(statsChanged);
                 GUI.stampEvent(nickname + " si è unito alla partita " + game.getGameData().getName());
-                return game;
+                return gameStub;
             } else {
                 return null;
             }
@@ -270,6 +273,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
                 //it try to connect on random port(Port 0 is used for listeners to let the OS pick up a non-assigned port and it always works (unless there is really no port available which is nearly impossible))
                 flag = false;
                 gameStub = (ServerGameStub) UnicastRemoteObject.exportObject(game, 0);
+                gamesStubList.put(gameData.getId(), gameStub);
             } catch (RemoteException e) {
                 flag = true;//if the connection tempt somehow went wrong
             }
