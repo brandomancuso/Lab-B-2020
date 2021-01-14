@@ -6,12 +6,16 @@
 package client;
 
 import entity.GameData;
+import entity.UserData;
 import java.awt.Color;
 import java.awt.Component;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -31,14 +35,15 @@ public class GameWin extends javax.swing.JDialog {
     ClientGameImpl clientGame;
     DefaultListModel wordListModel;
     DefaultTableModel scoreTableModel;
-    int sessionNum = 0;
+    int sessionNum = 1;
     String gameName = "";
     Map<String, Integer> storePointPlayer;
+    UserData loggedUser;
 
     /**
      * Creates new form GameWin
      */
-    public GameWin(java.awt.Dialog parent, boolean modal, String gameName) {
+    public GameWin(java.awt.Dialog parent, boolean modal, String gameName, UserData parLoggedUser) {
         super(parent, modal);
         storePointPlayer = new HashMap<>();
         wordListModel = new DefaultListModel<String>();
@@ -46,6 +51,7 @@ public class GameWin extends javax.swing.JDialog {
         initComponents();
         initScoreTable();
         this.gameName = gameName;
+        this.loggedUser = parLoggedUser;
         this.jLabelGameName.setText("Partita: " + this.gameName);
     }
 
@@ -106,6 +112,11 @@ public class GameWin extends javax.swing.JDialog {
         btn_game_leave.setForeground(new java.awt.Color(255, 255, 255));
         btn_game_leave.setText("ABBANDONA");
         btn_game_leave.setBorder(null);
+        btn_game_leave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_game_leaveActionPerformed(evt);
+            }
+        });
 
         jTableScore.setModel(scoreTableModel);
         jScrollPane2.setViewportView(jTableScore);
@@ -348,9 +359,7 @@ public class GameWin extends javax.swing.JDialog {
                             .addComponent(jLabel_timerValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(15, 15, 15))
                     .addComponent(jSeparator7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(jPanelLeft, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(jPanelLeft, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -368,9 +377,10 @@ public class GameWin extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     public void openResultWindow() {
-        ResultWin guiResult = new ResultWin(this, true, this.gameName);
+        ResultWin guiResult = new ResultWin(this, true, this.gameName, this.loggedUser);
         guiResult.setClientGameStub(clientGame);
         guiResult.setServerGameStub(gameStub);
+        guiResult.setSessionNum(sessionNum);
         this.clientGame.setGuiResult(guiResult);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -461,6 +471,15 @@ public class GameWin extends javax.swing.JDialog {
         this.text_game_addWord.setText("");
     }//GEN-LAST:event_text_addWordMouseClicked
 
+    private void btn_game_leaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_leaveActionPerformed
+        try {
+            this.gameStub.leaveGame(this.loggedUser.getNickname());
+        } catch (RemoteException ex) {
+            Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_btn_game_leaveActionPerformed
+
     //UTILITY
     public void fillScoreTable() {
         //va chimamato alla creazione? ma se nn la ricreo ogni volta....
@@ -510,7 +529,7 @@ public class GameWin extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                GameWin dialog = new GameWin(new javax.swing.JDialog(), true, "");
+                GameWin dialog = new GameWin(new javax.swing.JDialog(), true, "", null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -6,6 +6,7 @@
 package client;
 
 import entity.GameData;
+import entity.StatsData;
 import entity.UserData;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,8 +23,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -58,10 +63,11 @@ public class ControlFrame extends javax.swing.JFrame {
         loggedUser = new UserData();
         Registry registry;
         try {
-            if(IpServer.length!=0)
-                registry = LocateRegistry.getRegistry(IpServer[0],1099);
-            else
+            if (IpServer.length != 0) {
+                registry = LocateRegistry.getRegistry(IpServer[0], 1099);
+            } else {
                 registry = LocateRegistry.getRegistry(1099);
+            }
             serviceStub = (ServerServiceStub) registry.lookup("Il Paroliere");
         } catch (NotBoundException | RemoteException e) {
             showMessageDialog(null, "Si è verificato un errore nella connessione... " + e.getLocalizedMessage());
@@ -125,6 +131,14 @@ public class ControlFrame extends javax.swing.JFrame {
         combo_stats = new javax.swing.JComboBox<>();
         btn_search_stats = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        stats_label_bestPlayerGameScore = new javax.swing.JLabel();
+        stats_label_bestPlayerSessionScore = new javax.swing.JLabel();
+        stats_label_averageGame = new javax.swing.JLabel();
+        stats_label_averageSession = new javax.swing.JLabel();
+        stats_label_errors = new javax.swing.JLabel();
+        stats_label_duplicates = new javax.swing.JLabel();
+        stats_label_moreSessions = new javax.swing.JLabel();
         jPanel_profile = new javax.swing.JPanel();
         label_profile = new javax.swing.JLabel();
         text_name_profile = new javax.swing.JTextField();
@@ -526,8 +540,13 @@ public class ControlFrame extends javax.swing.JFrame {
         jPanel_stats.setBackground(new java.awt.Color(255, 255, 255));
 
         combo_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
-        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_stats.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Migliori Punteggi di Parole", "Classifica Occorrenze di Parole", "Classifica Occorrenze Definizioni", "Occorrenza delle Lettere", "Sessioni Medie di Gioco", "Sessioni Massime di Gioco", "Sessioni Minime di Gioco" }));
         combo_stats.setBorder(null);
+        combo_stats.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combo_statsItemStateChanged(evt);
+            }
+        });
 
         btn_search_stats.setBackground(new java.awt.Color(79, 36, 107));
         btn_search_stats.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
@@ -542,32 +561,99 @@ public class ControlFrame extends javax.swing.JFrame {
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/icons/combo_chart_96px.png"))); // NOI18N
 
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
+
+        stats_label_bestPlayerGameScore.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_bestPlayerGameScore.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_bestPlayerGameScore.setText("Miglior Punteggio di Gioco: 100pt - Giocatore: marco");
+
+        stats_label_bestPlayerSessionScore.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_bestPlayerSessionScore.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_bestPlayerSessionScore.setText("Miglior Punteggio di Sessione: 50pt - Giocatore: marco");
+
+        stats_label_averageGame.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_averageGame.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_averageGame.setText("Giocatore con la Media di Punti di Gioco Maggiore: sara - 44pt");
+
+        stats_label_averageSession.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_averageSession.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_averageSession.setText("Giocatore con la Media di Punti di Sessione Maggiore: sara - 44pt");
+
+        stats_label_errors.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_errors.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_errors.setText("Giocatore che ha Commesso il Maggior Numero di Errori: mario77 - 56 Errori");
+
+        stats_label_duplicates.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_duplicates.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_duplicates.setText("Giocatore che ha Trovato il Maggior Numero di Duplicati: enea85 - 23 Duplicati");
+
+        stats_label_moreSessions.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
+        stats_label_moreSessions.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        stats_label_moreSessions.setText("Giocatore che ha Giocato il Maggior Numero di Sessioni: stefano90 - 22 Sessioni");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(stats_label_bestPlayerGameScore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_bestPlayerSessionScore, javax.swing.GroupLayout.DEFAULT_SIZE, 978, Short.MAX_VALUE)
+            .addComponent(stats_label_averageGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_averageSession, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_errors, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_duplicates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(stats_label_moreSessions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(stats_label_bestPlayerGameScore, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_bestPlayerSessionScore, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_averageGame, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_averageSession, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_moreSessions, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_errors, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(stats_label_duplicates, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(63, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel_statsLayout = new javax.swing.GroupLayout(jPanel_stats);
         jPanel_stats.setLayout(jPanel_statsLayout);
         jPanel_statsLayout.setHorizontalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_statsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
-                        .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(136, 136, 136)
-                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(159, 159, 159))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(452, 452, 452))))
+                        .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(combo_stats, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel_statsLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel3)))
+                        .addGap(125, 125, 125)
+                        .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73))))
         );
         jPanel_statsLayout.setVerticalGroup(
             jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_statsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                 .addGroup(jPanel_statsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(combo_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_search_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(473, 473, 473))
+                .addGap(46, 46, 46)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jPanel_main.add(jPanel_stats, "stats");
@@ -818,41 +904,41 @@ public class ControlFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_loginActionPerformed
 
     private void label_pswRecoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_pswRecoverMouseClicked
-        // TODO add your handling code here:
+
         RecoverPsw recover = new RecoverPsw(this, true, serviceStub);
         recover.setVisible(true);
     }//GEN-LAST:event_label_pswRecoverMouseClicked
 
     private void label_signinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_signinMouseClicked
-        // TODO add your handling code here:
+
         RegisterUser register = new RegisterUser(this, true, serviceStub);
         register.setVisible(true);
     }//GEN-LAST:event_label_signinMouseClicked
 
     private void text_email_loginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_email_loginMouseClicked
-        // TODO add your handling code here:
+
         this.text_email_login.setText("");
     }//GEN-LAST:event_text_email_loginMouseClicked
 
     private void text_password_loginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_password_loginMouseClicked
-        // TODO add your handling code here:
+
         this.text_password_login.setText("");
     }//GEN-LAST:event_text_password_loginMouseClicked
 
     private void btn_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_homeActionPerformed
-        // TODO add your handling code here:
+
         gameList = clientService.getGamesList();
         this.fillGameTable(gameList);
         card.show(jPanel_main, "home");
     }//GEN-LAST:event_btn_homeActionPerformed
 
     private void btn_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_statsActionPerformed
-        // TODO add your handling code here:
+
         card.show(jPanel_main, "stats");
+        fillBasicStats(this.clientService.getStatsData());
     }//GEN-LAST:event_btn_statsActionPerformed
 
     private void btn_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_profileActionPerformed
-        // TODO add your handling code here:
 
         //fillUserProfileData(loggedUser);
         card.show(jPanel_main, "profile");
@@ -861,7 +947,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
 
     private void btn_createGame_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_createGame_homeActionPerformed
-        // TODO add your handling code here:
+
         if (GuiUtility.isEmpty(this.text_gameName_home)) {
             showMessageDialog(null, "Inserire un nome della partita");
             return;
@@ -877,14 +963,20 @@ public class ControlFrame extends javax.swing.JFrame {
             serverGameStub = serviceStub.createGame(this.loggedUser.getNickname(), gameName, this.combo_Nplayers.getSelectedIndex() + 2, clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setGameName(gameName);
-            lobby.setVisible(true);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    lobby.setVisible(true);
+                }
+            });
+
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_createGame_homeActionPerformed
 
     private void btn_partecipate_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_homeActionPerformed
-        // TODO add your handling code here:
+
         ServerGameStub serverGameStub = null;
         int gameIndex = this.jTableGameList.getSelectedRow();
 
@@ -897,61 +989,207 @@ public class ControlFrame extends javax.swing.JFrame {
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
             lobby.setServerGameStub(serverGameStub);
             lobby.setGameName(gameName);
-            lobby.setVisible(true);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    lobby.setVisible(true);
+                }
+            });
+
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_partecipate_homeActionPerformed
 
     private void text_gameName_homeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_gameName_homeMouseClicked
-        // TODO add your handling code here:
+
         this.text_gameName_home.setText("");
     }//GEN-LAST:event_text_gameName_homeMouseClicked
 
     private void label_verifyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_verifyMouseClicked
-        // TODO add your handling code here:
+
         VerifyUser verify = new VerifyUser(this, true, this.serviceStub);
         verify.setVisible(true);
     }//GEN-LAST:event_label_verifyMouseClicked
 
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
-        // TODO add your handling code here:
+
+        StatsData stats = this.clientService.getStatsData();
+        JFrame statsFrame;
+        String[] colNames;
+        String[][] val;
+        JTable statsTable;
+        JScrollPane sp;
+
+        switch (this.combo_stats.getSelectedIndex()) {
+            case 0:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Migliori Punteggi di Parole");
+                colNames = new String[]{"Parola", "Punti"};
+                val = new String[][]{};
+                if (stats.getWordsBestScore() != null) {
+                    for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
+                        val[i][0] = stats.getWordsBestScore().get(i).getFirst();
+                        val[i][1] = stats.getWordsBestScore().get(i).getLast();
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+
+            case 1:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Classifica Occorrenze Parole");
+                colNames = new String[]{"Parola", "Occorrenze"};
+                val = new String[][]{};
+                if (stats.getOccurrencyWordsLeaderboard() != null) {
+                    for (int i = 0; i < stats.getOccurrencyWordsLeaderboard().size(); i++) {
+                        val[i][0] = stats.getOccurrencyWordsLeaderboard().get(i).getFirst();
+                        val[i][1] = stats.getOccurrencyWordsLeaderboard().get(i).getLast() + "";
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+
+            case 2:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Classifica Occorrenze Richiesta Definizione Parole");
+                colNames = new String[]{"Parola", "Occorrenze"};
+                val = new String[][]{};
+                if (stats.getOccurrencyWordsDefLeaderboard() != null) {
+                    for (int i = 0; i < stats.getOccurrencyWordsDefLeaderboard().size(); i++) {
+                        val[i][0] = stats.getOccurrencyWordsDefLeaderboard().get(i).getFirst();
+                        val[i][1] = stats.getOccurrencyWordsDefLeaderboard().get(i).getLast() + "";
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+
+            case 3:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Classifica Occorrenze Lettere");
+                colNames = new String[]{"Lettera", "Occorrenze"};
+                val = new String[][]{};
+                if (stats.getLettersAverageOccurency() != null) {
+                    for (int i = 0; i < stats.getLettersAverageOccurency().size(); i++) {
+                        val[i][0] = stats.getLettersAverageOccurency().get(i).getFirst();
+                        val[i][1] = stats.getLettersAverageOccurency().get(i).getLast() + "";
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+
+            case 4:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Sessioni Medie per Gioco");
+                colNames = new String[]{"Num. Giocatori", "Sessioni"};
+                val = new String[][]{};
+                if (stats.getAverageSessionsPerGame() != null) {
+                    for (int i = 0; i < 5; i++) {
+                        if (stats.getAverageSessionsPerGame()[i] != null) {
+                            val[i][0] = stats.getAverageSessionsPerGame()[i].getFirst() + "";
+                            val[i][1] = stats.getAverageSessionsPerGame()[i].getLast() + "";
+                        }
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+
+            case 5:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Sessioni Massime per Gioco");
+                colNames = new String[]{"Num. Giocatori", "Sessioni"};
+                val = new String[][]{};
+                if (stats.getMaxSessionsPerGame() != null) {
+                    for (int i = 0; i < 5; i++) {
+                        if (stats.getMaxSessionsPerGame()[i] != null) {
+                            val[i][0] = stats.getMaxSessionsPerGame()[i].getFirst() + "";
+                            val[i][1] = stats.getMaxSessionsPerGame()[i].getLast() + "";
+                        }
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+
+            case 6:
+                statsFrame = new JFrame();
+                statsFrame.setTitle("Sessioni Minime per Gioco");
+                colNames = new String[]{"Num. Giocatori", "Sessioni"};
+                val = new String[][]{};
+                if (stats.getMinSessionsPerGame() != null) {
+                    for (int i = 0; i < 5; i++) {
+                        if (stats.getMinSessionsPerGame()[i] != null) {
+                            val[i][0] = stats.getMinSessionsPerGame()[i].getFirst() + "";
+                            val[i][1] = stats.getMinSessionsPerGame()[i].getLast() + "";
+                        }
+                    }
+                }
+                statsTable = new JTable(val, colNames);
+                sp = new JScrollPane(statsTable);
+                statsFrame.add(sp);
+                statsFrame.setSize(500, 600);
+                statsFrame.setVisible(true);
+                break;
+        }
     }//GEN-LAST:event_btn_search_statsActionPerformed
 
     private void text_name_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_name_profileMouseClicked
-        // TODO add your handling code here:
+
         this.btn_save_profile.setEnabled(true);
     }//GEN-LAST:event_text_name_profileMouseClicked
 
     private void text_surname_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_surname_profileMouseClicked
-        // TODO add your handling code here:
+
         this.btn_save_profile.setEnabled(true);
     }//GEN-LAST:event_text_surname_profileMouseClicked
 
     private void text_username_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_username_profileMouseClicked
-        // TODO add your handling code here:
+
         this.btn_save_profile.setEnabled(true);
     }//GEN-LAST:event_text_username_profileMouseClicked
 
     private void text_email_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_email_profileMouseClicked
-        // TODO add your handling code here:
+
         this.btn_save_profile.setEnabled(true);
     }//GEN-LAST:event_text_email_profileMouseClicked
 
     private void text_password_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_password_profileMouseClicked
-        // TODO add your handling code here:
+
         this.btn_save_profile.setEnabled(true);
         pswMod = true;
     }//GEN-LAST:event_text_password_profileMouseClicked
 
     private void text_repeatPassword_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_repeatPassword_profileMouseClicked
-        // TODO add your handling code here:
+
         this.btn_save_profile.setEnabled(true);
         pswMod = true;
     }//GEN-LAST:event_text_repeatPassword_profileMouseClicked
 
     private void btn_save_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_profileActionPerformed
-        // TODO add your handling code here:
+
         UserData updatedUser;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_email_profile) || GuiUtility.isEmpty(this.text_name_profile) || GuiUtility.isEmpty(this.text_surname_profile) || GuiUtility.isEmpty(this.text_username_profile) || GuiUtility.isEmpty(this.text_password_profile) || GuiUtility.isEmpty(this.text_repeatPassword_profile)) {
@@ -1013,11 +1251,15 @@ public class ControlFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_logoutActionPerformed
 
     private void combo_NplayersItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_NplayersItemStateChanged
-        // TODO add your handling code here:
+
         if (this.combo_Nplayers.getSelectedIndex() != 5) {
             this.btn_createGame_home.setEnabled(true);
         }
     }//GEN-LAST:event_combo_NplayersItemStateChanged
+
+    private void combo_statsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_statsItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_statsItemStateChanged
 
     private void fillUserProfileData(UserData user) {
         text_email_profile.setText(user.getEmail());
@@ -1028,37 +1270,78 @@ public class ControlFrame extends javax.swing.JFrame {
         text_repeatPassword_profile.setText(user.getPassword());
     }
 
+    private void fillBasicStats(StatsData stats) {
+        String stats_duplicates;
+        String stats_errors;
+        String stats_played_sessions;
+        String stats_best_game_score;
+        String stats_best_session_score;
+        String stats_average_game_score;
+        String stats_average_session_score;
+
+        if (stats.getPlayerWithMoreDuplicates() == null) {
+            stats_duplicates = "Giocatore che ha Trovato il Maggior Numero di Duplicati: " + "/" + " - " + "/" + " Duplicati";
+        } else {
+            stats_duplicates = "Giocatore che ha Trovato il Maggior Numero di Duplicati: " + stats.getPlayerWithMoreDuplicates().getFirst() + " - " + stats.getPlayerWithMoreDuplicates().getLast() + " Duplicati";
+        }
+        this.stats_label_duplicates.setText(stats_duplicates);
+
+        if (stats.getPlayerWithMoreErrors() == null) {
+            stats_errors = "Giocatore che ha Commesso il Maggior Numero di Errori: " + "/" + " - " + "/" + " Errori";
+        } else {
+            stats_errors = "Giocatore che ha Commesso il Maggior Numero di Errori: " + stats.getPlayerWithMoreErrors().getFirst() + " - " + stats.getPlayerWithMoreErrors().getLast() + " Errori";
+        }
+        this.stats_label_errors.setText(stats_errors);
+
+        if (stats.getPlayerWithMoreSessions() == null) {
+            stats_played_sessions = "Giocatore che ha Giocato il Maggior Numero di Sessioni: " + "/" + " - " + "/" + " Sessioni";
+        } else {
+            stats_played_sessions = "Giocatore che ha Giocato il Maggior Numero di Sessioni: " + stats.getPlayerWithMoreSessions().getFirst() + " - " + stats.getPlayerWithMoreSessions().getLast() + " Sessioni";
+        }
+        this.stats_label_moreSessions.setText(stats_played_sessions);
+
+        if (stats.getBestPlayerGameScore() == null) {
+            stats_best_game_score = "Miglior Punteggio di Gioco: " + "/pt." + " - Giocatore: " + "/";
+        } else {
+            stats_best_game_score = "Miglior Punteggio di Gioco: " + stats.getBestPlayerGameScore().getLast() + "pt. - Giocatore: " + stats.getBestPlayerGameScore().getFirst();
+        }
+        this.stats_label_bestPlayerGameScore.setText(stats_best_game_score);
+
+        if (stats.getBestPlayerSessionScore() == null) {
+            stats_best_session_score = "Miglior Punteggio di Sessione: " + "/pt." + " - Giocatore: " + "/";
+        } else {
+            stats_best_session_score = "Miglior Punteggio di Sessione: " + stats.getBestPlayerSessionScore().getLast() + "pt. - Giocatore: " + stats.getBestPlayerSessionScore().getFirst();
+
+        }
+        this.stats_label_bestPlayerSessionScore.setText(stats_best_session_score);
+
+        if (stats.getBestAverageGameScore() == null) {
+            stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + "/" + " - " + "/" + "pt";
+
+        } else {
+            stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + stats.getBestAverageGameScore().getFirst() + " - " + stats.getBestAverageGameScore().getLast() + "pt";
+        }
+        this.stats_label_averageGame.setText(stats_average_game_score);
+
+        if (stats.getBestAverageSessionScore() == null) {
+            stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + "/" + " - " + "/" + "pt";
+
+        } else {
+            stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + stats.getBestAverageSessionScore().getFirst() + " - " + stats.getBestAverageSessionScore().getLast() + "pt";
+        }
+        this.stats_label_averageSession.setText(stats_average_session_score);
+    }
+
     //UTILITY
     public void fillGameTable(List<GameData> parGameList) {
         GuiUtility.clearTable(gameTableModel);
-
-        //gameList = clientService.getGamesList(); //controllare che nn sia nullo!
         gameList = parGameList;
-        //gameList = new ArrayList<GameData>();
 
-        /*//TEST ADDING VALUES
-        GameData test = new GameData("PartitaEdoardoBianchi", 3);
-        test.setId(1);
-        test.addPlayer("marco");
-        test.addPlayer("giovanni");
-        gameList.add(test);
-        GameData test1 = new GameData("PartitaSandro", 6);
-        test1.setId(2);
-        test1.addPlayer("sandro");
-        test1.addPlayer("rocco");
-        gameList.add(test1);
-        GameData test2 = new GameData("PartitaMia", 5);
-        test2.setId(3);
-        test2.addPlayer("gigi");
-        test2.addPlayer("rocco");
-        gameList.add(test2);
-        //END
-         */
-        //ADD to table
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {
-                rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
+                //rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
+                rowData[0] = tmp.getName() + " " + tmp.getCreator();
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
             }
@@ -1119,6 +1402,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel_home;
     private javax.swing.JPanel jPanel_login;
     private javax.swing.JPanel jPanel_main;
@@ -1145,6 +1429,13 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JLabel label_pswRecover;
     private javax.swing.JLabel label_signin;
     private javax.swing.JLabel label_verify;
+    private javax.swing.JLabel stats_label_averageGame;
+    private javax.swing.JLabel stats_label_averageSession;
+    private javax.swing.JLabel stats_label_bestPlayerGameScore;
+    private javax.swing.JLabel stats_label_bestPlayerSessionScore;
+    private javax.swing.JLabel stats_label_duplicates;
+    private javax.swing.JLabel stats_label_errors;
+    private javax.swing.JLabel stats_label_moreSessions;
     private javax.swing.JTextField text_email_login;
     private javax.swing.JTextField text_email_profile;
     private javax.swing.JTextField text_gameName_home;

@@ -1,6 +1,7 @@
  package server.game;
 
 
+import entity.ItemType;
 import entity.Definition;
 import entity.Term;
 import java.io.BufferedReader;

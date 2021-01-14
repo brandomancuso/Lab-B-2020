@@ -4,6 +4,8 @@ import database.Database;
 import database.DatabaseConfig;
 import database.DatabaseException;
 import database.DatabaseImpl;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe relativa all'avvio dell'applicazione lato server
