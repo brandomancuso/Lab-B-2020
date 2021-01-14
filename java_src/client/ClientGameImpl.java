@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -16,7 +17,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
 
     private List<String> lobbyList;
-    //private List<String> playerWordList;
     private int timerValue;
     private int gameState;
     private Lobby guiLobby;
@@ -30,7 +30,6 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         super(0);
         storePointPlayer = new HashMap<>();
         lobbyList = new ArrayList<String>();
-        //playerWordList = new ArrayList<String>();
         guiGame = null;
         guiResult = null;
 
@@ -101,23 +100,14 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiLobby.disableLeaveBtn();
                 break;
             case 1: //session --> apro finestra di gioco
-                if(this.guiResult != null){
+                if (this.guiResult != null) {
                     this.guiResult.setVisible(false);
                 }
                 this.guiLobby.openGameWindow();
-                /**if (this.guiGame == null) {
-                    //creo guiGame nuovo
-                    this.guiLobby.openGameWindow();
-                } else {
-                    this.guiGame.setVisible(true);
-                }*/
                 this.guiGame.fillScoreTable();
-                //this.guiLobby.setVisible(false);
-                //this.guiLobby.dispose();
                 break;
             case 2: //result
                 this.guiGame.disableInput();
-                //playerWordList = this.guiGame.getPlayerWords();
                 this.guiGame.setVisible(false);
                 this.guiGame.openResultWindow();
 
@@ -125,9 +115,13 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 break;
             case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
                 this.guiGame.dispose();
+                this.guiResult.dispose();
+                this.guiLobby.dispose();
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
                 this.guiGame.dispose();
+                this.guiResult.dispose();
+                this.guiLobby.dispose();
                 break;
         }
     }
@@ -148,7 +142,6 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
             case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
-
                 break;
         }
     }
@@ -167,25 +160,45 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
     @Override
     public void notifyInfoGame(List<String> nickNames) throws RemoteException {
-        String nickName="";
-        int length=nickNames.size();
-        
-        while(!nickNames.isEmpty())
-        {
-            nickName=nickNames.get(length-1)+ "  ";
-            nickNames.remove(length-1);
-        }
-        
 
-        if (gameState==3)
-        {
-            if (length >= 2)
-                showMessageDialog(guiMain,nickName+ " hanno vinto !");
-            else
-                showMessageDialog(guiMain,nickName+ " ha vinto !");
-        }     
-        if (gameState==4)
-             showMessageDialog(guiMain,nickName+ " ha abbandonato !");   
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                String nickName = "";
+                int length = nickNames.size();
+
+                while (!nickNames.isEmpty()) {
+                    nickName = nickNames.get(length - 1) + "  ";
+                    nickNames.remove(length - 1);
+                }
+                if (gameState == 3) {
+                    if (length >= 2) {
+                        showMessageDialog(guiMain, nickName + " hanno vinto !");
+                    } else {
+                        showMessageDialog(guiMain, nickName + " ha vinto !");
+                    }
+                }
+                if (gameState == 4) {
+                    showMessageDialog(guiMain, nickName + " ha abbandonato !");
+                }
+            }
+        });
+
+    }
+
+    public void shutdownServer() {
+        if (this.guiResult != null) {
+            this.guiResult.setVisible(false);
+            this.guiResult.dispose();
+        }
+        if (this.guiGame != null) {
+            this.guiGame.setVisible(false);
+            this.guiGame.dispose();
+        }
+        if (this.guiLobby != null) {
+            this.guiLobby.setVisible(false);
+            this.guiLobby.dispose();
+        }
+
     }
 
 }
