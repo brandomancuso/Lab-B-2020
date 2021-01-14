@@ -185,6 +185,9 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             int controlCode = dbResult.getLast();
             loginResult = new Pair<>(controlCode, null);
         }
+        //to update the user about the stats
+        this.setChanged();
+        this.notifyObservers(true);
         return loginResult;
     }
     
