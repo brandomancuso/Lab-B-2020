@@ -86,7 +86,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         clientsList.put(nickname, client);
         List<GameData> list = castMapToList();
         client.update(list);
-        //client.update(stats);
+        client.update(stats);
         WrappedObserver wo = new WrappedObserver(this, client, nickname);
     }
     
@@ -188,8 +188,8 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             loginResult = new Pair<>(controlCode, null);
         }
         //to update the user about the stats
-        this.setChanged();
-        this.notifyObservers(true);
+        //this.setChanged();
+        //this.notifyObservers(true);
         return loginResult;
     }
     
