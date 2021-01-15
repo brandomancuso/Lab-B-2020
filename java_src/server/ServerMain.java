@@ -39,34 +39,32 @@ public class ServerMain {
      * @return <code>true</code> se la connessione al database è avvenuta
      */
     //Accedo al database e controllo la presenza di un amministratore
-    public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost){
-        boolean result = true;
+    public static boolean connectDatabase(String dbUser, String dbPassword, String dbHost) {
         Database dbReference = DatabaseImpl.getDatabase().configure(new DatabaseConfig()
-                 .setHost(dbHost).setUser(dbUser)
-                 .setPswd(dbPassword));
+                .setHost(dbHost).setUser(dbUser)
+                .setPswd(dbPassword));
 
         loginScreen = new LoginScreen();
         registerScreen = new RegisterScreen();
-        if(dbReference != null){
-            try {
-                if(!dbReference.checkDatabaseExistence()){
+        try {
+            if (dbReference != null) {
+                if (!dbReference.checkDatabaseExistence()) {
                     dbReference.createDatabase();
                 }
                 homeScreen = new HomeScreen();
-                if(dbReference.checkAdminExistence()){
+                if (dbReference.checkAdminExistence()) {
                     loginScreen.setVisible(true);
                     return true;
-                }
-                else{
+                } else {
                     registerScreen.setVisible(true);
                     return true;
                 }
-            } catch (DatabaseException ex) {
-                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                return false;
             }
+        } catch (DatabaseException e) {
+            return false;
         }
-       
-        return false;
     }
     
     /**

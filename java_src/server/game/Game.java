@@ -314,6 +314,7 @@ public class Game extends Thread implements ServerGameStub {
         }
         WordData wordData=new WordData();
         wordData.setWord(word);
+        nickname=nickname.trim();//to avoid problem with the database
         currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
         return currentTerm;
     }
@@ -327,6 +328,7 @@ public class Game extends Thread implements ServerGameStub {
     public synchronized void ready() throws RemoteException {
         if (++playerReadyNextRound == gameData.getNumPlayers()) {
             timerThread.interrupt();//interupting the time allow the server to go to the next phases
+            playerReadyNextRound=0;//to restart the counter
         }
     }
 

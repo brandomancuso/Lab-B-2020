@@ -176,7 +176,7 @@ public class Session {
                          wordTmp.setCorrect(false);
                     }
                  else
-                     if(isDuplicated(wordFound))
+                     if(isDuplicated(nickname,wordFound))
                          {
                              wordTmp.setPoints(calculateScore(wordFound));
                              wordTmp.setRealPoints(0);
@@ -194,8 +194,9 @@ public class Session {
        }
     }   
     
-    private boolean isDuplicated (String wordFound)
+    private boolean isDuplicated (String nickname,String wordFound)
     {
+        //TO-DO:if a word is duplicated by the same person
         List<WordData> wordFoundList=sessionData.getFoundWords().values().parallelStream().flatMap(Collection::stream).collect(Collectors.toList());//i will take all the word (This allows us to flatten the nested Stream structure and eventually collect all elements to a particular collection) 
         List<WordData> wordFoundMatched=wordFoundList.parallelStream().filter(word -> (word.getWord().equals(wordFound))).collect(Collectors.toList());//i filter in order to find the equal element
         if(wordFoundMatched.isEmpty())
