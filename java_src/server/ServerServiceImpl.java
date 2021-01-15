@@ -17,6 +17,7 @@ import java.util.Observable;
 import java.util.Random;
 import server.game.Game;
 import server.game.ServerGameStub;
+import utils.CryptMD5;
 import utils.Pair;
 
 /**
@@ -62,13 +63,14 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
      */
     @Override
     public boolean recoverPassword(String email) throws RemoteException {
-        //mi serve il nickname dell'utente per avere il riferimento per aggiornare il database
-        //invio la mail
         String tempPsw = generatePassword();
-        new Thread(new EmailSender(email, tempPsw, email, 2)).start();
-        //TODO modifica password dell'utente nel database
         
+        UserData user = dbReference.getUserByEmail(email);
+        
+        user.setPassword(CryptMD5.crypt(tempPsw));
+        dbReference.updateUser(user, user.getNickname());
         GUI.stampEvent(email + " ha richisto il recupero psw");
+        new Thread(new EmailSender(email, tempPsw, user.getNickname(), 2)).start();
         return true;
     }
 
@@ -84,7 +86,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         clientsList.put(nickname, client);
         List<GameData> list = castMapToList();
         client.update(list);
-        //client.update(stats);
+        client.update(stats);
         WrappedObserver wo = new WrappedObserver(this, client, nickname);
     }
     
@@ -186,8 +188,8 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             loginResult = new Pair<>(controlCode, null);
         }
         //to update the user about the stats
-        this.setChanged();
-        this.notifyObservers(true);
+        //this.setChanged();
+        //this.notifyObservers(true);
         return loginResult;
     }
     
