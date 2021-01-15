@@ -58,6 +58,7 @@ public class ResultWin extends javax.swing.JDialog {
         this.gameName = gameName;
         this.loggedUser = parLoggedUser;
         this.jLabelGameName_result.setText("Partita: " + this.gameName);
+        this.btn_result_pass.setEnabled(true);
     }
 
     /**
@@ -366,22 +367,27 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_result_verifyWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_verifyWordActionPerformed
 
-        Term def;
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                final Term def;
+                int rowIndex = jTable_result.getSelectedRow();
+                if (rowIndex == -1) {
+                    showMessageDialog(null, "Selezionare una riga!");
+                    return;
+                }
+                try {
+                    def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
+                    if (def == null) {
+                        showMessageDialog(null, "Definizione non trovata");
+                    } else {
+                        showMessageDialog(null, def.toString());
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
 
-        int rowIndex = this.jTable_result.getSelectedRow();
-        if (rowIndex == -1) {
-            showMessageDialog(null, "Selezionare una riga!");
-            return;
-        }
-        try {
-            def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
-            if(def == null)
-                showMessageDialog(null, "Definizione non trovata");
-            else
-                showMessageDialog(null, def.toString());
-        } catch (RemoteException ex) {
-            Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_btn_result_verifyWordActionPerformed
 
     private void jTable_resultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_resultMouseClicked
@@ -391,6 +397,7 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_result_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_passActionPerformed
         try {
+            this.btn_result_pass.setEnabled(false);
             gameStub.ready();
         } catch (RemoteException ex) {
             Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
@@ -399,6 +406,8 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_game_leave_resultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_leave_resultActionPerformed
         try {
+            this.setVisible(false);
+            this.dispose();
             gameStub.leaveGame(this.loggedUser.getNickname());
         } catch (RemoteException ex) {
             Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);

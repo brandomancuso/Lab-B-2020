@@ -66,9 +66,9 @@ public class Lobby extends javax.swing.JDialog {
         guiGame.setServerGameStub(gameStub);
         this.clientGame.setGuiGame(guiGame);
         SwingUtilities.invokeLater(new Runnable() {
-             public void run() {
-                    guiGame.setVisible(true);
-                               }
+            public void run() {
+                guiGame.setVisible(true);
+            }
         });
 
         //this.setVisible(false);
@@ -175,7 +175,7 @@ public class Lobby extends javax.swing.JDialog {
             Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
         }
         //this.fillPartecipant();
-        
+
     }//GEN-LAST:event_btn_leaveActionPerformed
 
     public void fillPartecipant() {

@@ -55,6 +55,7 @@ public class ControlFrame extends javax.swing.JFrame {
     boolean pswMod = false;
     boolean logged = false;
     DefaultTableModel gameTableModel;
+    ServerGameStub serverGameStub = null;
 
     public ControlFrame(String[] IpServer) {
         gameTableModel = GuiUtility.createCustomTableModel(2);
@@ -953,7 +954,7 @@ public class ControlFrame extends javax.swing.JFrame {
             return;
         }
         String gameName = this.text_gameName_home.getText();
-        ServerGameStub serverGameStub = null;
+
         try {
             //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
             this.clientGame = new ClientGameImpl();
@@ -977,7 +978,6 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_partecipate_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_homeActionPerformed
 
-        ServerGameStub serverGameStub = null;
         int gameIndex = this.jTableGameList.getSelectedRow();
 
         String gameName = gameList.get(gameIndex).getName();
@@ -1345,6 +1345,12 @@ public class ControlFrame extends javax.swing.JFrame {
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
             }
+        }
+    }
+
+    public void shutdownServer() {
+        if (this.clientGame != null) {
+            this.clientGame.shutdownServer();
         }
     }
 
