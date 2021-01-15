@@ -70,7 +70,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         user.setPassword(CryptMD5.crypt(tempPsw));
         dbReference.updateUser(user, user.getNickname());
         GUI.stampEvent(email + " ha richisto il recupero psw");
-        new Thread(new EmailSender(email, tempPsw, user.getNickname(), 2)).start();
+        new Thread(new EmailSender(email, tempPsw, 2)).start();
         return true;
     }
 
@@ -115,10 +115,10 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
         UserData updatedUser = dbReference.updateUser(user, oldNickname);
-        /* Controllo vecchia password + aggiornamento nuova con invio email
-        if(updateUser.getPassword().equals(user.getPassword)){
-        new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", user.getNickname(), 3)).start();
-        */
+        
+        if(updatedUser.getPassword().equals(user.getPassword())){
+            new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", 3)).start();
+        }
         usersList.replace(oldNickname, updatedUser);
         
         GUI.stampEvent(oldNickname + "(" + user.getNickname() + ")" + " ha modificato l'account");
@@ -140,7 +140,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
 
         if (updatedNewUser != null) {
             registerResult = true;
-            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), newUser.getNickname(), 1)).start();
+            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), 1)).start();
             GUI.stampEvent(updatedNewUser.getNickname() + " registrato");
         } else {
             registerResult = false;
