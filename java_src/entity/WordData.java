@@ -2,14 +2,18 @@ package entity;
 
 import java.io.Serializable;
 
-public class WordData implements Serializable{
+public class WordData implements Serializable {
+
     private Integer id;
     private String word;
     private int points;
     private int realPoints;
     private boolean correct;
     private boolean duplicate;
-    
+    private boolean inDictionary;
+    private boolean inGrid;
+    private boolean minimunLetter;
+
     private static final long serialVersionUID = 1L;
 
     public String getWord() {
@@ -42,7 +46,31 @@ public class WordData implements Serializable{
 
     public void setDuplicate(boolean duplicate) {
         this.duplicate = duplicate;
-    }   
+    }
+
+    public boolean inDictionary() {
+        return inDictionary;
+    }
+
+    public void setInDictionary(boolean inDictionary) {
+        this.inDictionary = inDictionary;
+    }
+
+    public boolean inGrid() {
+        return inGrid;
+    }
+
+    public void setInGrid(boolean inGrid) {
+        this.inGrid = inGrid;
+    }
+    
+    public boolean minimunLetter() {
+        return minimunLetter;
+    }
+
+    public void setMinimunLetter(boolean minimunLetter) {
+        this.minimunLetter=minimunLetter;
+    }
 
     public Integer getId() {
         return id;
@@ -52,15 +80,12 @@ public class WordData implements Serializable{
         this.id = id;
     }
 
-    
-    public int getRealPoints ()
-    {
+    public int getRealPoints() {
         return realPoints;
     }
-    
-    public void setRealPoints (int realPoint)
-    {
-         this.realPoints=realPoint;
+
+    public void setRealPoints(int realPoint) {
+        this.realPoints = realPoint;
     }
-    
+
 }

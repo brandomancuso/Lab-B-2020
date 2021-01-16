@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -64,10 +65,18 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
         //capire quando sono nella finestra home e chiamare il metodo per refillare la tabella partite
 
     }
-    
+
     @Override
     public void shutDownServer() throws RemoteException {
-        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                showMessageDialog(null, "Il server e' stato arrestato....");
+                if (gui != null) {
+                    gui.shutdownServer();
+                }
+            }
+        });
+
     }
 
 }

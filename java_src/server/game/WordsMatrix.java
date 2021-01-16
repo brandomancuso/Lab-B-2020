@@ -54,6 +54,8 @@ public class WordsMatrix {
 				int select = gen.nextInt(upperBound+1);
 				matrix[i][j] = dices[select];
 				dices[select].roll();
+                                if ((select % 2) == 0)
+                                    dices[select].roll();//to have more random element
 				swap(select, upperBound--);//to exchage the last dice with the one selected in order to shaking
 			}
 		}
@@ -237,7 +239,7 @@ public class WordsMatrix {
          do
     		{ 	
         	 Stack<Coordinate> cellToVisitClone;
-        	 for(int i=cellToVisit.peek().getIndexLetter()+1 ; i< wordFound.length() ; i++)
+        	 for(int i=cellToVisit.peek().getIndexLetter()+1 ; i< wordFound.length() && !cellToVisit.isEmpty() ; i++)
         	 	{
 	    			currentCoordinate=cellToVisit.pop();
 	    			cellVisited.add(currentCoordinate);
@@ -246,7 +248,8 @@ public class WordsMatrix {
 	    			if(cellToVisit.equals(cellToVisitClone))
 	    			{
 	    				flag=false;
-	    				break;//to avoid doing more useless research
+	    				i--;
+	    				cellVisited.remove(currentCoordinate);//to remove the cell if it's wrong
 	    			}
 	    			else
 	    				flag=true;

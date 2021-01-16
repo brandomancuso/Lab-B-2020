@@ -18,7 +18,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -55,6 +57,7 @@ public class ControlFrame extends javax.swing.JFrame {
     boolean pswMod = false;
     boolean logged = false;
     DefaultTableModel gameTableModel;
+    ServerGameStub serverGameStub = null;
 
     public ControlFrame(String[] IpServer) {
         gameTableModel = GuiUtility.createCustomTableModel(2);
@@ -953,7 +956,7 @@ public class ControlFrame extends javax.swing.JFrame {
             return;
         }
         String gameName = this.text_gameName_home.getText();
-        ServerGameStub serverGameStub = null;
+
         try {
             //creare qua clientGame --> togliere il parametro e mettere un setter in lobby
             this.clientGame = new ClientGameImpl();
@@ -977,7 +980,6 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void btn_partecipate_homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_partecipate_homeActionPerformed
 
-        ServerGameStub serverGameStub = null;
         int gameIndex = this.jTableGameList.getSelectedRow();
 
         String gameName = gameList.get(gameIndex).getName();
@@ -1012,12 +1014,19 @@ public class ControlFrame extends javax.swing.JFrame {
         verify.setVisible(true);
     }//GEN-LAST:event_label_verifyMouseClicked
 
+    public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return model;
+    }
+
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
 
         StatsData stats = this.clientService.getStatsData();
+        Map<String, String> vals = new HashMap<>();
         JFrame statsFrame;
-        String[] colNames;
-        String[][] val;
         JTable statsTable;
         JScrollPane sp;
 
@@ -1025,15 +1034,12 @@ public class ControlFrame extends javax.swing.JFrame {
             case 0:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Migliori Punteggi di Parole");
-                colNames = new String[]{"Parola", "Punti"};
-                val = new String[][]{};
                 if (stats.getWordsBestScore() != null) {
                     for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
-                        val[i][0] = stats.getWordsBestScore().get(i).getFirst();
-                        val[i][1] = stats.getWordsBestScore().get(i).getLast();
+                        vals.put(stats.getWordsBestScore().get(i).getFirst(), stats.getWordsBestScore().get(i).getLast());
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Punti"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1043,15 +1049,12 @@ public class ControlFrame extends javax.swing.JFrame {
             case 1:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Classifica Occorrenze Parole");
-                colNames = new String[]{"Parola", "Occorrenze"};
-                val = new String[][]{};
                 if (stats.getOccurrencyWordsLeaderboard() != null) {
                     for (int i = 0; i < stats.getOccurrencyWordsLeaderboard().size(); i++) {
-                        val[i][0] = stats.getOccurrencyWordsLeaderboard().get(i).getFirst();
-                        val[i][1] = stats.getOccurrencyWordsLeaderboard().get(i).getLast() + "";
+                        vals.put(stats.getOccurrencyWordsLeaderboard().get(i).getFirst(), stats.getOccurrencyWordsLeaderboard().get(i).getLast() + "");
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Occorrenze"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1061,15 +1064,12 @@ public class ControlFrame extends javax.swing.JFrame {
             case 2:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Classifica Occorrenze Richiesta Definizione Parole");
-                colNames = new String[]{"Parola", "Occorrenze"};
-                val = new String[][]{};
                 if (stats.getOccurrencyWordsDefLeaderboard() != null) {
                     for (int i = 0; i < stats.getOccurrencyWordsDefLeaderboard().size(); i++) {
-                        val[i][0] = stats.getOccurrencyWordsDefLeaderboard().get(i).getFirst();
-                        val[i][1] = stats.getOccurrencyWordsDefLeaderboard().get(i).getLast() + "";
+                        vals.put(stats.getOccurrencyWordsDefLeaderboard().get(i).getFirst(), stats.getOccurrencyWordsDefLeaderboard().get(i).getLast() + "");
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Occorrenze"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1079,15 +1079,13 @@ public class ControlFrame extends javax.swing.JFrame {
             case 3:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Classifica Occorrenze Lettere");
-                colNames = new String[]{"Lettera", "Occorrenze"};
-                val = new String[][]{};
+
                 if (stats.getLettersAverageOccurency() != null) {
                     for (int i = 0; i < stats.getLettersAverageOccurency().size(); i++) {
-                        val[i][0] = stats.getLettersAverageOccurency().get(i).getFirst();
-                        val[i][1] = stats.getLettersAverageOccurency().get(i).getLast() + "";
+                        vals.put(stats.getLettersAverageOccurency().get(i).getFirst(), stats.getLettersAverageOccurency().get(i).getLast() + "");
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Lettera", "Occorrenze"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1097,17 +1095,14 @@ public class ControlFrame extends javax.swing.JFrame {
             case 4:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Sessioni Medie per Gioco");
-                colNames = new String[]{"Num. Giocatori", "Sessioni"};
-                val = new String[][]{};
                 if (stats.getAverageSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getAverageSessionsPerGame()[i] != null) {
-                            val[i][0] = stats.getAverageSessionsPerGame()[i].getFirst() + "";
-                            val[i][1] = stats.getAverageSessionsPerGame()[i].getLast() + "";
+                            vals.put(stats.getAverageSessionsPerGame()[i].getFirst() + "", stats.getAverageSessionsPerGame()[i].getLast() + "");
                         }
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1117,17 +1112,14 @@ public class ControlFrame extends javax.swing.JFrame {
             case 5:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Sessioni Massime per Gioco");
-                colNames = new String[]{"Num. Giocatori", "Sessioni"};
-                val = new String[][]{};
                 if (stats.getMaxSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getMaxSessionsPerGame()[i] != null) {
-                            val[i][0] = stats.getMaxSessionsPerGame()[i].getFirst() + "";
-                            val[i][1] = stats.getMaxSessionsPerGame()[i].getLast() + "";
+                            vals.put(stats.getMaxSessionsPerGame()[i].getFirst() + "", stats.getMaxSessionsPerGame()[i].getLast() + "");
                         }
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1137,17 +1129,14 @@ public class ControlFrame extends javax.swing.JFrame {
             case 6:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Sessioni Minime per Gioco");
-                colNames = new String[]{"Num. Giocatori", "Sessioni"};
-                val = new String[][]{};
                 if (stats.getMinSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getMinSessionsPerGame()[i] != null) {
-                            val[i][0] = stats.getMinSessionsPerGame()[i].getFirst() + "";
-                            val[i][1] = stats.getMinSessionsPerGame()[i].getLast() + "";
+                            vals.put(stats.getMinSessionsPerGame()[i].getFirst() + "", stats.getMinSessionsPerGame()[i].getLast() + "");
                         }
                     }
                 }
-                statsTable = new JTable(val, colNames);
+                statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1345,6 +1334,12 @@ public class ControlFrame extends javax.swing.JFrame {
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
             }
+        }
+    }
+
+    public void shutdownServer() {
+        if (this.clientGame != null) {
+            this.clientGame.shutdownServer();
         }
     }
 

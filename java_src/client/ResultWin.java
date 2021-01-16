@@ -10,6 +10,9 @@ import entity.UserData;
 import entity.WordData;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -58,6 +62,7 @@ public class ResultWin extends javax.swing.JDialog {
         this.gameName = gameName;
         this.loggedUser = parLoggedUser;
         this.jLabelGameName_result.setText("Partita: " + this.gameName);
+        this.btn_result_pass.setEnabled(true);
     }
 
     /**
@@ -366,31 +371,74 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_result_verifyWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_verifyWordActionPerformed
 
-        Term def;
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                final Term def;
+                int rowIndex = jTable_result.getSelectedRow();
+                if (rowIndex == -1) {
+                    showMessageDialog(null, "Selezionare una riga!");
+                    return;
+                }
+                try {
+                    def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
+                    if (def == null) {
+                        showMessageDialog(null, "Definizione non trovata");
+                    } else {
+                        showMessageDialog(null, def.toString());
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
 
-        int rowIndex = this.jTable_result.getSelectedRow();
-        if (rowIndex == -1) {
-            showMessageDialog(null, "Selezionare una riga!");
-            return;
-        }
-        try {
-            def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
-            if(def == null)
-                showMessageDialog(null, "Definizione non trovata");
-            else
-                showMessageDialog(null, def.toString());
-        } catch (RemoteException ex) {
-            Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_btn_result_verifyWordActionPerformed
 
     private void jTable_resultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_resultMouseClicked
-        // TODO add your handling code here:
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (evt.getClickCount() == 2) {
+                    int row = jTable_result.getSelectedRow();
+                    if ((wordCheckedFound != null) && (!wordCheckedFound.isEmpty())) {
 
+                        for (Map.Entry<String, List<WordData>> mapEntry : wordCheckedFound.entrySet()) {
+                            if (mapEntry != null) {
+                                for (WordData listEntry : mapEntry.getValue()) {
+                                    String checkval = jTable_result.getValueAt(row, 1) + "";
+                                    checkval = checkval.trim();
+
+                                    if (listEntry.getWord().equals(checkval)) {
+                                        String minimunLetter = "No";
+                                        String isDuplicate = "No";
+                                        String inDictionary = "No";
+                                        String inGrid = "No";
+                                        if (listEntry.minimunLetter()) {
+                                            minimunLetter = "Si";
+                                        }
+                                        if (listEntry.isDuplicate()) {
+                                            isDuplicate = "Si";
+                                        }
+                                        if (listEntry.inDictionary()) {
+                                            inDictionary = "Si";
+                                        }
+                                        if (listEntry.inGrid()) {
+                                            inGrid = "Si";
+                                        }
+                                        showMessageDialog(null, "Duplicata: " + isDuplicate + "\nLunghezza Sufficente: " + minimunLetter + "\nNel dizionario: " + inDictionary + "\nNella Griglia: " + inGrid);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }//GEN-LAST:event_jTable_resultMouseClicked
 
     private void btn_result_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_passActionPerformed
         try {
+            this.btn_result_pass.setEnabled(false);
             gameStub.ready();
         } catch (RemoteException ex) {
             Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);

@@ -477,7 +477,7 @@ public class GameWin extends javax.swing.JDialog {
         } catch (RemoteException ex) {
             Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_btn_game_leaveActionPerformed
 
     //UTILITY

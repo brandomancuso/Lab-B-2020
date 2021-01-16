@@ -56,7 +56,7 @@ public class Session {
      * @param timerThread the timer thread
      */
     
-    public void startRealGame(Thread timerThread)
+    public boolean startRealGame(Thread timerThread)
     {
         observerClientSet.forEach((key,value)->{
             try {
@@ -75,14 +75,17 @@ public class Session {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
             System.err.println(ex);
+            return true;//when the method forcedExit is call then the game is interupted
         }
+        
+        return false;
     }
     
     /**
      * check the wordfound and send the result to the game client player
      * @param timerThread the timer thread
      */
-    public void startAfterGame(Thread timerThread)
+    public boolean startAfterGame(Thread timerThread)
     {
         //checkword
         observerClientSet.forEach((key,value)->
@@ -128,9 +131,10 @@ public class Session {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
             System.err.println(ex);
-            System.exit(0);//when the method forcedExit is call then the game is interupted
+            return true;//when the method forcedExit is call then the game is interupted
         }
         
+       return false;
     }
     
     /**
@@ -156,45 +160,59 @@ public class Session {
     private void checkWord(String nickname,List<String> wordFoundList)
     {
        WordData wordTmp;
+       
+       wordFoundList =removeDuplicated(wordFoundList);
+       
        //TO-DO:if the wordFoundList is null set a empty result
        for (String wordFound : wordFoundList)
        {
             wordTmp = new WordData();
             wordFound=wordFound.trim();//to avoid space
             wordFound=wordFound.toLowerCase();//to avoid problem with the dictionary
-            if(!wordsMatrix.isAllowed(wordFound.toUpperCase()))//To be comparable with UpperCase inside the matrix
+            wordTmp.setInGrid(wordsMatrix.isAllowed(wordFound.toUpperCase()));
+            wordTmp.setDuplicate(false);
+            wordTmp.setInDictionary(dictionary.exists(wordFound));
+            
+             if (calculateScore(wordFound)!= 0)//at least with 3 letter
              {
-                 wordTmp.setPoints(calculateScore(wordFound));
-                 wordTmp.setRealPoints(0);
-                 wordTmp.setCorrect(false);
-             }
-              else
-                if (!dictionary.exists(wordFound))
-                    {
-                         wordTmp.setPoints(calculateScore(wordFound));
-                         wordTmp.setRealPoints(0);
-                         wordTmp.setCorrect(false);
-                    }
-                 else
-                     if(isDuplicated(nickname,wordFound))
-                         {
+                wordTmp.setMinimunLetter(true);
+                if(!wordsMatrix.isAllowed(wordFound.toUpperCase()))//To be comparable with UpperCase inside the matrix
+                 {
+                     wordTmp.setPoints(calculateScore(wordFound));
+                     wordTmp.setRealPoints(0);
+                     wordTmp.setCorrect(false);
+                 }
+                  else
+                    if (!dictionary.exists(wordFound))
+                        {
                              wordTmp.setPoints(calculateScore(wordFound));
                              wordTmp.setRealPoints(0);
-                             wordTmp.setCorrect(true);
-                             wordTmp.setDuplicate(true);
-                         }
-                      else
-                         {
-                             wordTmp.setRealPoints(calculateScore(wordFound));
-                             wordTmp.setPoints(calculateScore(wordFound));  
-                             wordTmp.setCorrect(true);
-                         }
+                             wordTmp.setCorrect(false);
+                        }
+                     else
+                         if(isDuplicated(wordFound))
+                             {
+                                 wordTmp.setPoints(calculateScore(wordFound));
+                                 wordTmp.setRealPoints(0);
+                                 wordTmp.setCorrect(true);
+                                 wordTmp.setDuplicate(true);
+                             }
+                          else
+                             {
+                                 wordTmp.setRealPoints(calculateScore(wordFound));
+                                 wordTmp.setPoints(calculateScore(wordFound));  
+                                 wordTmp.setCorrect(true);
+                             }
+             }
+             else
+                 wordTmp.setMinimunLetter(false);
+             wordTmp.setDuplicate(isDuplicated(wordFound));
              wordTmp.setWord(wordFound);
              sessionData.addFoundWord(nickname, wordTmp);   
        }
     }   
     
-    private boolean isDuplicated (String nickname,String wordFound)
+    private boolean isDuplicated (String wordFound)
     {
         //TO-DO:if a word is duplicated by the same person
         List<WordData> wordFoundList=sessionData.getFoundWords().values().parallelStream().flatMap(Collection::stream).collect(Collectors.toList());//i will take all the word (This allows us to flatten the nested Stream structure and eventually collect all elements to a particular collection) 
@@ -203,7 +221,11 @@ public class Session {
             return false;
         else
         {
-            wordFoundMatched.parallelStream().forEach(word -> word.setRealPoints(0));
+            wordFoundMatched.parallelStream().forEach(word ->
+            {
+                word.setRealPoints(0);
+                word.setDuplicate(true);
+            });
             return true;
         }
     }
@@ -213,6 +235,10 @@ public class Session {
          //calculate the score
         switch(word.length())
         {
+            case 1:
+            case 2:
+                return 0;
+                
             case 3:
             case 4:    
                 return 1;
@@ -245,5 +271,10 @@ public class Session {
             }
          }
         return pointPlayer;
+    }
+    
+    private List<String> removeDuplicated (List<String> foundWordList)
+    {
+        return foundWordList.parallelStream().distinct().collect(Collectors.toList());
     }
 }
