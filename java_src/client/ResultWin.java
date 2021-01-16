@@ -10,6 +10,9 @@ import entity.UserData;
 import entity.WordData;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -391,8 +395,45 @@ public class ResultWin extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_result_verifyWordActionPerformed
 
     private void jTable_resultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_resultMouseClicked
-        // TODO add your handling code here:
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (evt.getClickCount() == 2) {
+                    int row = jTable_result.getSelectedRow();
+                    if ((wordCheckedFound != null) && (!wordCheckedFound.isEmpty())) {
 
+                        for (Map.Entry<String, List<WordData>> mapEntry : wordCheckedFound.entrySet()) {
+                            if (mapEntry != null) {
+                                for (WordData listEntry : mapEntry.getValue()) {
+                                    String checkval = jTable_result.getValueAt(row, 1) + "";
+                                    checkval = checkval.trim();
+
+                                    if (listEntry.getWord().equals(checkval)) {
+                                        String isCorrect = "No";
+                                        String isDuplicate = "No";
+                                        String inDictionary = "No";
+                                        String inGrid = "No";
+                                        if (listEntry.isCorrect()) {
+                                            isCorrect = "Si";
+                                        }
+                                        if (listEntry.isDuplicate()) {
+                                            isDuplicate = "Si";
+                                        }
+                                        if (listEntry.inDictionary()) {
+                                            inDictionary = "Si";
+                                        }
+                                        if (listEntry.inGrid()) {
+                                            inGrid = "Si";
+                                        }
+                                        showMessageDialog(null, "Duplicata: " + isDuplicate + "\nValida: " + isCorrect + "\nNel dizionario: " + inDictionary + "\nNella Griglia: " + inGrid);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }//GEN-LAST:event_jTable_resultMouseClicked
 
     private void btn_result_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_passActionPerformed
