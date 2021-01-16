@@ -64,14 +64,17 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public boolean recoverPassword(String email) throws RemoteException {
         String tempPsw = generatePassword();
-        
         UserData user = dbReference.getUserByEmail(email);
-        
-        user.setPassword(CryptMD5.crypt(tempPsw));
-        dbReference.updateUser(user, user.getNickname());
-        GUI.stampEvent(email + " ha richisto il recupero psw");
-        new Thread(new EmailSender(email, tempPsw, 2)).start();
-        return true;
+        if (user != null) {
+            user.setPassword(CryptMD5.crypt(tempPsw));
+            dbReference.updateUser(user, user.getNickname());
+            GUI.stampEvent(email + " ha richisto il recupero psw");
+            new Thread(new EmailSender(email, tempPsw, 2)).start();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
