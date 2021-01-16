@@ -253,6 +253,8 @@ public class Game extends Thread implements ServerGameStub {
      * @param nickname who abandoned
      */
     public void forcedExit(String nickname) {
+        timerThread.interrupt();//interrupt the timer beacause of game ending
+        persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
         List<String> tmpNickname=new ArrayList<>();
         tmpNickname.add(nickname);//this is the nickname who abandoned
         if (!boolNextRound)

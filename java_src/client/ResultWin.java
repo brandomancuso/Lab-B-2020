@@ -408,12 +408,12 @@ public class ResultWin extends javax.swing.JDialog {
                                     checkval = checkval.trim();
 
                                     if (listEntry.getWord().equals(checkval)) {
-                                        String isCorrect = "No";
+                                        String minimunLetter = "No";
                                         String isDuplicate = "No";
                                         String inDictionary = "No";
                                         String inGrid = "No";
-                                        if (listEntry.isCorrect()) {
-                                            isCorrect = "Si";
+                                        if (listEntry.minimunLetter()) {
+                                            minimunLetter = "Si";
                                         }
                                         if (listEntry.isDuplicate()) {
                                             isDuplicate = "Si";
@@ -424,7 +424,7 @@ public class ResultWin extends javax.swing.JDialog {
                                         if (listEntry.inGrid()) {
                                             inGrid = "Si";
                                         }
-                                        showMessageDialog(null, "Duplicata: " + isDuplicate + "\nValida: " + isCorrect + "\nNel dizionario: " + inDictionary + "\nNella Griglia: " + inGrid);
+                                        showMessageDialog(null, "Duplicata: " + isDuplicate + "\nLunghezza Sufficente: " + minimunLetter + "\nNel dizionario: " + inDictionary + "\nNella Griglia: " + inGrid);
                                         return;
                                     }
                                 }

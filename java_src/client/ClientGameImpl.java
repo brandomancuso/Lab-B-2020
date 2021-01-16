@@ -180,7 +180,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 String nickName = "";
                 int length = nickNames.size();
                 
-                if(nickNames != null)
+                if(nickNames.get(0)!=null)
                 {
                     while (!nickNames.isEmpty()) {
                         if (gameState == 5 && nickNames.size()==1)

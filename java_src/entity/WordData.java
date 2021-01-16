@@ -10,8 +10,9 @@ public class WordData implements Serializable {
     private int realPoints;
     private boolean correct;
     private boolean duplicate;
-    private boolean inDictionary = true;
-    private boolean inGrid = true;
+    private boolean inDictionary;
+    private boolean inGrid;
+    private boolean minimunLetter;
 
     private static final long serialVersionUID = 1L;
 
@@ -61,6 +62,14 @@ public class WordData implements Serializable {
 
     public void setInGrid(boolean inGrid) {
         this.inGrid = inGrid;
+    }
+    
+    public boolean minimunLetter() {
+        return minimunLetter;
+    }
+
+    public void setMinimunLetter(boolean minimunLetter) {
+        this.minimunLetter=minimunLetter;
     }
 
     public Integer getId() {
