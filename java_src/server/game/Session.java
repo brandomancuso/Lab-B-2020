@@ -56,7 +56,7 @@ public class Session {
      * @param timerThread the timer thread
      */
     
-    public void startRealGame(Thread timerThread)
+    public boolean startRealGame(Thread timerThread)
     {
         observerClientSet.forEach((key,value)->{
             try {
@@ -75,14 +75,17 @@ public class Session {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
             System.err.println(ex);
+            return true;//when the method forcedExit is call then the game is interupted
         }
+        
+        return false;
     }
     
     /**
      * check the wordfound and send the result to the game client player
      * @param timerThread the timer thread
      */
-    public void startAfterGame(Thread timerThread)
+    public boolean startAfterGame(Thread timerThread)
     {
         //checkword
         observerClientSet.forEach((key,value)->
@@ -128,9 +131,10 @@ public class Session {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
             System.err.println(ex);
-            System.exit(0);//when the method forcedExit is call then the game is interupted
+            return true;//when the method forcedExit is call then the game is interupted
         }
         
+       return false;
     }
     
     /**

@@ -13,6 +13,7 @@ public interface ClientGameStub extends Remote{
     static final int RESULT = 2;//transito in schermata risultati sessione
     static final int WIN = 3;//transito schermata vincitori
     static final int ABANDONED = 4;//transito nello stato abbandonato se qualche altro giocatore abbandona al posto mio
+    static final int ABANDONED_WINNER = 5;//transito nello stato abbandonato se qualche altro giocatore abbandona al posto mio
     
     
     List<String> getWords() throws RemoteException;//tutte le parole trovate dall'utente --> lista 

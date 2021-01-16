@@ -38,6 +38,7 @@ public class Game extends Thread implements ServerGameStub {
     private Session currentSession;
     private List<Pair<String,Integer>> winners;
     private final int WINNING_POINT = 1;
+    private int numberSession;//in order to count the number of sessions
 
     public Game(GameData gameData, String hostNickname, ClientGameStub clientGameStub, ServerServiceImpl serverServiceImpl, Database dbReDatabase) {
         this.gameData = gameData;
@@ -49,6 +50,7 @@ public class Game extends Thread implements ServerGameStub {
         boolNextRound = true;//i assume that there might be a little succesful at the end of the first round
         isLobbyState = true;//at creation the game is in lobby state
         playerReadyNextRound = 0;
+        numberSession=1;
         observerClientSet.put(hostNickname, new ObserverClient(hostNickname, clientGameStub, this, timer));
         gameData.addPlayer(hostNickname);
         this.serverServiceImpl = serverServiceImpl;
@@ -71,15 +73,14 @@ public class Game extends Thread implements ServerGameStub {
     public void run()
     {
         try {
-            Thread.sleep(1000);//to wait for all client they have the gamestub
+            Thread.sleep(500);//to wait for all client they have the gamestub
         } catch (InterruptedException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int i=0;//in order to count the number of sessions
+        
         do
         {
-            i++;//the counter for the session
-            currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,i,this);
+            currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,numberSession,this);
             if(isLobbyState)
             {
                 gameData.addSession(currentSession.getSessionData());
@@ -100,33 +101,30 @@ public class Game extends Thread implements ServerGameStub {
             }
             
             timer.setTime(70);
-            currentSession.startRealGame(timerThread = new Thread(timer));
+            if(currentSession.startRealGame(timerThread = new Thread(timer))) 
+                return;//to kill the thread
+            
+            numberSession++;//the counter for the session
+            
             timer.setTime(100);
-            currentSession.startAfterGame(timerThread = new Thread(timer));
-            //to save the results of the all sessions and set the winners
+            if(currentSession.startAfterGame(timerThread = new Thread(timer)))
+                return;//to kill the thread
+            
             //check if another session has to be started          
             findWinner();
         }while (boolNextRound);
         
-        //i need only a list of string for the winner
-        List<String> winnerNickname=new ArrayList<>(); 
-        for(Pair<String,Integer> winner : winners)
-        {
-            winnerNickname.add(winner.getFirst());//TO:do check better these instructions
-        }      
-        
-        //transit the client to the winner state and send the winners with notifyInfoGame()
+        //transit every client to winner state
         observerClientSet.forEach((key, value) -> {
             try {
                 value.getClientGameStub().changeGameState(3);
-                value.getClientGameStub().notifyInfoGame(winnerNickname);
             } catch (RemoteException ex) {
-                System.err.println(ex);
-                observerClientSet.remove(key);
-                forcedExit(value.getNickname());//when a client isn't reacheable any more
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         
+        //send info winner to the client
+        sendWinner();
         
         //save the game
         saveGame();         
@@ -204,6 +202,27 @@ public class Game extends Thread implements ServerGameStub {
         //i remove all the players with less than the maximun player score inside this list, founding the real winners
         winners= winners.parallelStream().filter(winner-> winner.getLast().equals(winners.get(0).getLast())).collect(Collectors.toList());
     }
+    
+    private void sendWinner()
+    {
+        //i need only a list of string for the winner
+        List<String> winnerNickname=new ArrayList<>(); 
+        for(Pair<String,Integer> winner : winners)
+        {
+            winnerNickname.add(winner.getFirst());//TO:do check better these instructions
+        }      
+        
+        //send the winners with notifyInfoGame()
+        observerClientSet.forEach((key, value) -> {
+            try {
+                value.getClientGameStub().notifyInfoGame(winnerNickname);
+            } catch (RemoteException ex) {
+                System.err.println(ex);
+                observerClientSet.remove(key);
+                forcedExit(value.getNickname());//when a client isn't reacheable any more
+            }
+        });
+    }
 
 //public methods for the game 
     
@@ -234,14 +253,24 @@ public class Game extends Thread implements ServerGameStub {
      * @param nickname who abandoned
      */
     public void forcedExit(String nickname) {
-        timerThread.interrupt();//interrupt the timer beacause of game ending
-        persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
-        boolNextRound = false;
+        List<String> tmpNickname=new ArrayList<>();
+        tmpNickname.add(nickname);//this is the nickname who abandoned
+        if (!boolNextRound)
+        {
+            for(Pair<String,Integer> winner : winners)
+            {
+                tmpNickname.add(winner.getFirst());//TO:do check better these instructions
+            }    
+        }
 
         observerClientSet.forEach((key, value) -> {
             try {
-                value.getClientGameStub().changeGameState(4);//change into abandoned state
-                value.getClientGameStub().notifyInfoGame(Arrays.asList(nickname));
+                if (!boolNextRound)
+                    value.getClientGameStub().changeGameState(5);//change into abandoned state but with a winner
+                else
+                    value.getClientGameStub().changeGameState(4);//change into abandoned state
+                
+                value.getClientGameStub().notifyInfoGame(tmpNickname);
             } catch (RemoteException ex) {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -345,8 +374,15 @@ public class Game extends Thread implements ServerGameStub {
             RemovePartecipant(nickname);
         else
         {
-           //i have to save the game here because the standard execution of the game will be interupted
-           saveGame();
+           timerThread.interrupt();//interrupt the timer beacause of game ending
+           persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
+           //i have to save the game here because the standard execution of the game will be interupted (if there is at least a session played) and send the winner
+           if (numberSession > 1)
+           {
+                findWinner();
+                saveGame();
+           }
+           
            forcedExit(nickname);
         }
     }

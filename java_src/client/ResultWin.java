@@ -406,8 +406,6 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_game_leave_resultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_game_leave_resultActionPerformed
         try {
-            this.setVisible(false);
-            this.dispose();
             gameStub.leaveGame(this.loggedUser.getNickname());
         } catch (RemoteException ex) {
             Logger.getLogger(ResultWin.class.getName()).log(Level.SEVERE, null, ex);

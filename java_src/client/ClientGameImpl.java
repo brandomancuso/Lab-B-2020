@@ -19,10 +19,10 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     private List<String> lobbyList;
     private int timerValue;
     private int gameState;
-    private Lobby guiLobby;
-    private GameWin guiGame;
+    static private Lobby guiLobby;
+    static private GameWin guiGame;
     private ControlFrame guiMain;
-    private ResultWin guiResult;
+    static private ResultWin guiResult;
     private Map<String, Integer> storePointPlayer;
     private Map<String, List<WordData>> wordCheckedFound;
 
@@ -119,9 +119,23 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiLobby.dispose();
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
-                this.guiGame.dispose();
-                this.guiResult.dispose();
-                this.guiLobby.dispose();
+                new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                                 ClientGameImpl.guiGame.dispose();
+                                 ClientGameImpl.guiLobby.dispose();
+                        }     
+                });
+                break;
+            case 5: 
+              new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                                 ClientGameImpl.guiGame.dispose();
+                                 ClientGameImpl.guiResult.dispose();
+                                 ClientGameImpl.guiLobby.dispose();
+                        }     
+                });
                 break;
         }
     }
@@ -165,20 +179,30 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
             public void run() {
                 String nickName = "";
                 int length = nickNames.size();
-
-                while (!nickNames.isEmpty()) {
-                    nickName = nickNames.get(length - 1) + "  ";
-                    nickNames.remove(length - 1);
-                }
-                if (gameState == 3) {
-                    if (length >= 2) {
-                        showMessageDialog(guiMain, nickName + " hanno vinto !");
-                    } else {
-                        showMessageDialog(guiMain, nickName + " ha vinto !");
+                
+                if(nickNames != null)
+                {
+                    while (!nickNames.isEmpty()) {
+                        if (gameState == 5 && nickNames.size()==1)
+                            break;//to leave the nickname of the player who abandoned the game
+                        nickName = nickNames.get(length - 1) + "  ";
+                        nickNames.remove(length - 1);
                     }
-                }
-                if (gameState == 4) {
-                    showMessageDialog(guiMain, nickName + " ha abbandonato !");
+
+                    if (gameState == 3) {
+                        if (length >= 2) {
+                            showMessageDialog(guiMain, nickName + " hanno vinto !");
+                        } else {
+                            showMessageDialog(guiMain, nickName + " ha vinto !");
+                        }
+                    }
+                    if (gameState == 4) {
+                        showMessageDialog(guiMain, nickName + " ha abbandonato !");
+                    }
+                    
+                    if (gameState == 5) {
+                        showMessageDialog(guiMain, nickNames.get(0) + " ha abbandonato" + " e " + nickName + "ha vinto !");
+                    }
                 }
             }
         });

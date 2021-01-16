@@ -54,6 +54,8 @@ public class WordsMatrix {
 				int select = gen.nextInt(upperBound+1);
 				matrix[i][j] = dices[select];
 				dices[select].roll();
+                                if ((select % 2) == 0)
+                                    dices[select].roll();//to have more random element
 				swap(select, upperBound--);//to exchage the last dice with the one selected in order to shaking
 			}
 		}
