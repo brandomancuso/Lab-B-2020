@@ -119,16 +119,16 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 this.guiLobby.dispose();
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
-                new Thread(new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                                  ClientGameImpl.guiGame.dispose();
                                  ClientGameImpl.guiLobby.dispose();
-                        }     
+                        }    
                 });
                 break;
             case 5: 
-              new Thread(new Runnable() {
+              SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                                  ClientGameImpl.guiGame.dispose();
