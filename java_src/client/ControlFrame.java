@@ -152,11 +152,16 @@ public class ControlFrame extends javax.swing.JFrame {
         jSeparator5 = new javax.swing.JSeparator();
         text_email_profile = new javax.swing.JTextField();
         jSeparator6 = new javax.swing.JSeparator();
-        text_password_profile = new javax.swing.JPasswordField();
+        text_oldPassword_profile = new javax.swing.JPasswordField();
         jSeparator7 = new javax.swing.JSeparator();
-        text_repeatPassword_profile = new javax.swing.JPasswordField();
+        text_newPassword_profile = new javax.swing.JPasswordField();
         jSeparator8 = new javax.swing.JSeparator();
         btn_save_profile = new javax.swing.JButton();
+        text_repeatPassword_profile = new javax.swing.JPasswordField();
+        jSeparator10 = new javax.swing.JSeparator();
+        jlabel_profile_newPsw = new javax.swing.JLabel();
+        jLabel_profile_oldPsw = new javax.swing.JLabel();
+        jlabel_profile_repeatNewPsw = new javax.swing.JLabel();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -708,6 +713,7 @@ public class ControlFrame extends javax.swing.JFrame {
         text_email_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         text_email_profile.setText("Email");
         text_email_profile.setBorder(null);
+        text_email_profile.setEnabled(false);
         text_email_profile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 text_email_profileMouseClicked(evt);
@@ -716,23 +722,23 @@ public class ControlFrame extends javax.swing.JFrame {
 
         jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
 
-        text_password_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_password_profile.setText("password");
-        text_password_profile.setBorder(null);
-        text_password_profile.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                text_password_profileMouseClicked(evt);
+        text_oldPassword_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        text_oldPassword_profile.setText("password");
+        text_oldPassword_profile.setBorder(null);
+        text_oldPassword_profile.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                text_oldPassword_profileKeyTyped(evt);
             }
         });
 
         jSeparator7.setBackground(new java.awt.Color(0, 0, 0));
 
-        text_repeatPassword_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        text_repeatPassword_profile.setText("password");
-        text_repeatPassword_profile.setBorder(null);
-        text_repeatPassword_profile.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                text_repeatPassword_profileMouseClicked(evt);
+        text_newPassword_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        text_newPassword_profile.setText("password");
+        text_newPassword_profile.setBorder(null);
+        text_newPassword_profile.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                text_newPassword_profileKeyTyped(evt);
             }
         });
 
@@ -750,50 +756,85 @@ public class ControlFrame extends javax.swing.JFrame {
             }
         });
 
+        text_repeatPassword_profile.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        text_repeatPassword_profile.setText("password");
+        text_repeatPassword_profile.setBorder(null);
+        text_repeatPassword_profile.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                text_repeatPassword_profileKeyTyped(evt);
+            }
+        });
+
+        jSeparator10.setBackground(new java.awt.Color(0, 0, 0));
+
+        jlabel_profile_newPsw.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
+        jlabel_profile_newPsw.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jlabel_profile_newPsw.setText("Nuova Password:");
+
+        jLabel_profile_oldPsw.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
+        jLabel_profile_oldPsw.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel_profile_oldPsw.setText("Vecchia Password:");
+
+        jlabel_profile_repeatNewPsw.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
+        jlabel_profile_repeatNewPsw.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jlabel_profile_repeatNewPsw.setText("Ripeti Password:");
+
         javax.swing.GroupLayout jPanel_profileLayout = new javax.swing.GroupLayout(jPanel_profile);
         jPanel_profile.setLayout(jPanel_profileLayout);
         jPanel_profileLayout.setHorizontalGroup(
             jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(label_profile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_profileLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_save_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(377, 377, 377))
             .addGroup(jPanel_profileLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
                 .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel_profileLayout.createSequentialGroup()
-                        .addGap(316, 316, 316)
+                        .addGap(37, 37, 37)
+                        .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel_profile_oldPsw, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jlabel_profile_newPsw, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jlabel_profile_repeatNewPsw, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(text_username_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(text_repeatPassword_profile, javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(jSeparator7, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(text_password_profile, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(text_oldPassword_profile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
                                 .addComponent(jSeparator6, javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(text_email_profile, javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(jSeparator5, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(text_username_profile, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(text_surname_profile, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(text_name_profile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 315, Short.MAX_VALUE))
-                    .addComponent(label_profile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(jPanel_profileLayout.createSequentialGroup()
-                .addGap(365, 365, 365)
-                .addComponent(btn_save_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(text_newPassword_profile)
+                                .addComponent(jSeparator8)
+                                .addComponent(text_repeatPassword_profile)
+                                .addComponent(jSeparator10, javax.swing.GroupLayout.Alignment.TRAILING)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel_profileLayout.createSequentialGroup()
+                        .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(text_name_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
+                        .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(text_surname_profile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(49, 49, 49))))
         );
         jPanel_profileLayout.setVerticalGroup(
             jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_profileLayout.createSequentialGroup()
-                .addGap(0, 11, Short.MAX_VALUE)
-                .addComponent(label_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(text_name_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addComponent(text_surname_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(11, 11, 11)
+                .addComponent(label_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(text_name_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(text_surname_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(text_username_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -801,17 +842,27 @@ public class ControlFrame extends javax.swing.JFrame {
                 .addComponent(text_email_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(text_password_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(text_oldPassword_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel_profile_oldPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
+                .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(text_newPassword_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlabel_profile_newPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(text_repeatPassword_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_save_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
+                .addGroup(jPanel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(text_repeatPassword_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlabel_profile_repeatNewPsw, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_save_profile, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         jPanel_main.add(jPanel_profile, "profile");
@@ -888,6 +939,12 @@ public class ControlFrame extends javax.swing.JFrame {
                     case 2:
                         VerifyUser verify = new VerifyUser(this, true, serviceStub);
                         verify.setVisible(true);
+                        break;
+                    case 3:
+                        showMessageDialog(null, "Utente amministratore!");
+                        break;
+                    case 4:
+                        showMessageDialog(null, "Utente già loggato!");
                         break;
                 }
 
@@ -1162,49 +1219,42 @@ public class ControlFrame extends javax.swing.JFrame {
 
     private void text_email_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_email_profileMouseClicked
 
-        this.btn_save_profile.setEnabled(true);
+
     }//GEN-LAST:event_text_email_profileMouseClicked
-
-    private void text_password_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_password_profileMouseClicked
-
-        this.btn_save_profile.setEnabled(true);
-        pswMod = true;
-    }//GEN-LAST:event_text_password_profileMouseClicked
-
-    private void text_repeatPassword_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_repeatPassword_profileMouseClicked
-
-        this.btn_save_profile.setEnabled(true);
-        pswMod = true;
-    }//GEN-LAST:event_text_repeatPassword_profileMouseClicked
 
     private void btn_save_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_profileActionPerformed
 
         UserData updatedUser;
         //CHECK not empty
-        if (GuiUtility.isEmpty(this.text_email_profile) || GuiUtility.isEmpty(this.text_name_profile) || GuiUtility.isEmpty(this.text_surname_profile) || GuiUtility.isEmpty(this.text_username_profile) || GuiUtility.isEmpty(this.text_password_profile) || GuiUtility.isEmpty(this.text_repeatPassword_profile)) {
+        if (GuiUtility.isEmpty(this.text_email_profile) || GuiUtility.isEmpty(this.text_name_profile) || GuiUtility.isEmpty(this.text_surname_profile) || GuiUtility.isEmpty(this.text_username_profile)) {
             showMessageDialog(null, "Compilare tutti i campi");
             return;
         }
-        //CHECK email
-        if (GuiUtility.isEmailCorrect(this.text_email_profile.getText()) == false) {
-            showMessageDialog(null, "Formato Email errato");
-            return;
+        if (String.valueOf(this.text_oldPassword_profile.getPassword()).isEmpty() == false || String.valueOf(this.text_newPassword_profile.getPassword()).isEmpty() == false || String.valueOf(this.text_repeatPassword_profile.getPassword()).isEmpty() == false) {
+            if (CryptMD5.crypt(String.valueOf(this.text_oldPassword_profile.getPassword())).equals(this.loggedUser.getPassword()) == false) {
+                showMessageDialog(null, "Vecchia password errata");
+                return;
+            }
+            //CHECK psw = repeatPsw
+            if (GuiUtility.isPasswordMatching(this.text_newPassword_profile, text_repeatPassword_profile) == false) {
+                showMessageDialog(null, "Le nuove password non coincidono");
+                return;
+            }
+            pswMod = true;
         }
-        //CHECK psw = repeatPsw
-        if (GuiUtility.isPasswordMatching(this.text_password_profile, this.text_password_profile) == false) {
-            showMessageDialog(null, "Le password non coincidono");
-            return;
-        }
+
         //SET new profile data
         updatedUser = new UserData();
         updatedUser.setEmail(this.text_email_profile.getText());
         updatedUser.setFirstName(this.text_name_profile.getText());
         updatedUser.setLastName(this.text_surname_profile.getText());
         updatedUser.setNickname(this.text_username_profile.getText());
-
         updatedUser.setActivationCode("12345678");
+        updatedUser.setAdmin(false);
+        updatedUser.setActive(true);
+
         if (pswMod) {
-            updatedUser.setPassword(CryptMD5.crypt(String.valueOf(this.text_password_profile.getPassword())));
+            updatedUser.setPassword(CryptMD5.crypt(String.valueOf(this.text_newPassword_profile.getPassword())));
             pswMod = false;
         } else {
             updatedUser.setPassword(loggedUser.getPassword());
@@ -1250,13 +1300,29 @@ public class ControlFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_combo_statsItemStateChanged
 
+    private void text_oldPassword_profileKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_text_oldPassword_profileKeyTyped
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_oldPassword_profileKeyTyped
+
+    private void text_newPassword_profileKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_text_newPassword_profileKeyTyped
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_newPassword_profileKeyTyped
+
+    private void text_repeatPassword_profileKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_text_repeatPassword_profileKeyTyped
+        // TODO add your handling code here:
+        this.btn_save_profile.setEnabled(true);
+    }//GEN-LAST:event_text_repeatPassword_profileKeyTyped
+
     private void fillUserProfileData(UserData user) {
         text_email_profile.setText(user.getEmail());
         text_name_profile.setText(user.getFirstName());
         text_surname_profile.setText(user.getLastName());
         text_username_profile.setText(user.getNickname());
-        text_password_profile.setText(user.getPassword());
-        text_repeatPassword_profile.setText(user.getPassword());
+        text_oldPassword_profile.setText("");
+        text_newPassword_profile.setText("");
+        text_repeatPassword_profile.setText("");
     }
 
     private void fillBasicStats(StatsData stats) {
@@ -1397,6 +1463,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel_profile_oldPsw;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel_home;
     private javax.swing.JPanel jPanel_login;
@@ -1408,6 +1475,7 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator10;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
@@ -1418,6 +1486,8 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator9;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTableGameList;
+    private javax.swing.JLabel jlabel_profile_newPsw;
+    private javax.swing.JLabel jlabel_profile_repeatNewPsw;
     private javax.swing.JLabel label_home_activeGames;
     private javax.swing.JLabel label_home_createGame;
     private javax.swing.JLabel label_profile;
@@ -1435,8 +1505,9 @@ public class ControlFrame extends javax.swing.JFrame {
     private javax.swing.JTextField text_email_profile;
     private javax.swing.JTextField text_gameName_home;
     private javax.swing.JTextField text_name_profile;
+    private javax.swing.JPasswordField text_newPassword_profile;
+    private javax.swing.JPasswordField text_oldPassword_profile;
     private javax.swing.JPasswordField text_password_login;
-    private javax.swing.JPasswordField text_password_profile;
     private javax.swing.JPasswordField text_repeatPassword_profile;
     private javax.swing.JTextField text_surname_profile;
     private javax.swing.JTextField text_username_profile;

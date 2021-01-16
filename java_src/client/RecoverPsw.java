@@ -164,7 +164,7 @@ public class RecoverPsw extends javax.swing.JDialog {
             this.setVisible(false);
             this.dispose();
         } else {
-            showMessageDialog(null, "Si è verificato un errore....");
+            showMessageDialog(null, "Email inserita non esistente...");
         }
     }//GEN-LAST:event_btn_recoverPswActionPerformed
 

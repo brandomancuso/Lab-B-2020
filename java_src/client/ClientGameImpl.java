@@ -97,12 +97,19 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         this.gameState = gameState;
         switch (gameState) {
             case 0: //waiting --> blocco il bottone leave e parte il timer
-                this.guiLobby.disableLeaveBtn();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        guiLobby.disableLeaveBtn();
+                    }
+                });
+
                 break;
             case 1: //session --> apro finestra di gioco
                 if (this.guiResult != null) {
                     this.guiResult.setVisible(false);
                 }
+                this.guiLobby.setVisible(false);
                 this.guiLobby.openGameWindow();
                 this.guiGame.fillScoreTable();
                 break;
@@ -120,21 +127,21 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 break;
             case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
                 SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                                 ClientGameImpl.guiGame.dispose();
-                                 ClientGameImpl.guiLobby.dispose();
-                        }    
+                    @Override
+                    public void run() {
+                        ClientGameImpl.guiGame.dispose();
+                        ClientGameImpl.guiLobby.dispose();
+                    }
                 });
                 break;
-            case 5: 
-              SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                                 ClientGameImpl.guiGame.dispose();
-                                 ClientGameImpl.guiResult.dispose();
-                                 ClientGameImpl.guiLobby.dispose();
-                        }     
+            case 5:
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ClientGameImpl.guiGame.dispose();
+                        ClientGameImpl.guiResult.dispose();
+                        ClientGameImpl.guiLobby.dispose();
+                    }
                 });
                 break;
         }
@@ -179,12 +186,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
             public void run() {
                 String nickName = "";
                 int length = nickNames.size();
-                
-                if(nickNames.get(0)!=null)
-                {
+
+                if (nickNames.get(0) != null) {
                     while (!nickNames.isEmpty()) {
-                        if (gameState == 5 && nickNames.size()==1)
+                        if (gameState == 5 && nickNames.size() == 1) {
                             break;//to leave the nickname of the player who abandoned the game
+                        }
                         nickName = nickNames.get(length - 1) + "  ";
                         nickNames.remove(length - 1);
                     }
@@ -199,7 +206,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                     if (gameState == 4) {
                         showMessageDialog(guiMain, nickName + " ha abbandonato !");
                     }
-                    
+
                     if (gameState == 5) {
                         showMessageDialog(guiMain, nickNames.get(0) + " ha abbandonato" + " e " + nickName + "ha vinto !");
                     }

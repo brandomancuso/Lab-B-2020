@@ -424,6 +424,7 @@ public class ResultWin extends javax.swing.JDialog {
                                         if (listEntry.inGrid()) {
                                             inGrid = "Si";
                                         }
+                                        
                                         showMessageDialog(null, "Duplicata: " + isDuplicate + "\nLunghezza Sufficente: " + minimunLetter + "\nNel dizionario: " + inDictionary + "\nNella Griglia: " + inGrid);
                                         return;
                                     }
