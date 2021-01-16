@@ -169,9 +169,15 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if (dbResult.getFirst() != null) {
             if(!dbResult.getFirst().isAdmin()){
                 if(dbResult.getFirst().getActive()){
-                    loginResult = new Pair<>(null, dbResult.getFirst());
-                    usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
-                    GUI.stampEvent(dbResult.getFirst().getNickname() + " ha effettuato il login");
+                    if(usersList.get(dbResult.getFirst().getNickname()) == null){
+                        loginResult = new Pair<>(null, dbResult.getFirst());
+                        usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+                        GUI.stampEvent(dbResult.getFirst().getNickname() + " ha effettuato il login");
+                    }
+                    else{
+                        //Utente già loggato
+                        loginResult = new Pair<>(4, null);
+                    }
                 }
                 else{
                     //Utente non verificato
@@ -187,9 +193,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             int controlCode = dbResult.getLast();
             loginResult = new Pair<>(controlCode, null);
         }
-        //to update the user about the stats
-        //this.setChanged();
-        //this.notifyObservers(true);
         return loginResult;
     }
     
