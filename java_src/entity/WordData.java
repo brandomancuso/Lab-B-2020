@@ -10,8 +10,8 @@ public class WordData implements Serializable {
     private int realPoints;
     private boolean correct;
     private boolean duplicate;
-    private boolean inDictionary;
-    private boolean inGrid;
+    private boolean inDictionary = true;
+    private boolean inGrid = true;
 
     private static final long serialVersionUID = 1L;
 
