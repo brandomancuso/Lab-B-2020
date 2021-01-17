@@ -24,7 +24,7 @@ public class AccountDeleter extends TimerTask{
     
     /**
      * Operazioni per cancellare l'utente dal database
-     * @see @see java.util.TimerTask#run() 
+     * @see java.util.TimerTask#run() 
      */
     @Override
     public void run() {

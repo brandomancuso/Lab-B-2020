@@ -35,7 +35,6 @@ public class EmailSender implements Runnable{
      * Costruttore della classe
      * @param dest Email dell'utente a cui spedire la mail
      * @param content Contenuto della mail
-     * @param nickname Nickname dell'utente a cui spedire la mail
      * @param mailType Tipologia della mail da spedire. <p> 1 - mail di verifica. 2 - mail per reset password.
      */
     public EmailSender(String dest, String content, int mailType){
