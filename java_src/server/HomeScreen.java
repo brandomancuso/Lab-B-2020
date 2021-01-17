@@ -102,7 +102,8 @@ public class HomeScreen extends JFrame implements ActionListener{
         exitButton = new JButton();
         jScrollPane2 = new JScrollPane();
         serverOutput = new JTextArea();
-
+        
+        this.setUndecorated(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(54, 150, 155));
