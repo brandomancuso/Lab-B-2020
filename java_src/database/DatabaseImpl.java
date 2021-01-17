@@ -533,6 +533,7 @@ public class DatabaseImpl implements Database{
                 if(stored == null) {
                     stored = addWordToDb(word);
                 }
+                word.setId(stored.getId());
                 addFindRecord(session_id, player, word);
             }
         }
