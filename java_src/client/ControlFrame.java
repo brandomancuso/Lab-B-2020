@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -1404,8 +1405,16 @@ public class ControlFrame extends javax.swing.JFrame {
     }
 
     public void shutdownServer() {
-        if (this.clientGame != null) {
-            this.clientGame.shutdownServer();
+        int selection = JOptionPane.showConfirmDialog(
+                null,
+                "Il server è stato spento...",
+                "Server Spento",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.ERROR_MESSAGE);
+
+        if (selection == JOptionPane.DEFAULT_OPTION) {
+            // Code to use when OK is PRESSED.
+            System.exit(1);
         }
     }
 

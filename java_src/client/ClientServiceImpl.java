@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 
@@ -68,14 +69,8 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     @Override
     public void shutDownServer() throws RemoteException {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                showMessageDialog(null, "Il server e' stato arrestato....");
-                if (gui != null) {
-                    gui.shutdownServer();
-                }
-            }
-        });
+
+        gui.shutdownServer();
 
     }
 
