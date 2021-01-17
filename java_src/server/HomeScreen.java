@@ -75,6 +75,7 @@ public class HomeScreen extends JFrame implements ActionListener{
         }
         if(event.getSource() == exitButton){
             try{
+                server.closeServer();
                 if(registry.list().length > 0){
                     registry = LocateRegistry.getRegistry(1099);
                     registry.unbind("Il Paroliere");
@@ -84,11 +85,7 @@ public class HomeScreen extends JFrame implements ActionListener{
                 serverOutput.append("Errore! "+ e.getCause() + "\n");
             }
             finally{
-                server.closeServer();
-                ServerMain.showLogin();
-                this.dispose();
-                startButton.setEnabled(true);
-                serverOutput.setText(""); 
+                System.exit(0);
             }
         }
     }
