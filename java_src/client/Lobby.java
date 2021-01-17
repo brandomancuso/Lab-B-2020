@@ -21,7 +21,7 @@ import javax.swing.SwingUtilities;
 import server.game.ServerGameStub;
 
 /**
- *
+ * gestisce la finestra grafica lobby
  * @author Edoardo
  */
 public class Lobby extends javax.swing.JDialog {
@@ -51,14 +51,25 @@ public class Lobby extends javax.swing.JDialog {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * imposta il ServerGameStub
+     * @param serverGameStub 
+     */
     public void setServerGameStub(ServerGameStub serverGameStub) {
         this.gameStub = serverGameStub;
     }
 
+    /**
+     * imposta il nome della partita
+     * @param parName nome della partita
+     */
     public void setGameName(String parName) {
         this.gameName = parName;
     }
 
+    /**
+     * apre la finestra di gioco
+     */
     public void openGameWindow() {
         GameWin guiGame = new GameWin(this, true, this.gameName, this.loggedUser);
         guiGame.setPlayerList(playerNames); //--> lobbylist
@@ -178,6 +189,9 @@ public class Lobby extends javax.swing.JDialog {
 
     }//GEN-LAST:event_btn_leaveActionPerformed
 
+    /**
+     * riempie la lobby con la lista di giocatori
+     */
     public void fillPartecipant() {
         playerNames = this.clientGame.getLobbyList();
         //this.jList_lobby.removeAll();
@@ -186,10 +200,17 @@ public class Lobby extends javax.swing.JDialog {
         this.lobbyListModel.addAll(playerNames);
     }
 
+    /**
+     * aggiorna il valore del timer
+     * @param value valore del timer
+     */
     public void updateTimer(int value) {
         this.jLabel_timer.setText(value + "");
     }
 
+    /**
+     * disabilita e rende invisibile il bottone per uscire dalla lobby
+     */
     public void disableLeaveBtn() {
         this.btn_leave.setEnabled(false);
         this.btn_leave.setVisible(false);

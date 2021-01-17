@@ -14,14 +14,13 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 
 /**
+ * implementazione ClientServiceStub
  *
  * @author Edoardo
  */
 public class ClientServiceImpl extends UnicastRemoteObject implements ClientServiceStub {
 
-    //SINGLETON
     private static ClientServiceImpl csiSingleInstance = null;
-
     private StatsData statsData;
     private List<GameData> gameList;
     private ControlFrame gui;
@@ -44,21 +43,39 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
         return csiSingleInstance;
     }
 
-    //GETTER
+    /**
+     * ritorna oggetto relativo alle statistiche
+     * @return 
+     */
     public synchronized StatsData getStatsData() {
         return statsData;
     }
 
+    /**
+     * ritorna lista di partite
+     * @return 
+     */
     public synchronized List<GameData> getGamesList() {
         return gameList;
     }
 
-    //METHODS
+    /**
+     * aggiornamento delle statistiche nella grafica
+     *
+     * @param data statistiche
+     * @throws RemoteException
+     */
     @Override
     public synchronized void update(StatsData data) throws RemoteException {
         statsData = data;
     }
 
+    /**
+     * aggiornamento delle partite in lista
+     *
+     * @param games lista di partite
+     * @throws RemoteException
+     */
     @Override
     public synchronized void update(List<GameData> games) throws RemoteException {
         gameList = games;
@@ -67,6 +84,11 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     }
 
+    /**
+     * avvisa il client che il server è stato spento e chiude il client
+     *
+     * @throws RemoteException
+     */
     @Override
     public void shutDownServer() throws RemoteException {
         SwingUtilities.invokeLater(new Runnable() {

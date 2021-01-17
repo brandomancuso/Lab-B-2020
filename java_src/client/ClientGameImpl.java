@@ -11,7 +11,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 
 /**
- * Implementation of ClientGameStub
+ * Implementazione di ClientGameStub
+ *
  * @author Edoardo
  */
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
@@ -35,52 +36,106 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     }
 
     /**
-     * sets 
-     * @param parGuiLobby 
+     * setta l'oggetto relativo alla lobby grafica
+     *
+     * @param parGuiLobby
      */
     public void setGuiLobby(Lobby parGuiLobby) {
         guiLobby = parGuiLobby;
     }
 
+    /**
+     * setta l'oggetto relativo alla finestra di gioco grafica
+     *
+     * @param parGuiGame
+     */
     public void setGuiGame(GameWin parGuiGame) {
         guiGame = parGuiGame;
     }
 
+    /**
+     * setta l'oggetto relativo alla finestra principale grafica
+     *
+     * @param parGuiMain
+     */
     public void setGuiMain(ControlFrame parGuiMain) {
         guiMain = parGuiMain;
     }
 
+    /**
+     * setta l'oggetto relativo alla finestra dei risultati grafica
+     *
+     * @param parGuiResult
+     */
     public void setGuiResult(ResultWin parGuiResult) {
         guiResult = parGuiResult;
     }
 
-    
+    /**
+     * ritorna la lista di giocatori in lobby
+     *
+     * @return
+     */
     public synchronized List<String> getLobbyList() {
         return lobbyList;
     }
 
+    /**
+     * ritorna il valore del timer
+     *
+     * @return
+     */
     public synchronized int getTimerValue() {
         return timerValue;
     }
 
+    /**
+     * ritorna lo stato di gioco
+     *
+     * @return
+     */
     public synchronized int getGameState() {
         return gameState;
     }
 
+    /**
+     * ritorna una mappa contenente nomi e punti dei giocatori
+     *
+     * @return
+     */
     public synchronized Map<String, Integer> getStorePointPlayer() {
         return storePointPlayer;
     }
 
+    /**
+     * ritorna una mappa contenente nome giocatore e una lista di parole trovate
+     *
+     * @return
+     */
     public synchronized Map<String, List<WordData>> getWordCheckedFound() {
         return wordCheckedFound;
     }
 
+    /**
+     * ritorna tutte le parole trovate dall'utente
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
     public List<String> getWords() throws RemoteException {
         return guiGame.getPlayerWords();
 
     }
 
+    /**
+     * logica per visualizzare risultati della sessione e invio di una lista di
+     * nickname con relativo punteggio accumulato da n sessioni
+     *
+     * @param wordCheckedFound mappa di nome giocatore e lista di parole
+     * @param pointPlayer mapp di nome giocatore e punteggio
+     * @throws RemoteException
+     */
     @Override
     public void updateSessionResults(Map<String, List<WordData>> wordCheckedFound, Map<String, Integer> pointPlayer) throws RemoteException {
         this.storePointPlayer = pointPlayer;
@@ -94,6 +149,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         }
     }
 
+    /**
+     * logica per passare da uno stato di gioco all'altro
+     *
+     * @param gameState indica lo stato di gioco
+     * @throws RemoteException
+     */
     @Override
     public void changeGameState(int gameState) throws RemoteException {
         this.gameState = gameState;
@@ -149,6 +210,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         }
     }
 
+    /**
+     * logica per aggiornare i valori dei timer di gioco
+     *
+     * @param timerValue valore del timer
+     * @throws RemoteException
+     */
     @Override
     public void updateTimer(int timerValue) throws RemoteException {
         this.timerValue = timerValue;
@@ -169,18 +236,37 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         }
     }
 
+    /**
+     * logica per riempire la griglia grafica e numero della sessione
+     *
+     * @param grid griglia delle parole
+     * @param numSession numero di sessione corrente
+     * @throws RemoteException
+     */
     @Override
     public void updateSessionGame(String[] grid, int numSession) throws RemoteException {
         this.guiGame.setSessionNum(numSession);
         this.guiGame.fillGameGrid(grid);
     }
 
+    /**
+     * aggiorna la lista dei giocatori in lobby
+     *
+     * @param nickNames giocatori in lobby
+     * @throws RemoteException
+     */
     @Override
     public void updateLobby(List<String> nickNames) throws RemoteException {
         lobbyList = nickNames;
         this.guiLobby.fillPartecipant();
     }
 
+    /**
+     * logica per notificare vincitori o disertori
+     *
+     * @param nickNames giocatori
+     * @throws RemoteException
+     */
     @Override
     public void notifyInfoGame(List<String> nickNames) throws RemoteException {
 

@@ -14,7 +14,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import server.ServerServiceStub;
 
 /**
- *
+ * finestra di verifica account
  * @author Edoardo
  */
 public class VerifyUser extends javax.swing.JDialog {

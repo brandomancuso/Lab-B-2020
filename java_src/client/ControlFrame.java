@@ -41,6 +41,7 @@ import utils.CryptMD5;
 import utils.Pair;
 
 /**
+ * finestra grafica principale
  *
  * @author Edoardo
  */
@@ -1086,14 +1087,6 @@ public class ControlFrame extends javax.swing.JFrame {
         verify.setVisible(true);
     }//GEN-LAST:event_label_verifyMouseClicked
 
-    public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
-        DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
-        }
-        return model;
-    }
-
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
 
         StatsData stats = this.clientService.getStatsData();
@@ -1412,7 +1405,24 @@ public class ControlFrame extends javax.swing.JFrame {
         this.stats_label_averageSession.setText(stats_average_session_score);
     }
 
-    //UTILITY
+    /**
+     * trasforma una mappa in un table model corrispondente
+     * @param map mappa contenete i dati
+     * @param colNames nomi delle relative colonne
+     * @return 
+     */
+    public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return model;
+    }
+
+    /**
+     * riempie la tabella di partite
+     * @param parGameList lista di partite
+     */
     public void fillGameTable(List<GameData> parGameList) {
         GuiUtility.clearTable(gameTableModel);
         gameList = parGameList;
@@ -1420,7 +1430,6 @@ public class ControlFrame extends javax.swing.JFrame {
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {
-                //rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
                 rowData[0] = tmp.getName() + " " + tmp.getCreator();
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
@@ -1428,6 +1437,9 @@ public class ControlFrame extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * allo spegnimento del server notifica il client e chiude l'applicazione
+     */
     public void shutdownServer() {
         int selection = JOptionPane.showConfirmDialog(
                 null,
@@ -1437,7 +1449,6 @@ public class ControlFrame extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
 
         if (selection == 0) {
-            // Code to use when OK is PRESSED.
             System.exit(1);
         }
     }

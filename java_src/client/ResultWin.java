@@ -9,12 +9,7 @@ import entity.Term;
 import entity.UserData;
 import entity.WordData;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +18,13 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import server.game.ServerGameStub;
 
 /**
- *
+ * finestra risultati
  * @author Edoardo
  */
 public class ResultWin extends javax.swing.JDialog {
@@ -310,15 +304,27 @@ public class ResultWin extends javax.swing.JDialog {
         this.jScrollPane1.getViewport().setBackground(Color.white);
     }
 
+    /**
+     * imposta il numero della sessione
+     * @param parSession numero di sessione
+     */
     public void setSessionNum(int parSession) {
         this.sessionNum = parSession;
         updateSessionNum();
     }
 
+    /**
+     * imposta il ClientGameStub
+     * @param clientGameImpl 
+     */
     public synchronized void setClientGameStub(ClientGameImpl clientGameImpl) {
         this.clientGame = clientGameImpl;
     }
 
+    /**
+     * imposta il ServerGameStub
+     * @param serverGameStub 
+     */
     public synchronized void setServerGameStub(ServerGameStub serverGameStub) {
         this.gameStub = serverGameStub;
     }
@@ -327,11 +333,17 @@ public class ResultWin extends javax.swing.JDialog {
         this.jLabelGameSession_result.setText("Sessione Corrente: #" + String.valueOf(sessionNum));
     }
 
+    /**
+     * aggiorna la label del timer
+     * @param value 
+     */
     public void updateTimer(int value) {
         this.jLabel_timerValue_result.setText(value + "");
     }
 
-    //UTILITY
+    /**
+     * riempie la tabella dei punteggi
+     */
     public void fillScoreTable() {
         Object rowData[] = new Object[2];
         GuiUtility.clearTable(scoreTableModel);
@@ -347,6 +359,9 @@ public class ResultWin extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * riempie la tabella dei risultati
+     */
     public void fillResultTable() {
         Object rowData[] = new Object[3];
         GuiUtility.clearTable(resultTableModel);
