@@ -69,9 +69,11 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     @Override
     public void shutDownServer() throws RemoteException {
-
-        gui.shutdownServer();
-
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                gui.shutdownServer();
+            }
+        });
     }
 
 }

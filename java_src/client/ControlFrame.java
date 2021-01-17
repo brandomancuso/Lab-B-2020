@@ -460,6 +460,7 @@ public class ControlFrame extends javax.swing.JFrame {
         btn_partecipate_home.setForeground(new java.awt.Color(255, 255, 255));
         btn_partecipate_home.setText("PARTECIPA");
         btn_partecipate_home.setBorder(null);
+        btn_partecipate_home.setEnabled(false);
         btn_partecipate_home.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_partecipate_homeActionPerformed(evt);
@@ -476,6 +477,11 @@ public class ControlFrame extends javax.swing.JFrame {
                 combo_NplayersItemStateChanged(evt);
             }
         });
+        combo_Nplayers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_NplayersActionPerformed(evt);
+            }
+        });
 
         jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane3.setBorder(null);
@@ -489,6 +495,11 @@ public class ControlFrame extends javax.swing.JFrame {
         jTableGameList.setShowVerticalLines(false);
         jTableGameList.getTableHeader().setResizingAllowed(false);
         jTableGameList.getTableHeader().setReorderingAllowed(false);
+        jTableGameList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableGameListMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jTableGameList);
 
         javax.swing.GroupLayout jPanel_homeLayout = new javax.swing.GroupLayout(jPanel_home);
@@ -990,12 +1001,14 @@ public class ControlFrame extends javax.swing.JFrame {
 
         gameList = clientService.getGamesList();
         this.fillGameTable(gameList);
+        this.btn_partecipate_home.setEnabled(false);
         card.show(jPanel_main, "home");
     }//GEN-LAST:event_btn_homeActionPerformed
 
     private void btn_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_statsActionPerformed
 
         card.show(jPanel_main, "stats");
+        this.btn_partecipate_home.setEnabled(false);
         fillBasicStats(this.clientService.getStatsData());
     }//GEN-LAST:event_btn_statsActionPerformed
 
@@ -1003,6 +1016,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
         //fillUserProfileData(loggedUser);
         card.show(jPanel_main, "profile");
+        this.btn_partecipate_home.setEnabled(false);
         fillUserProfileData(loggedUser);
     }//GEN-LAST:event_btn_profileActionPerformed
 
@@ -1316,6 +1330,16 @@ public class ControlFrame extends javax.swing.JFrame {
         this.btn_save_profile.setEnabled(true);
     }//GEN-LAST:event_text_repeatPassword_profileKeyTyped
 
+    private void jTableGameListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGameListMouseClicked
+        // TODO add your handling code here:
+        if (this.jTableGameList.getSelectedRow() != -1)
+            this.btn_partecipate_home.setEnabled(true);
+    }//GEN-LAST:event_jTableGameListMouseClicked
+
+    private void combo_NplayersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_NplayersActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_NplayersActionPerformed
+
     private void fillUserProfileData(UserData user) {
         text_email_profile.setText(user.getEmail());
         text_name_profile.setText(user.getFirstName());
@@ -1412,7 +1436,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.ERROR_MESSAGE);
 
-        if (selection == JOptionPane.DEFAULT_OPTION) {
+        if (selection == 0) {
             // Code to use when OK is PRESSED.
             System.exit(1);
         }
