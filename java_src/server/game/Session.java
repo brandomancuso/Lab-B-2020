@@ -74,7 +74,6 @@ public class Session {
         try {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
-            System.err.println(ex);
             return true;//when the method forcedExit is call then the game is interupted
         }
         
@@ -130,7 +129,6 @@ public class Session {
         try {
             persistentSignal.waitTimer();
         } catch (InterruptedException ex) {
-            System.err.println(ex);
             return true;//when the method forcedExit is call then the game is interupted
         }
         
