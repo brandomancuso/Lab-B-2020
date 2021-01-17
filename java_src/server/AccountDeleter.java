@@ -11,29 +11,29 @@ import java.util.TimerTask;
  * @see java.util.TimerTask
  */
 public class AccountDeleter extends TimerTask{
-    private String nickname;    //nickname dell'utente da eliminare
+    private String email;    //email dell'utente da eliminare
     
     /**
      * Costruttore della classe
-     * @param nickname Nickname dell'utente da eliminare
+     * @param email Email dell'utente da eliminare
      */
-    public AccountDeleter( String nickname){
+    public AccountDeleter(String email){
         super();
-        this.nickname = nickname;
+        this.email = email;
     }
     
     /**
      * Operazioni per cancellare l'utente dal database
-     * @see @see java.util.TimerTask#run() 
+     * @see java.util.TimerTask#run() 
      */
     @Override
     public void run() {
         Database dbReference = DatabaseImpl.getDatabase();
         
-        UserData result = dbReference.getUser(nickname);
+        UserData result = dbReference.getUserByEmail(email);
         
         if(!result.getActive()){
-            dbReference.removeUser(nickname);
+            dbReference.removeUser(result.getNickname());
         }
     }
 }

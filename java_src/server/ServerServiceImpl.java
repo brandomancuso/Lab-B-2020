@@ -64,14 +64,17 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public boolean recoverPassword(String email) throws RemoteException {
         String tempPsw = generatePassword();
-        
         UserData user = dbReference.getUserByEmail(email);
-        
-        user.setPassword(CryptMD5.crypt(tempPsw));
-        dbReference.updateUser(user, user.getNickname());
-        GUI.stampEvent(email + " ha richisto il recupero psw");
-        new Thread(new EmailSender(email, tempPsw, user.getNickname(), 2)).start();
-        return true;
+        if (user != null) {
+            user.setPassword(CryptMD5.crypt(tempPsw));
+            dbReference.updateUser(user, user.getNickname());
+            GUI.stampEvent(email + " ha richisto il recupero psw");
+            new Thread(new EmailSender(email, tempPsw, 2)).start();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
@@ -115,10 +118,10 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
     @Override
     public UserData updateUserData(UserData user, String oldNickname) throws RemoteException {
         UserData updatedUser = dbReference.updateUser(user, oldNickname);
-        /* Controllo vecchia password + aggiornamento nuova con invio email
-        if(updateUser.getPassword().equals(user.getPassword)){
-        new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", user.getNickname(), 3)).start();
-        */
+        
+        if(updatedUser.getPassword().equals(user.getPassword())){
+            new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", 3)).start();
+        }
         usersList.replace(oldNickname, updatedUser);
         
         GUI.stampEvent(oldNickname + "(" + user.getNickname() + ")" + " ha modificato l'account");
@@ -140,7 +143,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
 
         if (updatedNewUser != null) {
             registerResult = true;
-            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), newUser.getNickname(), 1)).start();
+            new Thread(new EmailSender(newUser.getEmail(), newUser.getActivationCode(), 1)).start();
             GUI.stampEvent(updatedNewUser.getNickname() + " registrato");
         } else {
             registerResult = false;
@@ -169,9 +172,15 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if (dbResult.getFirst() != null) {
             if(!dbResult.getFirst().isAdmin()){
                 if(dbResult.getFirst().getActive()){
-                    loginResult = new Pair<>(null, dbResult.getFirst());
-                    usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
-                    GUI.stampEvent(dbResult.getFirst().getNickname() + " ha effettuato il login");
+                    if(usersList.get(dbResult.getFirst().getNickname()) == null){
+                        loginResult = new Pair<>(null, dbResult.getFirst());
+                        usersList.put(dbResult.getFirst().getNickname(), dbResult.getFirst());
+                        GUI.stampEvent(dbResult.getFirst().getNickname() + " ha effettuato il login");
+                    }
+                    else{
+                        //Utente già loggato
+                        loginResult = new Pair<>(4, null);
+                    }
                 }
                 else{
                     //Utente non verificato
@@ -187,9 +196,6 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
             int controlCode = dbResult.getLast();
             loginResult = new Pair<>(controlCode, null);
         }
-        //to update the user about the stats
-        //this.setChanged();
-        //this.notifyObservers(true);
         return loginResult;
     }
     

@@ -29,20 +29,17 @@ public class EmailSender implements Runnable{
     
     private String destinatario;    //Destinatario mail
     private String messageContent;  //Contenuto dinamico della mail
-    private String nick;    //Nickname dell'utente per la cancellazione dell'account
     private int mailType; //1 = codice di verifica  2 = reset password  3 = modifica account
     
     /**
      * Costruttore della classe
      * @param dest Email dell'utente a cui spedire la mail
      * @param content Contenuto della mail
-     * @param nickname Nickname dell'utente a cui spedire la mail
      * @param mailType Tipologia della mail da spedire. <p> 1 - mail di verifica. 2 - mail per reset password.
      */
-    public EmailSender(String dest, String content, String nickname, int mailType){
+    public EmailSender(String dest, String content, int mailType){
         this.destinatario = dest;
         this.messageContent = content;
-        this.nick = nickname;
         this.mailType = mailType;
     }
     
@@ -60,7 +57,7 @@ public class EmailSender implements Runnable{
                     sendEmail(HOST, PASSWORD, destinatario, this.VERIFICATION_OBJECT, emailBody);
                     //TODO Aggiunta Timer di 10 minuti
                     Timer t = new Timer();
-                    AccountDeleter ad = new AccountDeleter(nick);
+                    AccountDeleter ad = new AccountDeleter(this.destinatario);
                     t.schedule(ad, VALIDATION_TIME);
                     break;
                 case 2:
