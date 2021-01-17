@@ -192,6 +192,7 @@ public class Lobby extends javax.swing.JDialog {
 
     public void disableLeaveBtn() {
         this.btn_leave.setEnabled(false);
+        this.btn_leave.setVisible(false);
     }
 
     /**
