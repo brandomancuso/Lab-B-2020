@@ -533,7 +533,7 @@ public class DatabaseImpl implements Database{
                 if(stored == null) {
                     stored = addWordToDb(word);
                 }
-                addFindRecord(session_id, player, stored);
+                addFindRecord(session_id, player, word);
             }
         }
     }
@@ -1095,7 +1095,7 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 num_sessions++;
-                letters = rs.getString(1).split(";");
+                letters = rs.getString(1).split(",");
                 for(String s : letters){
                     Double i = occ.get(s);
                     if(i != null) {
