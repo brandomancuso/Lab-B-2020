@@ -533,7 +533,7 @@ public class DatabaseImpl implements Database{
                 if(stored == null) {
                     stored = addWordToDb(word);
                 }
-                addFindRecord(session_id, player, stored);
+                addFindRecord(session_id, player, word);
             }
         }
     }
