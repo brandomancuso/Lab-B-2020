@@ -1101,7 +1101,7 @@ public class DatabaseImpl implements Database{
                 for(String s : letters){
                     Double i = occ.get(s);
                     if(i != null) {
-                        i++;
+                        occ.put(s, i+1);
                     } else {
                         occ.put(s, 1d);
                     }

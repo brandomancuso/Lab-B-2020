@@ -11,7 +11,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 
 /**
- *
+ * Implementation of ClientGameStub
  * @author Edoardo
  */
 public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStub {
@@ -32,10 +32,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         lobbyList = new ArrayList<String>();
         guiGame = null;
         guiResult = null;
-
     }
 
-    //SETTER
+    /**
+     * sets 
+     * @param parGuiLobby 
+     */
     public void setGuiLobby(Lobby parGuiLobby) {
         guiLobby = parGuiLobby;
     }
@@ -52,7 +54,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
         guiResult = parGuiResult;
     }
 
-    //GETTER
+    
     public synchronized List<String> getLobbyList() {
         return lobbyList;
     }
@@ -213,23 +215,5 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                 }
             }
         });
-
     }
-
-    public void shutdownServer() {
-        if (this.guiResult != null) {
-            this.guiResult.setVisible(false);
-            this.guiResult.dispose();
-        }
-        if (this.guiGame != null) {
-            this.guiGame.setVisible(false);
-            this.guiGame.dispose();
-        }
-        if (this.guiLobby != null) {
-            this.guiLobby.setVisible(false);
-            this.guiLobby.dispose();
-        }
-
-    }
-
 }
