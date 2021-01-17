@@ -39,6 +39,7 @@ public class Game extends Thread implements ServerGameStub {
     private List<Pair<String,Integer>> winners;
     private final int WINNING_POINT = 1;
     private int numberSession;//in order to count the number of sessions
+    private boolean isClosing;
 
     public Game(GameData gameData, String hostNickname, ClientGameStub clientGameStub, ServerServiceImpl serverServiceImpl, Database dbReDatabase) {
         this.gameData = gameData;
@@ -51,6 +52,7 @@ public class Game extends Thread implements ServerGameStub {
         isLobbyState = true;//at creation the game is in lobby state
         playerReadyNextRound = 0;
         numberSession=1;
+        isClosing=false;
         observerClientSet.put(hostNickname, new ObserverClient(hostNickname, clientGameStub, this, timer));
         gameData.addPlayer(hostNickname);
         this.serverServiceImpl = serverServiceImpl;
@@ -100,7 +102,7 @@ public class Game extends Thread implements ServerGameStub {
                 isLobbyState=false;
             }
             
-            timer.setTime(70);
+            timer.setTime(20);
             if(currentSession.startRealGame(timerThread = new Thread(timer))) 
                 return;//to kill the thread
             
@@ -376,16 +378,20 @@ public class Game extends Thread implements ServerGameStub {
             RemovePartecipant(nickname);
         else
         {
-           timerThread.interrupt();//interrupt the timer beacause of game ending
-           persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
-           //i have to save the game here because the standard execution of the game will be interupted (if there is at least a session played) and send the winner
-           if (numberSession > 1)
+           if(!isClosing)
            {
-                findWinner();
-                saveGame();
+                isClosing=true;
+                timerThread.interrupt();//interrupt the timer beacause of game ending
+                persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
+                //i have to save the game here because the standard execution of the game will be interupted (if there is at least a session played) and send the winner
+                if (numberSession > 1)
+                {
+                     findWinner();
+                     saveGame();
+                }
+
+                forcedExit(nickname);
            }
-           
-           forcedExit(nickname);
         }
     }
     

@@ -533,6 +533,7 @@ public class DatabaseImpl implements Database{
                 if(stored == null) {
                     stored = addWordToDb(word);
                 }
+                word.setId(stored.getId());
                 addFindRecord(session_id, player, word);
             }
         }
@@ -940,6 +941,7 @@ public class DatabaseImpl implements Database{
     private List<Pair<String, Integer>> queryForOccurrencyWordsLeaderboard() {
         List<Pair<String, Integer>> leaderboard = new ArrayList<>();
         String sql = "SELECT word, COUNT(*) AS num_occ FROM find INNER JOIN word ON word_key = id "
+                + "WHERE correct = 'true' "
                 + "GROUP BY word ORDER BY num_occ ASC";
         Connection c = null;
         try {
@@ -963,7 +965,7 @@ public class DatabaseImpl implements Database{
         return leaderboard;
     }
 
-    private List<Pair<String, String>> queryForWordsBestScore() {
+    private List<Pair<String, String>> queryForWordsBestScore() { // to add relative game //add game name to first String!
         List<Pair<String, String>> leaderboard = new ArrayList<>();
         String sql = "SELECT word, points FROM word INNER JOIN find ON id = word_key "
                 + "WHERE points IN (SELECT MAX(points) FROM word) AND duplicate = 'false' AND correct = 'true'";
@@ -1099,7 +1101,7 @@ public class DatabaseImpl implements Database{
                 for(String s : letters){
                     Double i = occ.get(s);
                     if(i != null) {
-                        i = i+1;
+                        i++;
                     } else {
                         occ.put(s, 1d);
                     }
