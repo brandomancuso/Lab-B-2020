@@ -24,12 +24,12 @@ CREATE TABLE word (
 );
 CREATE TABLE partecipate (
 	game_key INTEGER NOT NULL REFERENCES game,
-	user_key VARCHAR(30) NOT NULL REFERENCES ip_user,
+	user_key VARCHAR(30) NOT NULL REFERENCES ip_user ON UPDATE CASCADE,
 	total_points INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY (game_key, user_key)
 );
 CREATE TABLE find (
-	user_key VARCHAR(30) NOT NULL REFERENCES ip_user,
+	user_key VARCHAR(30) NOT NULL REFERENCES ip_user ON UPDATE CASCADE,
 	word_key INTEGER NOT NULL REFERENCES word,
 	manche_key INTEGER NOT NULL REFERENCES manche,
 	duplicate BOOLEAN NOT NULL DEFAULT false,
@@ -37,13 +37,13 @@ CREATE TABLE find (
 	PRIMARY KEY (user_key, word_key, manche_key)
 );
 CREATE TABLE def_req (
-	user_key VARCHAR(30) NOT NULL REFERENCES ip_user,
+	user_key VARCHAR(30) NOT NULL REFERENCES ip_user ON UPDATE CASCADE,
 	word_key INTEGER NOT NULL REFERENCES word,
 	manche_key INTEGER NOT NULL REFERENCES manche,
 	PRIMARY KEY (user_key, word_key, manche_key)
 );
 CREATE TABLE play (
-	user_key VARCHAR(30) NOT NULL REFERENCES ip_user,
+	user_key VARCHAR(30) NOT NULL REFERENCES ip_user ON UPDATE CASCADE,
 	manche_key INTEGER NOT NULL REFERENCES manche,
         points INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY (user_key, manche_key)

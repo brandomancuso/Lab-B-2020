@@ -18,7 +18,7 @@ import utils.CryptMD5;
 /**
  * Classe dell'interfaccia grafica relativa alla registrazione dell'utente amministratore 
  * @author Fedeli Andrea
- * @see @see javax.swing.JFrame
+ * @see javax.swing.JFrame
  */
 public class RegisterScreen extends JFrame implements ActionListener{
     private JTextField emailTxt;
