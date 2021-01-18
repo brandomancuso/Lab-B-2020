@@ -103,6 +103,7 @@ public class Game extends Thread implements ServerGameStub {
             }
             
             timer.setTime(80);
+
             if(currentSession.startRealGame(timerThread = new Thread(timer))) 
                 return;//to kill the thread
             
@@ -352,9 +353,9 @@ public class Game extends Thread implements ServerGameStub {
         } catch (InvalidKey ex) {
             System.err.println(ex);
         }
-        WordData wordData=new WordData();
+        final WordData wordData=new WordData();
         wordData.setWord(word);
-        nickname=nickname.trim();//to avoid problem with the database
+        nickname=nickname.trim();//to avoid problem with the database  
         currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
         return currentTerm;
     }
