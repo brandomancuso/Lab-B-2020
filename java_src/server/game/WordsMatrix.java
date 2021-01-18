@@ -256,7 +256,10 @@ public class WordsMatrix {
                                         cellVisited.remove(cellVisitedTmp.pop());
 	    			}
 	    			else
+                                {
 	    				flag=true;
+                                        cellVisitedTmp.add(currentCoordinate);
+                                }
         	 	}
     		}while(!cellToVisit.isEmpty() && flag != true);
         }
