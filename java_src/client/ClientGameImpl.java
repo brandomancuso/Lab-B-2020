@@ -188,14 +188,19 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
             public void run() {
                 String nickName = "";
                 int length = nickNames.size();
+                String playerAbandoned="";
 
-                if (nickNames.get(0) != null) {
+                if (nickNames.get(0) != null)
+                {
+                   if (gameState == 5)
+                    {
+                        playerAbandoned=nickNames.get(0);//at the first place there will be the player who abandoned
+                        nickNames.remove(0);
+                    }
+                   
                     while (!nickNames.isEmpty()) {
-                        if (gameState == 5 && nickNames.size() == 1) {
-                            break;//to leave the nickname of the player who abandoned the game
-                        }
-                        nickName = nickNames.get(length - 1) + "  ";
-                        nickNames.remove(length - 1);
+                        nickName += nickNames.get(nickNames.size() - 1) + " ";
+                        nickNames.remove(nickNames.size() - 1);
                     }
 
                     if (gameState == 3) {
@@ -210,7 +215,13 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
                     }
 
                     if (gameState == 5) {
-                        showMessageDialog(guiMain, nickNames.get(0) + " ha abbandonato" + " e " + nickName + "ha vinto !");
+                        if (length >= 3) {
+                            showMessageDialog(guiMain, playerAbandoned + " ha abbandonato" + " e " + nickName + "hanno vinto !");
+                        }
+                        else
+                        {
+                            showMessageDialog(guiMain, playerAbandoned + " ha abbandonato" + " e " + nickName + "ha vinto !");
+                        }
                     }
                 }
             }
