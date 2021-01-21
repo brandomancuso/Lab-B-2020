@@ -8,13 +8,13 @@ public class StatsData implements Serializable{
     private Pair<String, Integer> bestPlayerGameScore;
     private Pair<String, Integer> bestPlayerSessionScore;
     private Pair<String, Integer> playerWithMoreSessions;
-    private Pair<String, Integer> bestAverageSessionScore;
-    private Pair<String, Integer> bestAverageGameScore;
+    private Pair<String, Double> bestAverageSessionScore;
+    private Pair<String, Double> bestAverageGameScore;
     private Pair<String, Integer> playerWithMoreDuplicates;
     private Pair<String, Integer> playerWithMoreErrors;
     private List<Pair<String, Integer>> occurrencyWordsLeaderboard;
     private List<Pair<String, String>> wordsBestScore;
-    private Pair<Integer, Integer>[] averageSessionsPerGame;
+    private Pair<Integer, Double>[] averageSessionsPerGame;
     private Pair<Integer, Integer>[] maxSessionsPerGame;
     private Pair<Integer, Integer>[] minSessionsPerGame;
     private List<Pair<String, Double>> lettersAverageOccurency;
@@ -46,19 +46,19 @@ public class StatsData implements Serializable{
         this.playerWithMoreSessions = playerWithMoreSessions;
     }
 
-    public Pair<String, Integer> getBestAverageSessionScore() {
+    public Pair<String, Double> getBestAverageSessionScore() {
         return bestAverageSessionScore;
     }
 
-    public void setBestAverageSessionScore(Pair<String, Integer> bestAverageSessionScore) {
+    public void setBestAverageSessionScore(Pair<String, Double> bestAverageSessionScore) {
         this.bestAverageSessionScore = bestAverageSessionScore;
     }
 
-    public Pair<String, Integer> getBestAverageGameScore() {
+    public Pair<String, Double> getBestAverageGameScore() {
         return bestAverageGameScore;
     }
 
-    public void setBestAverageGameScore(Pair<String, Integer> bestAverageGameScore) {
+    public void setBestAverageGameScore(Pair<String, Double> bestAverageGameScore) {
         this.bestAverageGameScore = bestAverageGameScore;
     }
 
@@ -94,11 +94,11 @@ public class StatsData implements Serializable{
         this.wordsBestScore = wordsBestScore;
     }
 
-    public Pair<Integer, Integer>[] getAverageSessionsPerGame() {
+    public Pair<Integer, Double>[] getAverageSessionsPerGame() {
         return averageSessionsPerGame;
     }
 
-    public void setAverageSessionsPerGame(Pair<Integer, Integer>[] averageSessionsPerGame) {
+    public void setAverageSessionsPerGame(Pair<Integer, Double>[] averageSessionsPerGame) {
         this.averageSessionsPerGame = averageSessionsPerGame;
     }
 
