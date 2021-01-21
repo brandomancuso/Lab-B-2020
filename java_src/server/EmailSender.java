@@ -18,7 +18,7 @@ import java.util.Timer;
  */
 public class EmailSender implements Runnable{
     private final String HOST = "ilparoliere2020@outlook.it";   //Email da cui inviare la mail
-    private final String PASSWORD = "InfoInsubria2020"; //Password della mail da cui inviare la mail
+    private final String PASSWORD = "akrv639#_VJ"; //Password della mail da cui inviare la mail
     private final String VERIFICATION_OBJECT = "Il Paroliere - Verifica il tuo account";    //Oggetto della mail di verifica
     private final String RESET_PSW_OBJECT = "Il Paroliere - Modifica Password"; //Oggetto della mail reset password
     private final String ACCOUNT_MOD_OBJECT = "Il Paroliere - Modifica account";    //Oggetto della mail modifica account
