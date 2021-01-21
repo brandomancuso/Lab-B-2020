@@ -18,6 +18,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +32,13 @@ import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import server.ServerServiceStub;
 import server.game.ServerGameStub;
 import utils.CryptMD5;
@@ -1100,11 +1104,26 @@ public class ControlFrame extends javax.swing.JFrame {
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Migliori Punteggi di Parole");
                 if (stats.getWordsBestScore() != null) {
+
+                    stats.getWordsBestScore().sort(new Comparator<Pair<String, String>>() {
+                        @Override
+                        public int compare(Pair<String, String> l1, Pair<String, String> l2) {
+                            return l1.getLast().compareTo(l2.getLast());
+                        }
+                    });
+
                     for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
                         vals.put(stats.getWordsBestScore().get(i).getFirst(), stats.getWordsBestScore().get(i).getLast());
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Punti"}));
+                
+                TableRowSorter<TableModel> sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
+
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1407,9 +1426,10 @@ public class ControlFrame extends javax.swing.JFrame {
 
     /**
      * trasforma una mappa in un table model corrispondente
+     *
      * @param map mappa contenete i dati
      * @param colNames nomi delle relative colonne
-     * @return 
+     * @return
      */
     public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
         DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);
@@ -1421,6 +1441,7 @@ public class ControlFrame extends javax.swing.JFrame {
 
     /**
      * riempie la tabella di partite
+     *
      * @param parGameList lista di partite
      */
     public void fillGameTable(List<GameData> parGameList) {
