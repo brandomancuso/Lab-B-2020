@@ -814,8 +814,8 @@ public class DatabaseImpl implements Database{
         return result;
     }
 
-    private Pair<String, Integer> queryForBestAverageSessionScore() {
-        Integer score = 0;
+    private Pair<String, Double> queryForBestAverageSessionScore() {
+        Double score = 0d;
         StringBuilder player = new StringBuilder();
         String sql = "SELECT player, avg_points FROM manche_play_stats WHERE avg_points IN "
                 + "(SELECT MAX(avg_points) FROM manche_play_stats)";
@@ -826,7 +826,7 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                score = rs.getInt("avg_points");
+                score = rs.getDouble("avg_points");
                 player.append(more ? "," : "").append(rs.getString("player"));
                 more = true;
             }
@@ -841,12 +841,12 @@ public class DatabaseImpl implements Database{
                 ex.printStackTrace();
             }
         }
-        Pair<String, Integer> result = new Pair<>(player.toString(), score);
+        Pair<String, Double> result = new Pair<>(player.toString(), score);
         return result;
     }
 
-    private Pair<String, Integer> queryForBestAverageGameScore() {
-        Integer score = 0;
+    private Pair<String, Double> queryForBestAverageGameScore() {
+        Double score = 0d;
         StringBuilder player = new StringBuilder();
         String sql = "SELECT player, avg_points FROM game_play_stats WHERE avg_points IN "
                 + "(SELECT MAX(avg_points) FROM game_play_stats )";
@@ -857,7 +857,7 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                score = rs.getInt("avg_points");
+                score = rs.getDouble("avg_points");
                 player.append(more ? "," : "").append(rs.getString("player"));
                 more = true;
             }
@@ -872,7 +872,7 @@ public class DatabaseImpl implements Database{
                 ex.printStackTrace();
             }
         }
-        Pair<String, Integer> result = new Pair<>(player.toString(), score);
+        Pair<String, Double> result = new Pair<>(player.toString(), score);
         return result;
     }
 
@@ -996,8 +996,8 @@ public class DatabaseImpl implements Database{
         return leaderboard;
     }
     
-    private Pair<Integer, Integer>[] queryForAverageSessionsPerGame() {
-        Pair<Integer, Integer>[] avgSessionsPerGame = new Pair[5];
+    private Pair<Integer, Double>[] queryForAverageSessionsPerGame() {
+        Pair<Integer, Double>[] avgSessionsPerGame = new Pair[5];
         String sql = "SELECT num_players, AVG(num_sessions) AS avg_sessions FROM game_stats "
                 + "WHERE num_players = ? GROUP BY num_players";
         Connection c = null;
@@ -1008,7 +1008,7 @@ public class DatabaseImpl implements Database{
                 stmt.setInt(1, i +2);
                 ResultSet rs = stmt.executeQuery();
                 if(rs.next()) {
-                    avgSessionsPerGame[i] = new Pair<>(rs.getInt("num_players"), rs.getInt("avg_sessions"));
+                    avgSessionsPerGame[i] = new Pair<>(rs.getInt("num_players"), rs.getDouble("avg_sessions"));
                 } else {
                     avgSessionsPerGame[i] = null;
                 }
