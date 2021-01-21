@@ -13,7 +13,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import server.ServerServiceStub;
 
 /**
- *
+ * finestra recupero password
  * @author Edoardo
  */
 public class RecoverPsw extends javax.swing.JDialog {

@@ -7,19 +7,15 @@ package client;
 
 import entity.UserData;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
-import javax.swing.JTextField;
 import server.ServerServiceStub;
 import utils.CryptMD5;
 
 /**
- *
+ * finestra registrazione utente
  * @author Edoardo
  */
 public class RegisterUser extends javax.swing.JDialog {

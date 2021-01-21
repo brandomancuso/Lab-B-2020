@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import server.game.ServerGameStub;
 
 /**
- *
+ * gestisce la finestra di gioco
  * @author Edoardo
  */
 public class GameWin extends javax.swing.JDialog {
@@ -376,6 +376,9 @@ public class GameWin extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * gestisce l'apertura della finestra risultati
+     */
     public void openResultWindow() {
         ResultWin guiResult = new ResultWin(this, true, this.gameName, this.loggedUser);
         guiResult.setClientGameStub(clientGame);
@@ -389,8 +392,11 @@ public class GameWin extends javax.swing.JDialog {
         });
     }
 
+    /**
+     * imposta la tabella dei punteggi
+     */
     private void initScoreTable() {
-        //TABLE settings
+        
         DefaultTableCellRenderer headerBgRender = new DefaultTableCellRenderer();
         headerBgRender.setBackground(Color.decode("#FFFFFF"));
         headerBgRender.setForeground(Color.decode("#FFFFFF"));
@@ -405,25 +411,44 @@ public class GameWin extends javax.swing.JDialog {
         this.jScrollPane2.getViewport().setBackground(Color.white);
     }
 
+    /**
+     * imposta il numero della sessione corrente
+     * @param parSession sessione corrente
+     */
     public void setSessionNum(int parSession) {
         this.sessionNum = parSession;
         updateSessionNum();
     }
 
+    /**
+     * imposta il ClientGameStub
+     * @param clientGameImpl 
+     */
     public void setClientGameStub(ClientGameImpl clientGameImpl) {
         this.clientGame = clientGameImpl;
     }
 
+    /**
+     * imposta il ServerGameStub
+     * @param serverGameStub 
+     */
     public void setServerGameStub(ServerGameStub serverGameStub) {
         this.gameStub = serverGameStub;
     }
 
+    /**
+     * imposta la lista dei giocatori 
+     * @param parPlayer lista giocatori
+     */
     public void setPlayerList(List<String> parPlayer) {
         for (String tmp : parPlayer) {
             this.storePointPlayer.put(tmp, 0);
         }
     }
 
+    /**
+     * blocca l'input utente
+     */
     public void disableInput() {
         this.btn_game_addWord.setEnabled(false);
         this.btn_game_leave.setEnabled(false);
@@ -433,10 +458,18 @@ public class GameWin extends javax.swing.JDialog {
         this.jLabelGameSession.setText("Sessione Corrente: #" + String.valueOf(sessionNum));
     }
 
+    /**
+     * aggiorna la label contenete il valore del timer
+     * @param value valore del timer
+     */
     public void updateTimer(int value) {
         this.jLabel_timerValue.setText(value + "");
     }
 
+    /**
+     * ritorna le parole trovate dal giocatore
+     * @return 
+     */
     public List<String> getPlayerWords() {
         List<String> playerWords = new ArrayList<String>();
 
@@ -447,6 +480,10 @@ public class GameWin extends javax.swing.JDialog {
         return playerWords;
     }
 
+    /**
+     * riempie la griglia di gioco
+     * @param grid lettere della griglia
+     */
     public void fillGameGrid(String[] grid) {
         int cnt = 0;
         for (Component tmp : this.jPanelGrid.getComponents()) {
@@ -480,9 +517,10 @@ public class GameWin extends javax.swing.JDialog {
 
     }//GEN-LAST:event_btn_game_leaveActionPerformed
 
-    //UTILITY
+    /**
+     * riempie la tabella dei punteggi
+     */
     public void fillScoreTable() {
-        //va chimamato alla creazione? ma se nn la ricreo ogni volta....
         Object rowData[] = new Object[2];
         GuiUtility.clearTable(scoreTableModel);
         if (this.sessionNum != 1) {

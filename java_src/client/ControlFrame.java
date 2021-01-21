@@ -18,6 +18,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,16 +32,20 @@ import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import server.ServerServiceStub;
 import server.game.ServerGameStub;
 import utils.CryptMD5;
 import utils.Pair;
 
 /**
+ * finestra grafica principale
  *
  * @author Edoardo
  */
@@ -1086,14 +1091,6 @@ public class ControlFrame extends javax.swing.JFrame {
         verify.setVisible(true);
     }//GEN-LAST:event_label_verifyMouseClicked
 
-    public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
-        DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
-        }
-        return model;
-    }
-
     private void btn_search_statsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_statsActionPerformed
 
         StatsData stats = this.clientService.getStatsData();
@@ -1101,17 +1098,34 @@ public class ControlFrame extends javax.swing.JFrame {
         JFrame statsFrame;
         JTable statsTable;
         JScrollPane sp;
+        TableRowSorter<TableModel> sorter;
+        List<RowSorter.SortKey> sortKeys;
 
         switch (this.combo_stats.getSelectedIndex()) {
             case 0:
                 statsFrame = new JFrame();
                 statsFrame.setTitle("Migliori Punteggi di Parole");
                 if (stats.getWordsBestScore() != null) {
+
+                    stats.getWordsBestScore().sort(new Comparator<Pair<String, String>>() {
+                        @Override
+                        public int compare(Pair<String, String> l1, Pair<String, String> l2) {
+                            return l1.getLast().compareTo(l2.getLast());
+                        }
+                    });
+
                     for (int i = 0; i < stats.getWordsBestScore().size(); i++) {
                         vals.put(stats.getWordsBestScore().get(i).getFirst(), stats.getWordsBestScore().get(i).getLast());
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Punti"}));
+
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
+
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1127,6 +1141,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Occorrenze"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1142,6 +1161,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Occorrenze"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1158,6 +1182,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Lettera", "Occorrenze"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1170,11 +1199,16 @@ public class ControlFrame extends javax.swing.JFrame {
                 if (stats.getAverageSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getAverageSessionsPerGame()[i] != null) {
-                            vals.put(stats.getAverageSessionsPerGame()[i].getFirst() + "", stats.getAverageSessionsPerGame()[i].getLast() + "");
+                            vals.put(stats.getAverageSessionsPerGame()[i].getFirst() + "", stats.getAverageSessionsPerGame()[i].getLast().floatValue() + "");
                         }
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1187,11 +1221,16 @@ public class ControlFrame extends javax.swing.JFrame {
                 if (stats.getMaxSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getMaxSessionsPerGame()[i] != null) {
-                            vals.put(stats.getMaxSessionsPerGame()[i].getFirst() + "", stats.getMaxSessionsPerGame()[i].getLast() + "");
+                            vals.put(stats.getMaxSessionsPerGame()[i].getFirst() + "", stats.getMaxSessionsPerGame()[i].getLast().floatValue() + "");
                         }
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1204,11 +1243,16 @@ public class ControlFrame extends javax.swing.JFrame {
                 if (stats.getMinSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getMinSessionsPerGame()[i] != null) {
-                            vals.put(stats.getMinSessionsPerGame()[i].getFirst() + "", stats.getMinSessionsPerGame()[i].getLast() + "");
+                            vals.put(stats.getMinSessionsPerGame()[i].getFirst() + "", stats.getMinSessionsPerGame()[i].getLast().floatValue() + "");
                         }
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1399,7 +1443,7 @@ public class ControlFrame extends javax.swing.JFrame {
             stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + "/" + " - " + "/" + "pt";
 
         } else {
-            stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + stats.getBestAverageGameScore().getFirst() + " - " + stats.getBestAverageGameScore().getLast() + "pt";
+            stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + stats.getBestAverageGameScore().getFirst() + " - " + stats.getBestAverageGameScore().getLast().floatValue() + "pt";
         }
         this.stats_label_averageGame.setText(stats_average_game_score);
 
@@ -1407,12 +1451,31 @@ public class ControlFrame extends javax.swing.JFrame {
             stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + "/" + " - " + "/" + "pt";
 
         } else {
-            stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + stats.getBestAverageSessionScore().getFirst() + " - " + stats.getBestAverageSessionScore().getLast() + "pt";
+            stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + stats.getBestAverageSessionScore().getFirst() + " - " + stats.getBestAverageSessionScore().getLast().floatValue() + "pt";
         }
         this.stats_label_averageSession.setText(stats_average_session_score);
     }
 
-    //UTILITY
+    /**
+     * trasforma una mappa in un table model corrispondente
+     *
+     * @param map mappa contenete i dati
+     * @param colNames nomi delle relative colonne
+     * @return
+     */
+    public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return model;
+    }
+
+    /**
+     * riempie la tabella di partite
+     *
+     * @param parGameList lista di partite
+     */
     public void fillGameTable(List<GameData> parGameList) {
         GuiUtility.clearTable(gameTableModel);
         gameList = parGameList;
@@ -1420,7 +1483,6 @@ public class ControlFrame extends javax.swing.JFrame {
         Object rowData[] = new Object[2];
         for (GameData tmp : gameList) {
             if (tmp != null) {
-                //rowData[0] = tmp.getId() + " " + tmp.getName() + " " + tmp.getCreator();
                 rowData[0] = tmp.getName() + " " + tmp.getCreator();
                 rowData[1] = tmp.getPlayersList().size() + "/" + tmp.getNumPlayers();
                 gameTableModel.addRow(rowData);
@@ -1428,6 +1490,9 @@ public class ControlFrame extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * allo spegnimento del server notifica il client e chiude l'applicazione
+     */
     public void shutdownServer() {
         int selection = JOptionPane.showConfirmDialog(
                 null,
@@ -1437,7 +1502,6 @@ public class ControlFrame extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
 
         if (selection == 0) {
-            // Code to use when OK is PRESSED.
             System.exit(1);
         }
     }
