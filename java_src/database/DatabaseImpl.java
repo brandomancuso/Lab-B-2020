@@ -879,10 +879,10 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForPlayerWithMoreDuplicates() { //to check
         Integer num_duplicates = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, err_count FROM (SELECT find.user_key, COUNT(*) AS err_count "
-                + "FROM find WHERE duplicate = 'true' GROUP BY user_key) AS err WHERE err_count IN "
-                + "(SELECT MAX(err_count) FROM (SELECT find.user_key, COUNT(*) AS err_count FROM find "
-                + "WHERE duplicate = 'true' GROUP BY user_key) AS err_2)";
+        String sql = "SELECT user_key, dp_count FROM (SELECT find.user_key, COUNT(*) AS dp_count "
+                + "FROM find WHERE duplicate = 'true' GROUP BY user_key) AS dupl WHERE dp_count IN "
+                + "(SELECT MAX(dp_count) FROM (SELECT find.user_key, COUNT(*) AS dp_count FROM find "
+                + "WHERE duplicate = 'true' GROUP BY user_key) AS dupl_2)";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -890,7 +890,7 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                num_duplicates = rs.getInt("num_duplicates");
+                num_duplicates = rs.getInt("dp_count");
                 player.append(more ? "," : "").append(rs.getString("user_key"));
                 more = true;
             }
@@ -923,7 +923,7 @@ public class DatabaseImpl implements Database{
             ResultSet rs = stmt.executeQuery();
             boolean more = false;
             while(rs.next()){
-                num_errors = rs.getInt("num_errors");
+                num_errors = rs.getInt("err_count");
                 player.append(more ? "," : "").append(rs.getString("user_key"));
                 more = true;
             }
