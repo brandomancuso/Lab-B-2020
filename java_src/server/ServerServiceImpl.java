@@ -122,8 +122,14 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         if(updatedUser.getPassword().equals(user.getPassword())){
             new Thread(new EmailSender(user.getEmail(), "Il tuo account è stato modificato", 3)).start();
         }
+        if(updatedUser.getNickname().equals(user.getNickname())){
+            statsChanged = true;
+            stats = dbReference.getStats();
+            setChanged();
+            notifyObservers(statsChanged);
+        }
         usersList.replace(oldNickname, updatedUser);
-        
+        statsChanged = false;
         GUI.stampEvent(oldNickname + "(" + user.getNickname() + ")" + " ha modificato l'account");
         return updatedUser;
     }
