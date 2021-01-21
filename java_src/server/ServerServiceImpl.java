@@ -304,6 +304,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
      */
     public synchronized void disconnectGame(Integer gameId) {
         Game endedGame = gamesList.remove(gameId);
+        gamesStubList.remove(gameId);
         
         if(endedGame.getGameData().getSessions().isEmpty()){
             //La partita si è interrotta nella lobby
@@ -348,6 +349,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         this.clientsList.clear();
         this.usersList.clear();
         this.gamesList.clear();
+        this.gamesStubList.clear();
     }
     
     /**

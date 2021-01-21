@@ -76,7 +76,7 @@ public class WordsMatrix {
     	{
     		case UPPER_LEFT:
     			for(int i=0;i<2;i++)
-    	    		for(int j=1;j<2;j++)
+    	    		for(int j=0;j<2;j++)
     	    		{
     	    			if (matrix[x+i][y+j].read().equals(letter))
     	    			{
@@ -239,6 +239,7 @@ public class WordsMatrix {
          do
     		{ 	
         	 Stack<Coordinate> cellToVisitClone;
+                 Stack<Coordinate> cellVisitedTmp=new Stack<>();
         	 for(int i=cellToVisit.peek().getIndexLetter()+1 ; i< wordFound.length() && !cellToVisit.isEmpty() ; i++)
         	 	{
 	    			currentCoordinate=cellToVisit.pop();
@@ -247,12 +248,18 @@ public class WordsMatrix {
 	    			cellToVisit=findLetter(currentCoordinate,i,String.valueOf(wordFoundArray[i]),cellToVisit,cellVisited);
 	    			if(cellToVisit.equals(cellToVisitClone))
 	    			{
+	    				int lastIndex=i;
 	    				flag=false;
-	    				i--;
-	    				cellVisited.remove(currentCoordinate);//to remove the cell if it's wrong
+	    				i=cellToVisit.peek().getIndexLetter();
+	    				cellVisitedTmp.add(currentCoordinate);
+	    				for(int count = lastIndex-i;count > 0 ; count --)
+                                        cellVisited.remove(cellVisitedTmp.pop());
 	    			}
 	    			else
+                                {
 	    				flag=true;
+                                        cellVisitedTmp.add(currentCoordinate);
+                                }
         	 	}
     		}while(!cellToVisit.isEmpty() && flag != true);
         }

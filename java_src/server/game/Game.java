@@ -75,7 +75,7 @@ public class Game extends Thread implements ServerGameStub {
     public void run()
     {
         try {
-            Thread.sleep(500);//to wait for all client they have the gamestub
+            Thread.sleep(200);//to wait for all client they have the gamestub
         } catch (InterruptedException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,7 +102,8 @@ public class Game extends Thread implements ServerGameStub {
                 isLobbyState=false;
             }
             
-            timer.setTime(20);
+            timer.setTime(80);
+
             if(currentSession.startRealGame(timerThread = new Thread(timer))) 
                 return;//to kill the thread
             
@@ -255,8 +256,15 @@ public class Game extends Thread implements ServerGameStub {
      * @param nickname who abandoned
      */
     public void forcedExit(String nickname) {
-        timerThread.interrupt();//interrupt the timer beacause of game ending
+        
         persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        timerThread.interrupt();//interrupt the timer beacause of game ending
+        
         List<String> tmpNickname=new ArrayList<>();
         tmpNickname.add(nickname);//this is the nickname who abandoned
         if (!boolNextRound)
@@ -345,9 +353,9 @@ public class Game extends Thread implements ServerGameStub {
         } catch (InvalidKey ex) {
             System.err.println(ex);
         }
-        WordData wordData=new WordData();
+        final WordData wordData=new WordData();
         wordData.setWord(word);
-        nickname=nickname.trim();//to avoid problem with the database
+        nickname=nickname.trim();//to avoid problem with the database  
         currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
         return currentTerm;
     }
@@ -378,11 +386,16 @@ public class Game extends Thread implements ServerGameStub {
             RemovePartecipant(nickname);
         else
         {
-           if(!isClosing)
+        if(!isClosing)
            {
                 isClosing=true;
-                timerThread.interrupt();//interrupt the timer beacause of game ending
                 persistentSignal.interruptGame();//interrupt the game itself when you are in waiting at state result
+                try {
+                     Thread.sleep(100);
+                   } catch (InterruptedException ex) {
+                      Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                timerThread.interrupt();//interrupt the timer beacause of game ending
                 //i have to save the game here because the standard execution of the game will be interupted (if there is at least a session played) and send the winner
                 if (numberSession > 1)
                 {
@@ -391,6 +404,7 @@ public class Game extends Thread implements ServerGameStub {
                 }
 
                 forcedExit(nickname);
+                isClosing=false;
            }
         }
     }

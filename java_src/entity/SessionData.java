@@ -65,7 +65,9 @@ public class SessionData implements Serializable{
             list = new LinkedList<>();
             requestedWords.put(nickname, list);
         }
-        list.add(word);
+        //i check before if the same nickname has already requested the word
+        if(!requestedWords.get(nickname).parallelStream().anyMatch(actualWordData ->  actualWordData.getWord().equals(word.getWord())))
+            list.add(word);
     }
 
     public Map<String, List<WordData>> getRequestedWords() {
