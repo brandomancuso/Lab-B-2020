@@ -183,12 +183,12 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
 
                 //chiudo game e apro result win
                 break;
-            case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
+            case 3: //win --> transuto a lista di partita 
                 this.guiGame.dispose();
                 this.guiResult.dispose();
                 this.guiLobby.dispose();
                 break;
-            case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
+            case 4: //abandoned --> transuto a lista di partita
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -229,9 +229,9 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
             case 2: //result
                 this.guiResult.updateTimer(this.timerValue);
                 break;
-            case 3: //win --> transuto a lista di partita --> unico caso in cui distruggo guiGame??
+            case 3: //win --> transuto a lista di partita 
                 break;
-            case 4: //abandoned --> transuto a lista di partita--> unico caso in cui distruggo guiGame??
+            case 4: //abandoned --> transuto a lista di partita
                 break;
         }
     }

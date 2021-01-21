@@ -82,8 +82,7 @@ public class Lobby extends javax.swing.JDialog {
             }
         });
 
-        //this.setVisible(false);
-        //this.dispose();
+        
     }
 
     /**
@@ -185,7 +184,7 @@ public class Lobby extends javax.swing.JDialog {
         } catch (RemoteException ex) {
             Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //this.fillPartecipant();
+        
 
     }//GEN-LAST:event_btn_leaveActionPerformed
 
