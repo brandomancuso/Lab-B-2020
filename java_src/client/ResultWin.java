@@ -386,6 +386,7 @@ public class ResultWin extends javax.swing.JDialog {
 
     private void btn_result_verifyWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_result_verifyWordActionPerformed
 
+        String nickName=this.loggedUser.getNickname();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 final Term def;
@@ -395,7 +396,7 @@ public class ResultWin extends javax.swing.JDialog {
                     return;
                 }
                 try {
-                    def = gameStub.requestWordDef(String.valueOf(resultTableModel.getValueAt(rowIndex, 0)), String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
+                    def = gameStub.requestWordDef(nickName, String.valueOf(resultTableModel.getValueAt(rowIndex, 1)));
                     if (def == null) {
                         showMessageDialog(null, "Definizione non trovata");
                     } else {

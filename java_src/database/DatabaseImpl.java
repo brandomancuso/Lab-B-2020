@@ -879,8 +879,10 @@ public class DatabaseImpl implements Database{
     private Pair<String, Integer> queryForPlayerWithMoreDuplicates() { //to check
         Integer num_duplicates = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, MAX(dp_count) AS num_duplicates FROM (SELECT find.user_key, COUNT(*) AS dp_count FROM find "
-                + "WHERE duplicate = 'true' GROUP BY user_key) AS dp GROUP BY dp.user_key";
+        String sql = "SELECT user_key, err_count FROM (SELECT find.user_key, COUNT(*) AS err_count "
+                + "FROM find WHERE duplicate = 'true' GROUP BY user_key) AS err WHERE err_count IN "
+                + "(SELECT MAX(err_count) FROM (SELECT find.user_key, COUNT(*) AS err_count FROM find "
+                + "WHERE duplicate = 'true' GROUP BY user_key) AS err_2)";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -907,11 +909,13 @@ public class DatabaseImpl implements Database{
         return result;
     }
 
-    private Pair<String, Integer> queryForPlayerWithMoreErrors() { //to check
+    private Pair<String, Integer> queryForPlayerWithMoreErrors() {
         Integer num_errors = 0;
         StringBuilder player = new StringBuilder();
-        String sql = "SELECT user_key, MAX(err_count) AS num_errors FROM (SELECT find.user_key, COUNT(*) AS err_count FROM find "
-                + "WHERE correct = 'false' GROUP BY user_key) AS err GROUP BY err.user_key";
+        String sql = "SELECT user_key, err_count FROM (SELECT find.user_key, COUNT(*) AS err_count "
+                + "FROM find WHERE correct = 'false' GROUP BY user_key) AS err WHERE err_count IN "
+                + "(SELECT MAX(err_count) FROM (SELECT find.user_key, COUNT(*) AS err_count FROM find "
+                + "WHERE correct = 'false' GROUP BY user_key) AS err_2)";
         Connection c = null;
         try {
             c = connManager.getConnection();
@@ -968,7 +972,8 @@ public class DatabaseImpl implements Database{
     private List<Pair<String, String>> queryForWordsBestScore() { // to add relative game //add game name to first String!
         List<Pair<String, String>> leaderboard = new ArrayList<>();
         String sql = "SELECT word, points FROM word INNER JOIN find ON id = word_key "
-                + "WHERE points IN (SELECT MAX(points) FROM word) AND duplicate = 'false' AND correct = 'true'";
+                + "WHERE points IN (SELECT MAX(points) FROM word INNER JOIN find ON word_key = id "
+                + "WHERE duplicate = 'false' AND correct = 'true')";
         Connection c = null;
         try {
             c = connManager.getConnection();

@@ -1,5 +1,4 @@
 package entity;
-
 import java.io.Serializable;
 
 public class WordData implements Serializable {
@@ -86,6 +85,12 @@ public class WordData implements Serializable {
 
     public void setRealPoints(int realPoint) {
         this.realPoints = realPoint;
+    }
+    
+    @Override
+    public boolean equals (Object word)
+    {
+        return this.word.equals(((WordData)word).getWord());
     }
 
 }
