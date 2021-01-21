@@ -1098,6 +1098,8 @@ public class ControlFrame extends javax.swing.JFrame {
         JFrame statsFrame;
         JTable statsTable;
         JScrollPane sp;
+        TableRowSorter<TableModel> sorter;
+        List<RowSorter.SortKey> sortKeys;
 
         switch (this.combo_stats.getSelectedIndex()) {
             case 0:
@@ -1117,10 +1119,10 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Punti"}));
-                
-                TableRowSorter<TableModel> sorter = new TableRowSorter<>(statsTable.getModel());
+
+                sorter = new TableRowSorter<>(statsTable.getModel());
                 statsTable.setRowSorter(sorter);
-                List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
+                sortKeys = new ArrayList<>(1);
                 sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
                 sorter.setSortKeys(sortKeys);
 
@@ -1139,6 +1141,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Occorrenze"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1154,6 +1161,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Parola", "Occorrenze"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1170,6 +1182,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Lettera", "Occorrenze"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1187,6 +1204,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1204,6 +1226,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
@@ -1221,6 +1248,11 @@ public class ControlFrame extends javax.swing.JFrame {
                     }
                 }
                 statsTable = new JTable(toTableModel(vals, new String[]{"Num. Giocatori", "Sessioni"}));
+                sorter = new TableRowSorter<>(statsTable.getModel());
+                statsTable.setRowSorter(sorter);
+                sortKeys = new ArrayList<>(1);
+                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+                sorter.setSortKeys(sortKeys);
                 sp = new JScrollPane(statsTable);
                 statsFrame.add(sp);
                 statsFrame.setSize(500, 600);
