@@ -1163,7 +1163,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 if (stats.getAverageSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getAverageSessionsPerGame()[i] != null) {
-                            vals.put(stats.getAverageSessionsPerGame()[i].getFirst() + "", stats.getAverageSessionsPerGame()[i].getLast() + "");
+                            vals.put(stats.getAverageSessionsPerGame()[i].getFirst() + "", stats.getAverageSessionsPerGame()[i].getLast().floatValue() + "");
                         }
                     }
                 }
@@ -1180,7 +1180,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 if (stats.getMaxSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getMaxSessionsPerGame()[i] != null) {
-                            vals.put(stats.getMaxSessionsPerGame()[i].getFirst() + "", stats.getMaxSessionsPerGame()[i].getLast() + "");
+                            vals.put(stats.getMaxSessionsPerGame()[i].getFirst() + "", stats.getMaxSessionsPerGame()[i].getLast().floatValue() + "");
                         }
                     }
                 }
@@ -1197,7 +1197,7 @@ public class ControlFrame extends javax.swing.JFrame {
                 if (stats.getMinSessionsPerGame() != null) {
                     for (int i = 0; i < 5; i++) {
                         if (stats.getMinSessionsPerGame()[i] != null) {
-                            vals.put(stats.getMinSessionsPerGame()[i].getFirst() + "", stats.getMinSessionsPerGame()[i].getLast() + "");
+                            vals.put(stats.getMinSessionsPerGame()[i].getFirst() + "", stats.getMinSessionsPerGame()[i].getLast().floatValue() + "");
                         }
                     }
                 }
@@ -1392,7 +1392,7 @@ public class ControlFrame extends javax.swing.JFrame {
             stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + "/" + " - " + "/" + "pt";
 
         } else {
-            stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + stats.getBestAverageGameScore().getFirst() + " - " + stats.getBestAverageGameScore().getLast() + "pt";
+            stats_average_game_score = "Giocatore con la Media di Punti di Gioco Maggiore: " + stats.getBestAverageGameScore().getFirst() + " - " + stats.getBestAverageGameScore().getLast().floatValue() + "pt";
         }
         this.stats_label_averageGame.setText(stats_average_game_score);
 
@@ -1400,7 +1400,7 @@ public class ControlFrame extends javax.swing.JFrame {
             stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + "/" + " - " + "/" + "pt";
 
         } else {
-            stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + stats.getBestAverageSessionScore().getFirst() + " - " + stats.getBestAverageSessionScore().getLast() + "pt";
+            stats_average_session_score = "Giocatore con la Media di Punti di Sessione Maggiore: " + stats.getBestAverageSessionScore().getFirst() + " - " + stats.getBestAverageSessionScore().getLast().floatValue() + "pt";
         }
         this.stats_label_averageSession.setText(stats_average_session_score);
     }
