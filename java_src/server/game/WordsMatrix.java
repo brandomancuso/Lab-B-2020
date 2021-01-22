@@ -69,130 +69,133 @@ public class WordsMatrix {
 
         private Stack<Coordinate> findLetter(Coordinate currentCoordinate,int indexLetter,String letter,Stack<Coordinate> cellToVisit,HashSet<Coordinate> cellVisited) 
     {
-    	int x=currentCoordinate.getX(), y=currentCoordinate.getY();
-		Coordinate coordinateTmp;
-		
-    	switch(currentCoordinate.getPosition())
-    	{
-    		case UPPER_LEFT:
-    			for(int i=0;i<2;i++)
-    	    		for(int j=0;j<2;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
+    	   int x = currentCoordinate.getX(), y = currentCoordinate.getY();
+        Coordinate coordinateTmp;
 
-    		case UPPER:
-    			for(int i=0;i<2;i++)
-    	    		for(int j=-1;j<2;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    
-    		case UPPER_RIGHT:
-    			for(int i=0;i<2;i++)
-    	    		for(int j=-1;j<1;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    
-    		case CENTER_LEFT:
-    			for(int i=-1;i<2;i++)
-    	    		for(int j=0;j<2;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    	
-    		case CENTER:
-    			for(int i=-1;i<2;i++)
-    	    		for(int j=-1;j<2;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    
-    		case CENTER_RIGHT:
-    			for(int i=-1;i<2;i++)
-    	    		for(int j=-1;j<1;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    	
-    		case LOWER_LEFT:
-    			for(int i=-1;i<1;i++)
-    	    		for(int j=0;j<2;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    
-    		case LOWER:
-    			for(int i=-1;i<1;i++)
-    	    		for(int j=-1;j<2;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter) && (x!=x+i || y!=y+j))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	    	
-    		case LOWER_RIGHT:
-    			for(int i=-1;i<1;i++)
-    	    		for(int j=-1;j<1;j++)
-    	    		{
-    	    			if (matrix[x+i][y+j].read().equals(letter))
-    	    			{
-    	    				coordinateTmp=new Coordinate(x+i, y+j,indexLetter ,DIM);
-    	    				if (!cellVisited.contains(coordinateTmp))
-    	    					cellToVisit.add(coordinateTmp);
-    	    			}
-    	    		}
-    	    	break;
-    	}
-    	
-    	return cellToVisit;
+        if (letter.length() == 2) {
+            letter = letter.substring(0, 1) + letter.substring(1, 2).toLowerCase();//to have Qu
+        }
+
+        switch (currentCoordinate.getPosition()) {
+            case UPPER_LEFT:
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case UPPER:
+                for (int i = 0; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter) && (x != x + i || y != y + j)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case UPPER_RIGHT:
+                for (int i = 0; i < 2; i++) {
+                    for (int j = -1; j < 1; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter) && (x != x + i || y != y + j)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case CENTER_LEFT:
+                for (int i = -1; i < 2; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter) && (x != x + i || y != y + j)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case CENTER:
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter) && (x != x + i || y != y + j)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case CENTER_RIGHT:
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 1; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter) && (x != x + i || y != y + j)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case LOWER_LEFT:
+                for (int i = -1; i < 1; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case LOWER:
+                for (int i = -1; i < 1; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter) && (x != x + i || y != y + j)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case LOWER_RIGHT:
+                for (int i = -1; i < 1; i++) {
+                    for (int j = -1; j < 1; j++) {
+                        if (matrix[x + i][y + j].read().equals(letter)) {
+                            coordinateTmp = new Coordinate(x + i, y + j, indexLetter, DIM);
+                            if (!cellVisited.contains(coordinateTmp)) {
+                                cellToVisit.add(coordinateTmp);
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+
+        return cellToVisit;
     }
         
 //public method
@@ -229,7 +232,7 @@ public class WordsMatrix {
     	for(int i=0;i<DIM;i++)
     		for(int j=0;j<DIM;j++)
     		{
-    			if(matrix[i][j].read().equals(String.valueOf(wordFoundArray[0])))
+    			if(matrix[i][j].read().charAt(0)==wordFoundArray[0])
     				cellToVisit.add(new Coordinate(i, j,0,DIM));
     		}
     	
@@ -245,7 +248,17 @@ public class WordsMatrix {
 	    			currentCoordinate=cellToVisit.pop();
 	    			cellVisited.add(currentCoordinate);
 	    			cellToVisitClone=(Stack<Coordinate>)cellToVisit.clone();
-	    			cellToVisit=findLetter(currentCoordinate,i,String.valueOf(wordFoundArray[i]),cellToVisit,cellVisited);
+                                if (wordFound.charAt(i - 1) == 'Q')//the first condition is only if the word start with Qu
+                                {
+                                    i++;//to not consider the next letter u	
+                                }
+                                if (wordFound.charAt(i) == 'Q')//for the other iteration
+                                {
+                                    cellToVisit = findLetter(currentCoordinate, i, String.valueOf(wordFoundArray[i]) + String.valueOf(wordFoundArray[i + 1]), cellToVisit, cellVisited);
+                                    i++;
+                                } else
+                                    cellToVisit = findLetter(currentCoordinate, i, String.valueOf(wordFoundArray[i]), cellToVisit, cellVisited);
+                                
 	    			if(cellToVisit.equals(cellToVisitClone))
 	    			{
 	    				int lastIndex=i;
