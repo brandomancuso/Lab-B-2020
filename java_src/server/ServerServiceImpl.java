@@ -221,7 +221,7 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
         boolean result = false;
         
         if(dbResult != null){
-            if(dbResult.getActivationCode().equals(verificationCode)){
+            if(dbResult.getActivationCode().equals(verificationCode) && dbResult.getActive()){
                 result = true;
                 dbResult.setActive(true);
                 dbReference.updateUser(dbResult, dbResult.getNickname());
