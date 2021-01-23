@@ -351,7 +351,7 @@ public class Game extends Thread implements ServerGameStub {
             word=word.toLowerCase();//to avoid problem with the dictionary
             currentTerm =dictionary.getTerm(word);      
         } catch (InvalidKey ex) {
-            System.err.println(ex);
+            //System.err.println(ex);
         }
         final WordData wordData=new WordData();
         wordData.setWord(word);
