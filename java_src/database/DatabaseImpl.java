@@ -42,7 +42,7 @@ public class DatabaseImpl implements Database{
     
     // <editor-fold defaultstate="collapsed" desc="user-methods">
     @Override
-    public UserData getUser(String nickname) {
+    public synchronized UserData getUser(String nickname) {
         UserData ret = null;
         String sql = "SELECT * FROM ip_user WHERE nickname = ?";
         Connection c = null;
@@ -77,7 +77,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public Pair<UserData, Integer> getUser(String email, String password) {
+    public synchronized Pair<UserData, Integer> getUser(String email, String password) {
         UserData usr = null;
         Pair<UserData, Integer> result = null;
         String sql = "SELECT * FROM ip_user WHERE email = ?";
@@ -121,7 +121,7 @@ public class DatabaseImpl implements Database{
     }
     
     @Override
-    public UserData getUserByEmail(String email) {
+    public synchronized UserData getUserByEmail(String email) {
         UserData ret = null;
         String sql = "SELECT * FROM ip_user WHERE email = ?";
         Connection c = null;
@@ -156,7 +156,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public UserData addUser(UserData user) {
+    public synchronized UserData addUser(UserData user) {
         String sql = "INSERT INTO ip_user (nickname, name, surname, email, password, activation_code, administrator, active) "
                 + "VALUES (?,?,?,?,?,?,?,?)";
         Connection c = null;
@@ -187,7 +187,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public UserData updateUser(UserData user, String old) {
+    public synchronized UserData updateUser(UserData user, String old) {
         if(old == null || user == null) throw new IllegalArgumentException();
         boolean comma = false;
         int req = 1;
@@ -250,7 +250,7 @@ public class DatabaseImpl implements Database{
     }
     
     @Override
-    public UserData removeUser(String nickname) {
+    public synchronized UserData removeUser(String nickname) {
         String sql = "DELETE FROM ip_user WHERE nickname = ?";
         UserData user = getUser(nickname);
         if(user != null) {
@@ -278,7 +278,7 @@ public class DatabaseImpl implements Database{
     
     // <editor-fold defaultstate="collapsed" desc="game-methods">
     @Override
-    public GameData addGame(GameData gameData) {
+    public synchronized GameData addGame(GameData gameData) {
         String sql = "INSERT INTO game (id, name) VALUES (?, ?)";
         gameData.setId(GAME_ID++);
         Connection conn = null;
@@ -302,7 +302,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public GameData getGame(int gameId) {
+    public synchronized GameData getGame(int gameId) {
         String sql = "SELECT * FROM game WHERE id = ?";
         GameData gameData = null;
         Connection conn = null;
@@ -336,7 +336,7 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
-    public boolean updateGame(GameData gameData) {
+    public synchronized boolean updateGame(GameData gameData) {
         for(String player : gameData.getPlayersList()) {
             addPartecipate(gameData.getId(), player, gameData.getPoints(player));
         }
@@ -347,7 +347,7 @@ public class DatabaseImpl implements Database{
     }
     
     @Override
-    public void removeGame(int gameId) {
+    public synchronized void removeGame(int gameId) {
         Connection conn = null;
         String sql = "DELETE FROM game WHERE id = ?";
         try {
@@ -372,7 +372,7 @@ public class DatabaseImpl implements Database{
     // <editor-fold defaultstate="collapsed" desc="stats-methods">
     
     @Override
-    public StatsData getStats() {
+    public synchronized StatsData getStats() {
         StatsData stats = new StatsData();
         stats.setBestPlayerGameScore(queryForBestPlayerGameScore());
         stats.setBestPlayerSessionScore(queryForPlayerSessionScore());
@@ -394,7 +394,7 @@ public class DatabaseImpl implements Database{
     
     //<editor-fold defaultstate="collapsed" desc="config-methods">
     @Override
-    public Database configure(DatabaseConfig config) {
+    public synchronized Database configure(DatabaseConfig config) {
         connManager.configure(config);
         return this;
     }
@@ -444,24 +444,24 @@ public class DatabaseImpl implements Database{
     
     //<editor-fold defaultstate="collapsed" desc="utility-methods"> Utility methods for first start and/or testing purpose
     @Override
-    public boolean checkAdminExistence() throws DatabaseException{
+    public synchronized boolean checkAdminExistence() throws DatabaseException{
         return connManager.checkAdminExistence();
     }
 
     @Override
-    public boolean checkDatabaseExistence() throws DatabaseException{
+    public synchronized boolean checkDatabaseExistence() throws DatabaseException{
         boolean exists = connManager.checkDatabaseExistence();
         if(exists) updateIds();
         return exists;
     }
 
     @Override
-    public void createDatabase() {
+    public synchronized void createDatabase() {
         connManager.createDatabase();
     }
 
     @Override
-    public void deleteDatabase() {
+    public synchronized void deleteDatabase() {
         connManager.deleteDatabase();
     }
 
