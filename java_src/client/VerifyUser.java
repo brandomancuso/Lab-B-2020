@@ -167,7 +167,7 @@ public class VerifyUser extends javax.swing.JDialog {
 
     private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
         // TODO add your handling code here:
-        boolean res = false;
+        int res;
         //CHECK not empty
         if (GuiUtility.isEmpty(this.text_nickname) || GuiUtility.isEmpty(this.text_verificationCode)) {
             showMessageDialog(null, "Compilare tutti i campi");
@@ -175,16 +175,26 @@ public class VerifyUser extends javax.swing.JDialog {
         }
         try {
             res = this.serviceStub.verifyUser(this.text_verificationCode.getText(), this.text_nickname.getText());
+
+            switch (res) {
+                case 0:
+                    showMessageDialog(null, "Codice di verifica errato...");
+                    break;
+                case 1:
+                    showMessageDialog(null, "Utente verificato...");
+                    this.setVisible(false);
+                    this.dispose();
+                    break;
+                case 2:
+                    showMessageDialog(null, "Utente già verificato...");
+                    break;
+                case 3:
+                    showMessageDialog(null, "Nickname errato...");
+                    break;
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(VerifyUser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(!res){
-            showMessageDialog(null, "Codice di verifica errato...");
-        }else{
-            this.setVisible(false);
-            this.dispose();
-        }
-
     }//GEN-LAST:event_btn_verifyActionPerformed
 
     private void text_verificationCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_text_verificationCodeMouseClicked

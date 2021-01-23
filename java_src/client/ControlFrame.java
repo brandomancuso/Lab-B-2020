@@ -1066,14 +1066,23 @@ public class ControlFrame extends javax.swing.JFrame {
             this.clientGame.setGuiLobby(lobby);
             this.clientGame.setGuiMain(this);
             serverGameStub = serviceStub.partecipate(this.loggedUser.getNickname(), gameList.get(gameIndex).getId(), clientGame);
-            lobby.setServerGameStub(serverGameStub);
-            lobby.setGameName(gameName);
+            if (serverGameStub != null) {
+                lobby.setServerGameStub(serverGameStub);
+                lobby.setGameName(gameName);
 
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    lobby.setVisible(true);
-                }
-            });
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        lobby.setVisible(true);
+                    }
+                });
+            }
+            else{
+               SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        showMessageDialog(null, "Partita piena!");
+                    }
+                }); 
+            }
 
         } catch (RemoteException ex) {
             Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);

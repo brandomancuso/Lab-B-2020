@@ -237,18 +237,19 @@ public class Game extends Thread implements ServerGameStub {
      * @see Pair
      */
     public Pair<GameData, Boolean> AddPartecipant(String nicknamePlayer, ClientGameStub clientGameStub) {
-        if (gameData.getPlayersList().size() + 1 == gameData.getNumPlayers()) {
+        Pair<GameData, Boolean> result = null;
+        if (gameData.getPlayersList().size() < gameData.getNumPlayers()) {
             gameData.addPlayer(nicknamePlayer);
             observerClientSet.put(nicknamePlayer, new ObserverClient(nicknamePlayer, clientGameStub, this, timer));
             updateInfoLobby();
-            this.start();//start the game
-            return new Pair<>(gameData, Boolean.TRUE);//it's not necessary
+            result = new Pair<>(gameData, Boolean.TRUE);//it's not necessary
+            if (gameData.getPlayersList().size() == gameData.getNumPlayers()) {
+                this.start();
+            }
         } else {
-            gameData.addPlayer(nicknamePlayer);
-            observerClientSet.put(nicknamePlayer, new ObserverClient(nicknamePlayer, clientGameStub, this, timer));
-            updateInfoLobby();
-            return new Pair<>(gameData, Boolean.TRUE);
+            result = new Pair<>(gameData, Boolean.FALSE);
         }
+        return result;
     }
 
     /**
@@ -344,19 +345,19 @@ public class Game extends Thread implements ServerGameStub {
      * @see RemoteException
      */
     @Override
-    public synchronized Term requestWordDef(String nickname,String word) throws RemoteException {
-        Term currentTerm=null;
+    public synchronized Term requestWordDef(String nickname, String word) throws RemoteException {
+        Term currentTerm = null;
         try {
-            word=word.trim();//to avoid space
-            word=word.toLowerCase();//to avoid problem with the dictionary
-            currentTerm =dictionary.getTerm(word);      
+            word = word.trim();//to avoid space
+            word = word.toLowerCase();//to avoid problem with the dictionary
+            currentTerm = dictionary.getTerm(word);
+            final WordData wordData = new WordData();
+            wordData.setWord(word);
+            nickname = nickname.trim();//to avoid problem with the database  
+            currentSession.getSessionData().addRequestedWord(nickname, wordData);//add the information in the database
         } catch (InvalidKey ex) {
             //System.err.println(ex);
         }
-        final WordData wordData=new WordData();
-        wordData.setWord(word);
-        nickname=nickname.trim();//to avoid problem with the database  
-        currentSession.getSessionData().addRequestedWord(nickname,wordData);//add the information in the database
         return currentTerm;
     }
 

@@ -94,5 +94,5 @@ public interface ServerServiceStub extends Remote{
      * @return <code>true</code> se la verifica è avvenuta
      * @throws RemoteException Se si verificano problemi nella connessione RMI
      */
-    boolean verifyUser(String verificationCode, String nickname) throws RemoteException;
+    int verifyUser(String verificationCode, String nickname) throws RemoteException;
 }

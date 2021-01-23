@@ -406,18 +406,29 @@ public class RegisterUser extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_registerActionPerformed
 
     private void btn_verifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verifyActionPerformed
-        boolean res = false;
+        int res;
 
         try {
             res = this.stub.verifyUser(this.text_verificationCode.getText(), this.text_username.getText());
+
+            switch (res) {
+                case 0:
+                    showMessageDialog(null, "Codice di verifica errato...");
+                    break;
+                case 1:
+                    showMessageDialog(null, "Utente verificato...");
+                    this.setVisible(false);
+                    this.dispose();
+                    break;
+                case 2:
+                    showMessageDialog(null, "Utente già verificato...");
+                    break;
+                case 3:
+                    showMessageDialog(null, "Nickname errato...");
+                    break;
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (res) {
-            showMessageDialog(null, "Account verificato con successo!");
-            this.setVisible(false);
-            this.dispose();
         }
     }//GEN-LAST:event_btn_verifyActionPerformed
 

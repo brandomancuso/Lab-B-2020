@@ -216,25 +216,26 @@ public class ServerServiceImpl extends Observable implements ServerServiceStub{
      * @throws java.rmi.RemoteException Se si verificano problemi nella connessione RMI
      */
     @Override
-    public boolean verifyUser(String verificationCode, String nickname) throws RemoteException{
+    public int verifyUser(String verificationCode, String nickname) throws RemoteException{
         UserData dbResult = dbReference.getUser(nickname);
-        boolean result = false;
+        int result = 0; //false
         
-        if(dbResult != null){
-            if(dbResult.getActivationCode().equals(verificationCode) && dbResult.getActive()){
-                result = true;
-                dbResult.setActive(true);
-                dbReference.updateUser(dbResult, dbResult.getNickname());
-                GUI.stampEvent(nickname + " si è verificato");
+        if (dbResult != null) {
+            if (!dbResult.getActive()) {
+                if (dbResult.getActivationCode().equals(verificationCode)) {
+                    result = 1; //true
+                    dbResult.setActive(true);
+                    dbReference.updateUser(dbResult, dbResult.getNickname());
+                    GUI.stampEvent(nickname + " si è verificato");
+                }
             }
             else{
-                result = false;
-            }   
+                result = 2; //già attivo
+            }
+        } else {
+            result = 3; //nickname errato
         }
-        else{
-            result = false;
-        }
-        
+
         return result;
     }
     
