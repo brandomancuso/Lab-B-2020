@@ -56,6 +56,6 @@ CREATE VIEW game_play_stats (player, avg_points) AS
     SELECT user_key, AVG(total_points) FROM partecipate GROUP BY user_key;
 
 CREATE VIEW game_stats (id, num_players, num_sessions) AS 
-    SELECT game.id, COUNT(DISTINCT user_key) AS num_players, COUNT(DISTINCT manche_key) AS num_sessions 
+    SELECT game.id, COUNT(DISTINCT user_key) AS num_players, COUNT(DISTINCT manche.id) AS num_sessions 
     FROM game INNER JOIN manche ON game.id = manche.game_key INNER JOIN play ON manche.id = play.manche_key 
     GROUP BY game.id;
