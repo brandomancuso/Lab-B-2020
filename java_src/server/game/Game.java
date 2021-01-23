@@ -83,9 +83,9 @@ public class Game extends Thread implements ServerGameStub {
         do
         {
             currentSession=new Session(dictionary,persistentSignal,observerClientSet,gameData,numberSession,this);
+            gameData.addSession(currentSession.getSessionData());
             if(isLobbyState)
             {
-                gameData.addSession(currentSession.getSessionData());
                 timer.setTime(5);
                 
                 observerClientSet.forEach((key,value)->{

@@ -1003,11 +1003,11 @@ public class DatabaseImpl implements Database{
         Connection c = null;
         try {
             c = connManager.getConnection();
-            for(int i = 0; i<5; i++) {
+            for (int i = 0; i < 5; i++) {
                 PreparedStatement stmt = c.prepareStatement(sql);
-                stmt.setInt(1, i +2);
+                stmt.setInt(1, i + 2);
                 ResultSet rs = stmt.executeQuery();
-                if(rs.next()) {
+                if (rs.next()) {
                     avgSessionsPerGame[i] = new Pair<>(rs.getInt("num_players"), rs.getDouble("avg_sessions"));
                 } else {
                     avgSessionsPerGame[i] = null;
