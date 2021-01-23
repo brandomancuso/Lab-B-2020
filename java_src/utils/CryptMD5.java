@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- *
+ * Classe per criptare una stringa con MD5
  * @author EBianchi
  */
 public class CryptMD5 {
@@ -24,6 +24,11 @@ public class CryptMD5 {
         }
     }
 
+    /**
+     * Cripta una stringa con MD5
+     * @param str Stringa da criptare
+     * @return Stringa criptata
+     */
     public static String crypt(String str) {
         if (str == null || str.length() == 0) {
             throw new IllegalArgumentException("String to encript cannot be null or zero length");

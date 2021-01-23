@@ -19,6 +19,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.Pair;
 
+/**
+ * DatabaseImpl è la classe che implementa l'interfaccia Database per la comunicazione con il database
+ * @author Mancuso Brando
+ */
 public class DatabaseImpl implements Database{
 
     private static DatabaseImpl instance;
@@ -33,6 +37,10 @@ public class DatabaseImpl implements Database{
         connManager = ConnectionManager.getConnectionManager();
     }
     
+    /**
+     * Metodo per ottenere il riferimento al database attraverso il pattern singleton
+     * @return Oggetto Database
+     */
     public static Database getDatabase() {
         if(instance == null) {
             instance = new DatabaseImpl();
@@ -41,6 +49,12 @@ public class DatabaseImpl implements Database{
     }
     
     // <editor-fold defaultstate="collapsed" desc="user-methods">
+    /**
+     * Restituisce l'utente con il nickname dato
+     * @param nickname Il nickname dell'utente da ricercare
+     * @return L'oggetto <code>UserData</code> relativo all'utente trovato. Restituisce <code>null</code> se non è stato trovato alcun utente
+     * @see entity.UserData
+     */
     @Override
     public synchronized UserData getUser(String nickname) {
         UserData ret = null;
@@ -76,6 +90,14 @@ public class DatabaseImpl implements Database{
         return ret;
     }
 
+    /**
+     * Restituisce l'utente con email e password date
+     * @param email La mail dell'utente da ricercare
+     * @param password La password dell'utente
+     * @return Oggetto di tipo <code>Pair</code> con primo valore l'oggetto di tipo <code>UserData</code> e secondo valore un <code>int</code> rappresentante il codice di errore.
+     * Se l'utente non è stato trovato <code>UserData</code> è <code>null</code>.
+     * @see utils.Pair
+     */
     @Override
     public synchronized Pair<UserData, Integer> getUser(String email, String password) {
         UserData usr = null;
@@ -120,6 +142,12 @@ public class DatabaseImpl implements Database{
         return result;
     }
     
+    /**
+     * Restituisce l'utente con la mail data
+     * @param email La mail dell'utente
+     * @return L'oggetto <code>UserData</code> relativo all'utente trovato. Restituisce <code>null</code> se non è stato trovato alcun utente
+     * @see entity.UserData
+     */
     @Override
     public synchronized UserData getUserByEmail(String email) {
         UserData ret = null;
@@ -155,6 +183,12 @@ public class DatabaseImpl implements Database{
         return ret;
     }
 
+    /**
+     * Aggiunge un utente al database
+     * @param user L'utente da aggiungere
+     * @return L'oggetto <code>UserData</code> relativo all'utente aggiunto. Se l'utente esiste già l'oggetto è <code>null</code>
+     * @see entity.UserData
+     */
     @Override
     public synchronized UserData addUser(UserData user) {
         String sql = "INSERT INTO ip_user (nickname, name, surname, email, password, activation_code, administrator, active) "
@@ -186,6 +220,13 @@ public class DatabaseImpl implements Database{
         return user;
     }
 
+    /**
+     * Aggiorna le informazioni di un utente presente nel database
+     * @param user L'utente con le informazioni aggiornate
+     * @param old Il vecchio username dell'utente
+     * @return L'oggetto <code>UserData</code> relativo all'utente aggiornato. Restituisce <code>null</code> se non è presente alcun utente con quel nickname
+     * @see entity.UserData
+     */
     @Override
     public synchronized UserData updateUser(UserData user, String old) {
         if(old == null || user == null) throw new IllegalArgumentException();
@@ -249,6 +290,12 @@ public class DatabaseImpl implements Database{
         return user;
     }
     
+    /**
+     * Rimuove un utente dal database
+     * @param nickname Il nickname dell'utente da rimuovere
+     * @return L'oggetto <code>UserData</code> relativo all'utente rimosso. Restituisce <code>null</code> se non è stato trovato alcun utente
+     * @see entity.UserData
+     */
     @Override
     public synchronized UserData removeUser(String nickname) {
         String sql = "DELETE FROM ip_user WHERE nickname = ?";
@@ -277,6 +324,12 @@ public class DatabaseImpl implements Database{
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="game-methods">
+    /**
+     * Aggiunge una partita al database
+     * @param gameData L'oggetto relativo alla partita
+     * @return L'oggetto <code>GameData</code> relativo alla partita aggiunta
+     * @see entity.GameData
+     */
     @Override
     public synchronized GameData addGame(GameData gameData) {
         String sql = "INSERT INTO game (id, name) VALUES (?, ?)";
@@ -301,6 +354,12 @@ public class DatabaseImpl implements Database{
         return gameData;
     }
 
+    /**
+     * Restituisce la partita con id dato
+     * @param gameId L'identificativo della partita
+     * @return L'oggetto <code>GameData</code> relativo alla partita ottenuta
+     * @see entity.GameData
+     */
     @Override
     public synchronized GameData getGame(int gameId) {
         String sql = "SELECT * FROM game WHERE id = ?";
@@ -335,6 +394,12 @@ public class DatabaseImpl implements Database{
         return gameData;
     }
 
+    /**
+     * Aggiorna le informazioni della partita relativa all'oggetto <code>GameData</code> dato
+     * @param gameData La partita da aggiornare
+     * @return L'oggetto <code>GameData</code> relativo alla partita modificata
+     * @see entity.GameData
+     */
     @Override
     public synchronized boolean updateGame(GameData gameData) {
         for(String player : gameData.getPlayersList()) {
@@ -346,6 +411,10 @@ public class DatabaseImpl implements Database{
         return true;
     }
     
+    /**
+     * Rimuove la partita con id dato dal database
+     * @param gameId L'identificativo della partita
+     */
     @Override
     public synchronized void removeGame(int gameId) {
         Connection conn = null;
@@ -370,7 +439,11 @@ public class DatabaseImpl implements Database{
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="stats-methods">
-    
+    /**
+     * Restituisce le statistiche calcolate sui dati del database
+     * @return L'oggetto <code>StatsData</code> rappresentante tutte le statistiche del programma
+     * @see entity.StatsData
+     */
     @Override
     public synchronized StatsData getStats() {
         StatsData stats = new StatsData();
@@ -393,6 +466,11 @@ public class DatabaseImpl implements Database{
     // </editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="config-methods">
+    /**
+     * Configura il database
+     * @param config L'oggetto <code>DatabaseConfig</code> per la configurazione
+     * @return L'oggetto <code>Database</code>
+     */
     @Override
     public synchronized Database configure(DatabaseConfig config) {
         connManager.configure(config);
@@ -443,11 +521,21 @@ public class DatabaseImpl implements Database{
     // </editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="utility-methods"> Utility methods for first start and/or testing purpose
+    /**
+     * Controlla se è presente un utente amministratore nel database
+     * @return <code>true</code> se l'amministratore è presente
+     * @throws DatabaseException Se le credenziali del database sono errate
+     */
     @Override
     public synchronized boolean checkAdminExistence() throws DatabaseException{
         return connManager.checkAdminExistence();
     }
 
+    /**
+     * Controlla se il database è già stato creato
+     * @return <code>true</code> se il database esiste
+     * @throws DatabaseException Se le credenziali del database sono errate
+     */
     @Override
     public synchronized boolean checkDatabaseExistence() throws DatabaseException{
         boolean exists = connManager.checkDatabaseExistence();
@@ -455,11 +543,17 @@ public class DatabaseImpl implements Database{
         return exists;
     }
 
+    /**
+     * Crea il database
+     */
     @Override
     public synchronized void createDatabase() {
         connManager.createDatabase();
     }
 
+    /**
+     * Cancella il database
+     */
     @Override
     public synchronized void deleteDatabase() {
         connManager.deleteDatabase();

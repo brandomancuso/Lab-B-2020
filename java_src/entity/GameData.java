@@ -49,7 +49,7 @@ public class GameData implements Serializable{
     public String getName() {
         return name;
     }
-    
+
     public String getCreator()
     {
         return creator;
