@@ -45,7 +45,7 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     /**
      * ritorna oggetto relativo alle statistiche
-     * @return 
+     * @return statsData
      */
     public synchronized StatsData getStatsData() {
         return statsData;
@@ -53,7 +53,7 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     /**
      * ritorna lista di partite
-     * @return 
+     * @return gameList
      */
     public synchronized List<GameData> getGamesList() {
         return gameList;

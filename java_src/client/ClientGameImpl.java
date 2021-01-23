@@ -74,7 +74,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     /**
      * ritorna la lista di giocatori in lobby
      *
-     * @return
+     * @return lobbyList
      */
     public synchronized List<String> getLobbyList() {
         return lobbyList;
@@ -83,7 +83,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     /**
      * ritorna il valore del timer
      *
-     * @return
+     * @return timerValue
      */
     public synchronized int getTimerValue() {
         return timerValue;
@@ -92,7 +92,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     /**
      * ritorna lo stato di gioco
      *
-     * @return
+     * @return gameState 
      */
     public synchronized int getGameState() {
         return gameState;
@@ -101,7 +101,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     /**
      * ritorna una mappa contenente nomi e punti dei giocatori
      *
-     * @return
+     * @return storePointPlayer
      */
     public synchronized Map<String, Integer> getStorePointPlayer() {
         return storePointPlayer;
@@ -110,7 +110,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     /**
      * ritorna una mappa contenente nome giocatore e una lista di parole trovate
      *
-     * @return
+     * @return wordCheckendFound
      */
     public synchronized Map<String, List<WordData>> getWordCheckedFound() {
         return wordCheckedFound;
@@ -119,7 +119,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     /**
      * ritorna tutte le parole trovate dall'utente
      *
-     * @return
+     * @return playerWords
      * @throws RemoteException
      */
     @Override

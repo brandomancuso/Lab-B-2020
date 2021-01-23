@@ -16,7 +16,7 @@ public class GuiUtility {
     /**
      * controlla il formato di una email
      * @param parEmail
-     * @return 
+     * @return result booleano true se formato corretto
      */
     public static boolean isEmailCorrect(String parEmail) {
         boolean result = true;
@@ -33,7 +33,7 @@ public class GuiUtility {
      * controlla che due campi password contengano lo stesso testo
      * @param parPsw1
      * @param parPsw2
-     * @return 
+     * @return booleano true se password corrispondono
      */
     public static boolean isPasswordMatching(JPasswordField parPsw1, JPasswordField parPsw2) {
         boolean result = true;
@@ -46,7 +46,7 @@ public class GuiUtility {
     /**
      * controlla che un campo di testo non sia vuoto
      * @param input
-     * @return 
+     * @return booleano true se il campo è vuoto
      */
     public static boolean isEmpty(JTextField input) {
         boolean result = false;
@@ -59,7 +59,7 @@ public class GuiUtility {
     /**
      * controlla che un campo password non sia vuoto
      * @param password
-     * @return 
+     * @return booleano true se il campo è vuoto
      */
     public static boolean isEmpty(JPasswordField password) {
         boolean result = false;
@@ -84,7 +84,7 @@ public class GuiUtility {
     /**
      * crea un table model di n colonne non editabile dall'utente
      * @param parNumCols
-     * @return 
+     * @return model
      */
     public static DefaultTableModel createCustomTableModel(int parNumCols) {
         DefaultTableModel model = new DefaultTableModel() {
