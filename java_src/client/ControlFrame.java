@@ -1470,7 +1470,7 @@ public class ControlFrame extends javax.swing.JFrame {
      *
      * @param map mappa contenete i dati
      * @param colNames nomi delle relative colonne
-     * @return
+     * @return model table model della tabella
      */
     public TableModel toTableModel(Map<?, ?> map, String[] colNames) {
         DefaultTableModel model = new DefaultTableModel(new Object[]{colNames[0], colNames[1]}, 0);

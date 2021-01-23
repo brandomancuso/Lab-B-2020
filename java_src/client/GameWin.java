@@ -468,7 +468,7 @@ public class GameWin extends javax.swing.JDialog {
 
     /**
      * ritorna le parole trovate dal giocatore
-     * @return 
+     * @return playerWords
      */
     public List<String> getPlayerWords() {
         List<String> playerWords = new ArrayList<String>();

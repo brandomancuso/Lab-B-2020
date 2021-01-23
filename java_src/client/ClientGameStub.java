@@ -19,7 +19,7 @@ public interface ClientGameStub extends Remote {
     /**
      * ritorna tutte le parole trovate dall'utente
      *
-     * @return
+     * @return playerWords
      * @throws RemoteException
      */
     List<String> getWords() throws RemoteException;
