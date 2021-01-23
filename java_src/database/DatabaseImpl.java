@@ -341,7 +341,7 @@ public class DatabaseImpl implements Database{
             addPartecipate(gameData.getId(), player, gameData.getPoints(player));
         }
         for(SessionData s : gameData.getSessions()) {
-            addSession(gameData.getId(), s);
+            addSession(gameData.getId(), s, gameData.getPlayersList());
         }
         return true;
     }
@@ -494,7 +494,7 @@ public class DatabaseImpl implements Database{
         } 
     }
 
-    private void addSession(Integer id, SessionData s) {
+    private void addSession(Integer id, SessionData s, List<String> players) {
         String sql = "INSERT INTO manche (id, grid, game_key) VALUES (?, ?, ?)";
         StringBuilder grid = new StringBuilder();
         for(int i = 0; i<s.getGrid().length; i++){
@@ -521,7 +521,7 @@ public class DatabaseImpl implements Database{
         
         addFoundWords(SESSION_ID-1, s.getFoundWords());
         addRequests(SESSION_ID-1, s.getRequestedWords());
-        addPlays(SESSION_ID-1, s.getPlayers());
+        addPlays(SESSION_ID-1, players);
     }
     
     private void addFoundWords(int session_id, Map<String, List<WordData>> foundWords) {
@@ -553,7 +553,7 @@ public class DatabaseImpl implements Database{
         }
     }
     
-    private void addPlays(int session_id, Set<String> players) {
+    private void addPlays(int session_id, List<String> players) {
         for(String player : players){
             List<WordData> words = getFoundWords(session_id, player);
             int points = 0;

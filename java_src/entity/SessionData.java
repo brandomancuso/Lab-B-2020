@@ -74,7 +74,4 @@ public class SessionData implements Serializable{
         return requestedWords;
     }
     
-    public Set<String> getPlayers() {
-        return foundWords.keySet();
-    }
 }
