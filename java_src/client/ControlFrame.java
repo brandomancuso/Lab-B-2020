@@ -73,6 +73,7 @@ public class ControlFrame extends javax.swing.JFrame {
         Registry registry;
         try {
             if (IpServer.length != 0) {
+                System.out.println(IpServer[0]);
                 registry = LocateRegistry.getRegistry(IpServer[0], 1099);
             } else {
                 registry = LocateRegistry.getRegistry(1099);
