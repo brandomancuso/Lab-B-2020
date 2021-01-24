@@ -247,6 +247,7 @@ public class ClientGameImpl extends UnicastRemoteObject implements ClientGameStu
     public void updateSessionGame(String[] grid, int numSession) throws RemoteException {
         this.guiGame.setSessionNum(numSession);
         this.guiGame.fillGameGrid(grid);
+        this.guiGame.fillScoreTable();
     }
 
     /**

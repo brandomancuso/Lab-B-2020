@@ -60,8 +60,8 @@ public class Session {
     {
         observerClientSet.forEach((key,value)->{
             try {
-                    value.getClientGameStub().changeGameState(1);//change state into session
-                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);                
+                    value.getClientGameStub().changeGameState(1);//change state into session  
+                    value.getClientGameStub().updateSessionGame(getWordMatrix(),numSession);
                 } catch (RemoteException ex) {
                     System.err.println(ex);
                     observerClientSet.remove(key);

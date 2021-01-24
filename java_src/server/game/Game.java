@@ -42,7 +42,7 @@ public class Game extends Thread implements ServerGameStub {
     private Database dbReference;
     private Session currentSession;
     private List<Pair<String,Integer>> winners;
-    private final int WINNING_POINT = 1;
+    private final int WINNING_POINT = 50;
     private int numberSession;//in order to count the number of sessions
     private boolean isClosing;
 
@@ -91,7 +91,7 @@ public class Game extends Thread implements ServerGameStub {
             gameData.addSession(currentSession.getSessionData());
             if(isLobbyState)
             {
-                timer.setTime(5);
+                timer.setTime(30);
                 
                 observerClientSet.forEach((key,value)->{
                     try {
@@ -107,14 +107,14 @@ public class Game extends Thread implements ServerGameStub {
                 isLobbyState=false;
             }
             
-            timer.setTime(80);
+            timer.setTime(180);
 
             if(currentSession.startRealGame(timerThread = new Thread(timer))) 
                 return;//to kill the thread
             
             numberSession++;//the counter for the session
             
-            timer.setTime(100);
+            timer.setTime(180);
             if(currentSession.startAfterGame(timerThread = new Thread(timer)))
                 return;//to kill the thread
             
