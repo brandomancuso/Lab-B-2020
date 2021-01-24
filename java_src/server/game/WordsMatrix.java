@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Stack;
 
 /**
- *
+ *The grid of letter generated in a session
  * @author Christian Squadrito
  */
 public class WordsMatrix {
@@ -260,6 +260,7 @@ public class WordsMatrix {
                     }
                     
                     if (cellToVisit.empty()) {
+                        flag=false;
                         break;
                     }
                     

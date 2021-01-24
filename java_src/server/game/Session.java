@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
  
  /**
-  * 
+  * all the game logic in inside here
   * @author Christian Squadrito
   */
 

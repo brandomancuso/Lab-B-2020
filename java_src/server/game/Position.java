@@ -1,7 +1,7 @@
 package server.game;
 
 /**
- * 
+ * It says in which region of the grid the letter is positionated
  * @author Christian Squadrito
  */
 

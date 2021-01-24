@@ -1,7 +1,7 @@
  package server.game;
 
  /**
-  * 
+  * class exception for an invallid definition
   * @author Christian Squadrito
   */
 

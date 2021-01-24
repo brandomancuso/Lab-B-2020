@@ -2,6 +2,11 @@ package entity;
 
 import java.io.Serializable;
 
+/**
+ * it'a a class DAO for the user registered
+ * @author Mancuso Brando
+ */
+
 public class UserData implements Serializable{
     
     private String nickname;

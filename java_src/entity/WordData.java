@@ -1,6 +1,11 @@
 package entity;
 import java.io.Serializable;
 
+/**
+ * it'a a class DAO for the word found
+ * @author Mancuso Brando
+ */
+
 public class WordData implements Serializable {
 
     private Integer id;

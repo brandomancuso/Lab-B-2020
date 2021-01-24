@@ -3,7 +3,7 @@ package entity;
 import java.io.Serializable;
 
 /**
- * 
+ * the type of a word
  * @author Christian Squadrito
  */
 

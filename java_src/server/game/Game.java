@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 import utils.Pair;
 import server.ServerServiceImpl;
 
+/**
+ * Main class for the management of the game
+ * @author acer
+ */
+
 //Coustructor called after a master wants to create a Game
 public class Game extends Thread implements ServerGameStub {
 

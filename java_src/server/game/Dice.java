@@ -3,7 +3,7 @@
 import java.util.Random;
 
  /**
-  * 
+  * it's the dice to generate the letter inside the grid
   * @author Christian Squadrito
   */
 public class Dice {      

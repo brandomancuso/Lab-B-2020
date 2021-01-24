@@ -5,7 +5,7 @@ import entity.WordData;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 /**
- * 
+ * interface for remote method of the game
  * @author Christian Squadrito
  */
 

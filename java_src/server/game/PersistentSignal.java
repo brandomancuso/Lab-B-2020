@@ -1,7 +1,7 @@
  package server.game;
 
  /**
-  * 
+  * Class for syncronyzing the game with the timer
   * @author Christian Squadrito
   */
 

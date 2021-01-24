@@ -6,6 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * it'a a class DAO for the game
+ * @author Mancuso Brando
+ */
 public class GameData implements Serializable{
     private Integer id;
     private String name;

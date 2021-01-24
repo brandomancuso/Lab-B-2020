@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
  
 /**
- * 
+ * it's the proxy client just costructed for making worke the Observer Design Pattern
  * @author Christian Squadrito
  */
 

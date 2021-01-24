@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+/**
+ * it'a a class DAO for the session
+ * @author Mancuso Brando
+ */
 public class SessionData implements Serializable{
 
     private int id;

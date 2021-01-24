@@ -6,6 +6,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
+/**
+ * it'a an interface for the remote method of the game by the client side
+ * @author Bianchi Edoardo
+ */
 
 public interface ClientGameStub extends Remote {
 

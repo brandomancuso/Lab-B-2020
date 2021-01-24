@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
  
 /**
- * 
+ * Definition of a word
  * @author Christian Squadrito
  */
 

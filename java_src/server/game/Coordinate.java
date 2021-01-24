@@ -3,7 +3,7 @@ package server.game;
 import java.util.Objects;
 
 /**
- * 
+ * it design for the coordinate of the letter in the grid
  * @author Christian Squadrito
  */
 

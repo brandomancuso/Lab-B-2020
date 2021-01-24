@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
  
 /**
- * 
+ * The word who contained the list of definition
  * @author Christian Squadrito
  */
 

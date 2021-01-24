@@ -13,6 +13,10 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * it'a a class for the management of the database
+ * @author Mancuso Brando
+ */
 
 public class ConnectionManager {
     //Configuration data

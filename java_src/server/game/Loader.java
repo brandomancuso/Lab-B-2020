@@ -13,7 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
  
 /**
- * 
+ * it's the class for load the dictionary
  * @author Christian Squadrito
  */
 

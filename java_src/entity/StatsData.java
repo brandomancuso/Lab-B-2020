@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import utils.Pair;
 
+/**
+ * it'a a class DAO for the statistics
+ * @author Mancuso Brando
+ */
 public class StatsData implements Serializable{
     private Pair<String, Integer> bestPlayerGameScore;
     private Pair<String, Integer> bestPlayerSessionScore;

@@ -1,7 +1,7 @@
  package server.game;
 import java.util.Observable;
  /**
-  * 
+  * it's the game timer
   * @author Christian Squadrito
   */
 
