@@ -1067,7 +1067,7 @@ public class DatabaseImpl implements Database{
         List<Pair<String, String>> leaderboard = new ArrayList<>();
         String sql = "SELECT word, points FROM word INNER JOIN find ON id = word_key "
                 + "WHERE points IN (SELECT MAX(points) FROM word INNER JOIN find ON word_key = id "
-                + "WHERE duplicate = 'false' AND correct = 'true')";
+                + "WHERE duplicate = 'false' AND correct = 'true') AND duplicate = 'false' AND correct = 'true'";
         Connection c = null;
         try {
             c = connManager.getConnection();
